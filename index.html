@@ -3,23 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ขั้นตอนการใช้งานระบบนัดหมาย</title>
+    <title>ขอแนะนำ! ระบบนัดหมายใหม่สำหรับเจ้าหน้าที่โรงพยาบาลสันทราย</title>
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="ขอแนะนำ! ระบบนัดหมายใหม่สำหรับเจ้าหน้าที่ รพ.สันทราย" />
+    <meta property="og:description" content="สะดวก รวดเร็ว ทำนัดได้ทุกที่ ทุกเวลา ผ่าน LINE ที่คุ้นเคย ไม่ต้องโทร คลิกเพื่อดูรายละเอียดและเพิ่มเพื่อนเลย!" />
+    <meta property="og:image" content="https://i.postimg.cc/HWbKB95y/Logo-VIPLine.jpg" />
+    <meta property="og:url" content="https://praetinee.github.io/sansai-hospital-pr/" />
+    <meta property="og:type" content="website" />
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Sarabun', sans-serif; 
-            background-color: #f0f4f8;
+        html, body {
+            font-family: 'Sarabun', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .step-card {
-            @apply bg-white rounded-xl shadow-lg p-6 transition-transform transform hover:scale-105;
+        .gradient-bg {
+            background: linear-gradient(135deg, #00B900 0%, #008A00 100%);
         }
         .step-number {
-            @apply bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold flex-shrink-0;
+            @apply bg-green-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold flex-shrink-0;
         }
         .mockup-image {
-            @apply rounded-lg border-2 border-gray-200 shadow-md mt-4;
+            @apply rounded-lg border-2 border-gray-200 shadow-md;
         }
         .spinner { 
             border: 3px solid rgba(0, 0, 0, 0.1); 
@@ -30,110 +38,275 @@
             animation: spin 1s ease infinite; 
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .disabled-form input, .disabled-form select, .disabled-form textarea, .disabled-form button {
+            @apply bg-gray-200 border-gray-300 cursor-not-allowed;
+        }
     </style>
 </head>
-<body class="p-4 sm:p-8">
+<body class="bg-gray-100">
 
-    <div class="max-w-3xl mx-auto">
+    <div class="container mx-auto max-w-3xl p-4 sm:p-8">
+        
         <!-- Header -->
-        <header class="text-center mb-10">
-            <img src="https://i.postimg.cc/HWbKB95y/Logo-VIPLine.jpg" alt="Logo VIP Line" class="mx-auto h-28 w-28 rounded-full shadow-xl mb-4">
-            <h1 class="text-4xl font-extrabold text-gray-800">ขั้นตอนการใช้งานระบบนัดหมาย</h1>
-            <p class="text-lg text-gray-500 mt-2">สำหรับเจ้าหน้าที่โรงพยาบาลสันทราย</p>
+        <header class="gradient-bg text-white text-center p-8 rounded-t-xl shadow-lg">
+            <div class="flex justify-center items-center gap-4 mb-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/2048px-LINE_logo.svg.png" alt="LINE Logo" class="h-12">
+                <img src="https://i.postimg.cc/HWbKB95y/Logo-VIPLine.jpg" alt="VIP Line OA Logo" class="h-12 w-12 rounded-full object-cover border-2 border-white">
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-extrabold">ขอแนะนำ! ระบบนัดหมายใหม่</h1>
+            <p class="text-lg mt-2">สำหรับเจ้าหน้าที่โรงพยาบาลสันทรายและครอบครัว</p>
         </header>
 
-        <!-- Steps Container -->
-        <div class="space-y-8">
+        <!-- Main Content -->
+        <main class="bg-white p-6 sm:p-10 shadow-lg">
 
-            <!-- Step 1: Add Friend & Greeting -->
-            <div class="step-card">
-                <div class="flex items-start gap-6">
-                    <div class="step-number">1</div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800">เพิ่มเพื่อนและทักทาย</h2>
-                        <p class="text-gray-600 mt-1">เมื่อท่านเพิ่มเพื่อน LINE OA ของเรา จะได้รับข้อความต้อนรับอัตโนมัติ ท่านสามารถกดลิงก์ <span class="font-semibold text-blue-600">"คลิกที่นี่เพื่อทำนัดหมาย"</span> จากข้อความนี้ได้เลย</p>
-                        <img src="https://i.postimg.cc/k4RpKxNy/Greeting.png" alt="ข้อความทักทายอัตโนมัติ" class="mockup-image">
+            <!-- Introduction -->
+            <section>
+                <p class="text-center text-gray-700 text-lg">
+                    เพื่ออำนวยความสะดวกให้แก่เจ้าหน้าที่ทุกท่าน ตอนนี้เราได้เปิดตัวระบบการนัดหมายเพื่อเข้ารับบริการทางการแพทย์ผ่าน LINE Official Account แล้ว!
+                </p>
+            </section>
+
+            <!-- Key Benefits -->
+            <section class="mt-10">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <i class="fa-solid fa-mobile-screen-button text-4xl text-green-600"></i>
+                        <h3 class="font-bold text-lg mt-3">ใช้งานง่าย</h3>
+                        <p class="text-sm text-gray-600">ผ่านแอปพลิเคชัน LINE ที่คุ้นเคย</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <i class="fa-solid fa-clock text-4xl text-green-600"></i>
+                        <h3 class="font-bold text-lg mt-3">สะดวกและรวดเร็ว</h3>
+                        <p class="text-sm text-gray-600">ทำนัดได้ทุกที่ ทุกเวลา ไม่ต้องโทร</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <i class="fa-solid fa-users text-4xl text-green-600"></i>
+                        <h3 class="font-bold text-lg mt-3">สำหรับทุกคน</h3>
+                        <p class="text-sm text-gray-600">เจ้าหน้าที่และครอบครัวสามารถใช้งานได้</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Step 2: Use Rich Menu -->
-            <div class="step-card">
-                <div class="flex items-start gap-6">
-                    <div class="step-number">2</div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800">กดที่เมนูลัด (Rich Menu)</h2>
-                        <p class="text-gray-600 mt-1">หรือหากท่านอยู่ในห้องแชทแล้ว สามารถกดที่เมนู <span class="font-semibold text-blue-600">"นัดหมาย"</span> ที่แถบเมนูด้านล่างจอ เพื่อเริ่มต้นได้ทันที</p>
-                        <img src="https://i.postimg.cc/0jHJpw8M/Rich-Menu.png" alt="Rich Menu" class="mockup-image">
-                    </div>
+            <!-- Call to Action: QR Code & URL -->
+            <section class="mt-12 bg-green-50 border-2 border-dashed border-green-400 rounded-xl p-8 text-center">
+                <h2 class="text-2xl font-bold text-gray-800">เริ่มต้นใช้งานง่ายๆ</h2>
+                <p class="text-gray-600 mt-1">เพียงเพิ่มเพื่อน LINE Official Account ของเรา</p>
+
+                <div class="mt-6">
+                    <img src="https://qr-official.line.me/gs/M_766fcihj_BW.png?oat_content=qr" alt="QR Code to add LINE OA" class="mx-auto rounded-lg shadow-md border-4 border-white w-64 h-64">
+                    <p class="font-bold text-lg mt-4">สแกน QR Code นี้</p>
                 </div>
-            </div>
 
-            <!-- Step 3: Registration -->
-            <div class="step-card">
-                <div class="flex items-start gap-6">
-                    <div class="step-number">3</div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800">ลงทะเบียนครั้งแรก</h2>
-                        <p class="text-gray-600 mt-1">ระบบจะเปิดหน้าลงทะเบียน ให้ท่านกรอก <span class="font-semibold">"ชื่อ-นามสกุล"</span> และ <span class="font-semibold">"เลข HN"</span> เพื่อยืนยันตัวตน (ทำเพียงครั้งแรกที่ใช้งาน)</p>
-                        <!-- Registration Mockup -->
-                        <div class="mt-4 p-6 border-2 border-gray-200 rounded-lg bg-gray-50">
-                             <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">ชื่อ-นามสกุล (ไม่ต้องมีคำนำหน้าชื่อ)</label>
-                                    <input type="text" value="ปราถิณี ประกอบศรี" disabled class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">หมายเลข HN</label>
-                                    <input type="text" value="123456" disabled class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md">
-                                </div>
-                                <button disabled class="w-full flex justify-center py-3 px-4 rounded-md text-white bg-blue-500">ลงทะเบียน</button>
+                <div class="mt-6">
+                    <p class="text-gray-600">หรือ</p>
+                    <a href="https://lin.ee/LjY0UA3" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-green-700 transition-colors">
+                        <i class="fa-solid fa-plus mr-2"></i> คลิกที่นี่เพื่อเพิ่มเพื่อน
+                    </a>
+                    <p class="text-xs text-gray-500 mt-2">(หากเปิดบนคอมพิวเตอร์ จะแสดง QR Code ให้สแกน)</p>
+                </div>
+            </section>
+
+             <!-- How To Use (UPDATED) -->
+            <section class="mt-12">
+                <h2 class="text-2xl font-bold text-center text-gray-800 mb-10">ขั้นตอนการใช้งาน</h2>
+                <div class="space-y-8">
+
+                    <!-- Step 1: Start the Process -->
+                    <div class="flex items-start gap-6">
+                        <div class="step-number">1</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">เริ่มต้นทำนัดหมาย</h3>
+                            <p class="text-gray-600 mt-1">ท่านสามารถเริ่มต้นได้ 2 วิธี ขึ้นอยู่กับอุปกรณ์ที่ใช้งาน:</p>
+                            <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1">
+                                <li><b>สำหรับผู้ใช้งานบนมือถือ:</b> กดที่เมนู <span class="font-semibold text-blue-600">"นัดหมาย"</span> ที่แถบเมนูด้านล่างจอได้ทันที</li>
+                                <li><b>สำหรับผู้ใช้งานบน PC หรือ iPad:</b> กดที่รูปภาพในข้อความต้อนรับ</li>
+                            </ul>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                 <img src="https://i.postimg.cc/fyRpkJWP/Rich-Menu.png" alt="Rich Menu สำหรับมือถือ" class="mockup-image">
+                                 <img src="https://i.postimg.cc/k4RpKxNy/Greeting.png" alt="ข้อความทักทายอัตโนมัติสำหรับ PC/iPad" class="mockup-image">
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Step 4: Processing Registration -->
-            <div class="step-card">
-                <div class="flex items-start gap-6">
-                    <div class="step-number">4</div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800">ระบบกำลังตรวจสอบข้อมูล</h2>
-                        <p class="text-gray-600 mt-1">หลังจากกด "ลงทะเบียน" ปุ่มจะแสดงสถานะกำลังประมวลผล โปรดรอสักครู่...</p>
-                         <!-- Processing Mockup -->
-                        <div class="mt-4 p-6 border-2 border-gray-200 rounded-lg bg-gray-50">
-                             <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">ชื่อ-นามสกุล (ไม่ต้องมีคำนำหน้าชื่อ)</label>
-                                    <input type="text" value="ปราถิณี ประกอบศรี" disabled class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md">
+                    
+                    <!-- Step 2: Registration -->
+                    <div class="flex items-start gap-6">
+                        <div class="step-number">2</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">ลงทะเบียนครั้งแรก</h3>
+                            <p class="text-gray-600 mt-1">ระบบจะเปิดหน้าลงทะเบียน ให้ท่านกรอก <span class="font-semibold">"ชื่อ-นามสกุล"</span> และ <span class="font-semibold">"เลข HN"</span> เพื่อยืนยันตัวตน (ทำเพียงครั้งแรกที่ใช้งาน)</p>
+                            <div class="mt-4 p-6 border-2 border-gray-200 rounded-lg bg-gray-50 disabled-form">
+                                 <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">ชื่อ-นามสกุล (ไม่ต้องมีคำนำหน้าชื่อ)</label>
+                                        <input type="text" value="อารี ยิ้มแย้ม" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">หมายเลข HN</label>
+                                        <input type="text" value="123456" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                    </div>
+                                    <button disabled class="w-full flex justify-center py-3 px-4 rounded-md text-white bg-blue-500">ลงทะเบียน</button>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">หมายเลข HN</label>
-                                    <input type="text" value="123456" disabled class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md">
-                                </div>
-                                <button disabled class="w-full flex justify-center items-center py-3 px-4 rounded-md text-white bg-blue-400 cursor-not-allowed">
-                                    <div class="spinner mr-3"></div>
-                                    กำลังลงทะเบียน...
-                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-             <!-- Step 5: Success -->
-            <div class="step-card bg-green-50 border-green-300 border">
-                 <div class="flex items-start gap-6">
-                    <div class="step-number bg-green-600">5</div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-green-800">เริ่มต้นทำนัดหมาย</h2>
-                        <p class="text-gray-700 mt-1">เมื่อลงทะเบียนสำเร็จ ท่านจะเข้าสู่หน้าฟอร์มสำหรับกรอกข้อมูลการนัดหมายได้ทันที และในการใช้งานครั้งถัดไป ท่านจะเข้ามาที่หน้านี้ได้เลยโดยไม่ต้องลงทะเบียนอีก</p>
-                    </div>
-                </div>
-            </div>
 
+                    <!-- Step 3: Processing Registration -->
+                    <div class="flex items-start gap-6">
+                        <div class="step-number">3</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">ระบบกำลังตรวจสอบข้อมูล</h3>
+                            <p class="text-gray-600 mt-1">หลังจากกด "ลงทะเบียน" ปุ่มจะแสดงสถานะกำลังประมวลผล โปรดรอสักครู่...</p>
+                            <div class="mt-4 p-6 border-2 border-gray-200 rounded-lg bg-gray-50 disabled-form">
+                                 <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">ชื่อ-นามสกุล (ไม่ต้องมีคำนำหน้าชื่อ)</label>
+                                        <input type="text" value="อารี ยิ้มแย้ม" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">หมายเลข HN</label>
+                                        <input type="text" value="123456" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                    </div>
+                                    <button disabled class="w-full flex justify-center items-center py-3 px-4 rounded-md text-white bg-blue-400">
+                                        <div class="spinner mr-3"></div>
+                                        กำลังลงทะเบียน...
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4: Appointment Form (FULL VERSION) -->
+                    <div class="flex items-start gap-6">
+                        <div class="step-number">4</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">กรอกฟอร์มนัดหมาย</h3>
+                            <p class="text-gray-600 mt-1">เมื่อลงทะเบียนสำเร็จ ท่านจะเข้าสู่หน้าฟอร์มสำหรับกรอกข้อมูลการนัดหมายได้ทันที</p>
+                            <div class="mt-4 p-6 border-2 border-gray-200 rounded-lg bg-gray-50 disabled-form">
+                                <div class="bg-blue-50 p-3 rounded-md mb-4 border border-blue-200">
+                                    <p class="text-sm text-gray-700">เจ้าหน้าที่ผู้ขอ: <span class="font-bold">อารี ยิ้มแย้ม</span></p>
+                                    <p class="text-sm text-gray-700">HN: <span class="font-bold">123456</span></p>
+                                </div>
+                                <div class="space-y-6">
+                                    <fieldset class="border p-4 rounded-md border-gray-300">
+                                        <legend class="text-lg font-medium text-gray-900 px-2">ข้อมูลผู้รับบริการ</legend>
+                                        <div class="space-y-4 pt-2">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700">ความสัมพันธ์</label>
+                                                <select disabled class="mt-1 block w-full pl-3 pr-10 py-2 text-base border rounded-md">
+                                                    <option selected>เจ้าหน้าที่เอง</option>
+                                                    <option>บิดา</option>
+                                                    <option>มารดา</option>
+                                                    <option>คู่สมรส (ตามกฎหมาย)</option>
+                                                    <option>บุตร</option>
+                                                    <option>อื่นๆ</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium">ชื่อ-นามสกุล ผู้รับบริการ</label>
+                                                <input type="text" value="อารี ยิ้มแย้ม" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium">เลขบัตรประชาชน</label>
+                                                <input type="text" value="1234567890123" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium">เบอร์โทรศัพท์</label>
+                                                <input type="tel" value="0812345678" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium">สถานะทางกายภาพ</label>
+                                                <div class="mt-2 flex space-x-4"><label class="inline-flex items-center"><input type="radio" name="patient-status-demo" value="เดินได้" checked disabled class="form-radio"><span class="ml-2 text-gray-700">เดินได้</span></label><label class="inline-flex items-center"><input type="radio" name="patient-status-demo" value="นั่งรถเข็น" disabled class="form-radio"><span class="ml-2 text-gray-700">นั่งรถเข็น</span></label><label class="inline-flex items-center"><input type="radio" name="patient-status-demo" value="นอนเปล" disabled class="form-radio"><span class="ml-2 text-gray-700">นอนเปล</span></label></div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    <fieldset class="border p-4 rounded-md border-gray-300">
+                                        <legend class="text-lg font-medium text-gray-900 px-2">รายละเอียดการนัดหมาย</legend>
+                                        <div class="space-y-4 pt-2">
+                                            <div>
+                                                <label class="block text-sm font-medium">อาการ/ความผิดปกติ</label>
+                                                <textarea rows="3" disabled class="mt-1 block w-full sm:text-sm border rounded-md p-2">ปวดศีรษะ มีไข้ต่ำๆ</textarea>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium">แผนก</label>
+                                                <select disabled class="mt-1 block w-full pl-3 pr-10 py-2 text-base border rounded-md">
+                                                     <option>ห้องตรวจโรคทั่วไป</option>
+                                                     <option selected>ห้องตรวจอายุรกรรม</option>
+                                                     <option>ห้องฟัน</option>
+                                                     <option>...</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium">ประเภทการนัด</label>
+                                                <div class="mt-2 flex space-x-4"><label class="inline-flex items-center"><input type="radio" name="appointment-type-demo" value="นัดใหม่" checked disabled class="form-radio"><span class="ml-2 text-gray-700">นัดใหม่</span></label><label class="inline-flex items-center"><input type="radio" name="appointment-type-demo" value="นัดเดิม" disabled class="form-radio"><span class="ml-2 text-gray-700">นัดเดิม</span></label></div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium">วันเวลาที่ต้องการนัด</label>
+                                                <input type="datetime-local" value="2025-10-10T10:30" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    <div>
+                                        <label class="block text-sm font-medium">หมายเหตุ (ถ้ามี)</label>
+                                        <textarea rows="2" disabled class="mt-1 block w-full sm:text-sm border rounded-md p-2"></textarea>
+                                    </div>
+                                    <button disabled class="w-full flex justify-center py-3 px-4 border rounded-md text-white bg-green-600">ส่งข้อมูล</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 5: Confirmation Message -->
+                    <div class="flex items-start gap-6">
+                        <div class="step-number">5</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">รอการตรวจสอบ</h3>
+                            <p class="text-gray-600 mt-1">หลังจากส่งข้อมูล ท่านจะได้รับข้อความสรุปการนัดหมาย เพื่อรอเจ้าหน้าที่ตรวจสอบและยืนยัน</p>
+                             <div class="mt-4 p-4 bg-[#06C755] rounded-lg max-w-sm">
+                                <div class="bg-white rounded-lg p-3 shadow-lg text-sm">
+                                    <p class="whitespace-pre-wrap">🟡 ได้รับเรื่องการนัดหมายของท่านแล้ว
+ขณะนี้กำลังรอการยืนยันจากเจ้าหน้าที่
+
+[สรุปข้อมูลการนัดหมาย]
+- ผู้รับบริการ: อารี ยิ้มแย้ม
+- แผนก: ห้องตรวจอายุรกรรม
+- วันเวลาที่ขอ: 10 ต.ค. 2568, 10:30 น.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 6: Final Result -->
+                    <div class="flex items-start gap-6">
+                        <div class="step-number bg-green-600">6</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">รับผลการยืนยัน</h3>
+                            <p class="text-gray-600 mt-1">เมื่อเจ้าหน้าที่ดำเนินการเรียบร้อยแล้ว ท่านจะได้รับข้อความแจ้งผลการนัดหมาย เป็นอันเสร็จสิ้นขั้นตอน</p>
+                             <div class="mt-4 p-4 bg-[#06C755] rounded-lg max-w-sm">
+                                <div class="bg-white rounded-lg p-3 shadow-lg text-sm">
+                                    <p class="font-bold text-green-600">🟢 ยืนยันการนัดหมาย</p>
+                                    <p class="mt-2">ของคุณ อารี ยิ้มแย้ม
+ในวันที่ 10 ต.ค. 2568, 10:30 น.
+
+ได้รับการยืนยันเรียบร้อยแล้วครับ</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="text-center p-6 bg-gray-200 rounded-b-xl">
+            <p class="text-sm text-gray-600 font-semibold">โรงพยาบาลสันทราย | กลุ่มงานอาชีวเวชกรรม</p>
+        </footer>
+        
+        <div class="text-right text-xs text-gray-400 mt-2 pr-2">
+            Content & Developed by Praetinee Prakobsri
         </div>
+
     </div>
 
 </body>
