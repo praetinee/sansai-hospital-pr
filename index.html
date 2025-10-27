@@ -139,12 +139,14 @@
                         </div>
                     </div>
                     
-                    <!-- Step 2: Registration -->
+                    <!-- Step 2: Registration (REVISED TEXT) -->
                     <div class="flex items-start gap-6">
                         <div class="step-number">2</div>
                         <div>
                             <h3 class="text-xl font-bold text-gray-800">ลงทะเบียนครั้งแรก</h3>
-                            <p class="text-gray-600 mt-1">ระบบจะเปิดหน้าลงทะเบียน ให้ท่านกรอก <span class="font-semibold">"ชื่อ-นามสกุล"</span> และ <span class="font-semibold">"เลข HN"</span> เพื่อยืนยันตัวตน (ทำเพียงครั้งแรกที่ใช้งาน)</p>
+                            <p class="text-gray-600 mt-1">
+                                ระบบจะเปิดหน้าลงทะเบียน ให้ท่านกรอก <span class="font-semibold">"ชื่อ-นามสกุล"</span> และ <span class="font-semibold">"เลข HN"</span> หรือ <span class="font-semibold">"เลขบัตรประชาชน"</span> เพื่อยืนยันตัวตน (ทำเพียงครั้งแรกที่ใช้งาน)
+                            </p>
                             <div class="mt-4 p-6 border-2 border-gray-200 rounded-lg bg-gray-50 disabled-form">
                                  <div class="space-y-4">
                                     <div>
@@ -152,7 +154,7 @@
                                         <input type="text" value="อารี ยิ้มแย้ม" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">หมายเลข HN</label>
+                                        <label class="block text-sm font-medium text-gray-700">หมายเลข HN (หรือ เลขบัตรประชาชน)</label>
                                         <input type="text" value="123456" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
                                     </div>
                                     <button disabled class="w-full flex justify-center py-3 px-4 rounded-md text-white bg-blue-500">ลงทะเบียน</button>
@@ -161,207 +163,14 @@
                         </div>
                     </div>
 
-                    <!-- Step 3: Processing Registration -->
-                    <div class="flex items-start gap-6">
-                        <div class="step-number">3</div>
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800">ระบบกำลังตรวจสอบข้อมูล</h3>
-                            <p class="text-gray-600 mt-1">หลังจากกด "ลงทะเบียน" ปุ่มจะแสดงสถานะกำลังประมวลผล โปรดรอสักครู่...</p>
-                            <div class="mt-4 p-6 border-2 border-gray-200 rounded-lg bg-gray-50 disabled-form">
-                                 <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">ชื่อ-นามสกุล (ไม่ต้องมีคำนำหน้าชื่อ)</label>
-                                        <input type="text" value="อารี ยิ้มแย้ม" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">หมายเลข HN</label>
-                                        <input type="text" value="123456" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
-                                    </div>
-                                    <button disabled class="w-full flex justify-center items-center py-3 px-4 rounded-md text-white bg-blue-400">
-                                        <div class="spinner mr-3"></div>
-                                        กำลังลงทะเบียน...
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Step 4: Appointment Form (FULL VERSION) -->
-                    <div class="flex items-start gap-6">
-                        <div class="step-number">4</div>
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800">กรอกฟอร์มนัดหมาย</h3>
-                            <p class="text-gray-600 mt-1">เมื่อลงทะเบียนสำเร็จ ท่านจะเข้าสู่หน้าฟอร์มสำหรับกรอกข้อมูลการนัดหมายได้ทันที</p>
-                            <div class="mt-4 p-6 border-2 border-gray-200 rounded-lg bg-gray-50 disabled-form">
-                                <div class="bg-blue-50 p-3 rounded-md mb-4 border border-blue-200">
-                                    <p class="text-sm text-gray-700">เจ้าหน้าที่ผู้ขอ: <span class="font-bold">อารี ยิ้มแย้ม</span></p>
-                                    <p class="text-sm text-gray-700">HN: <span class="font-bold">123456</span></p>
-                                </div>
-                                <div class="space-y-6">
-                                    <fieldset class="border p-4 rounded-md border-gray-300">
-                                        <legend class="text-lg font-medium text-gray-900 px-2">ข้อมูลผู้รับบริการ</legend>
-                                        <div class="space-y-4 pt-2">
-                                            <div>
-                                                <label class="block text-sm font-medium text-gray-700">ความสัมพันธ์</label>
-                                                <select disabled class="mt-1 block w-full pl-3 pr-10 py-2 text-base border rounded-md">
-                                                    <option selected>เจ้าหน้าที่เอง</option>
-                                                    <option>บิดา</option>
-                                                    <option>มารดา</option>
-                                                    <option>คู่สมรส (ตามกฎหมาย)</option>
-                                                    <option>บุตร</option>
-                                                    <option>อื่นๆ</option>
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium">ชื่อ-นามสกุล ผู้รับบริการ</label>
-                                                <input type="text" value="อารี ยิ้มแย้ม" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium">เลขบัตรประชาชน</label>
-                                                <input type="text" value="1234567890123" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium">เบอร์โทรศัพท์</label>
-                                                <input type="tel" value="0812345678" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium">สถานะทางกายภาพ</label>
-                                                <div class="mt-2 flex space-x-4"><label class="inline-flex items-center"><input type="radio" name="patient-status-demo" value="เดินได้" checked disabled class="form-radio"><span class="ml-2 text-gray-700">เดินได้</span></label><label class="inline-flex items-center"><input type="radio" name="patient-status-demo" value="นั่งรถเข็น" disabled class="form-radio"><span class="ml-2 text-gray-700">นั่งรถเข็น</span></label><label class="inline-flex items-center"><input type="radio" name="patient-status-demo" value="นอนเปล" disabled class="form-radio"><span class="ml-2 text-gray-700">นอนเปล</span></label></div>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-                                    <fieldset class="border p-4 rounded-md border-gray-300">
-                                        <legend class="text-lg font-medium text-gray-900 px-2">รายละเอียดการนัดหมาย</legend>
-                                        <div class="space-y-4 pt-2">
-                                            <div>
-                                                <label class="block text-sm font-medium">อาการ/ความผิดปกติ</label>
-                                                <textarea rows="3" disabled class="mt-1 block w-full sm:text-sm border rounded-md p-2">ปวดศีรษะ มีไข้ต่ำๆ</textarea>
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium">แผนก</label>
-                                                <select disabled class="mt-1 block w-full pl-3 pr-10 py-2 text-base border rounded-md">
-                                                     <option>ห้องตรวจโรคทั่วไป</option>
-                                                     <option selected>ห้องตรวจผู้ป่วยนอกทั่วไป</option>
-                                                     <option>ห้องฟัน</option>
-                                                     <option>...</option>
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium">ประเภทการนัด</label>
-                                                <div class="mt-2 flex space-x-4"><label class="inline-flex items-center"><input type="radio" name="appointment-type-demo" value="นัดใหม่" checked disabled class="form-radio"><span class="ml-2 text-gray-700">นัดใหม่</span></label><label class="inline-flex items-center"><input type="radio" name="appointment-type-demo" value="นัดเดิม" disabled class="form-radio"><span class="ml-2 text-gray-700">นัดเดิม</span></label></div>
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium">วันเวลาที่ต้องการนัด</label>
-                                                <input type="datetime-local" value="2025-10-10T10:30" disabled class="mt-1 block w-full px-3 py-2 border rounded-md">
-                                            </div>
-                                        </div>
-                                    </fieldset>
-                                    <div>
-                                        <label class="block text-sm font-medium">หมายเหตุ (ถ้ามี)</label>
-                                        <textarea rows="2" disabled class="mt-1 block w-full sm:text-sm border rounded-md p-2"></textarea>
-                                    </div>
-                                    <button disabled class="w-full flex justify-center py-3 px-4 border rounded-md text-white bg-green-600">ส่งข้อมูล</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 5: Success Redirect Page -->
-                    <div class="flex items-start gap-6">
-                        <div class="step-number">5</div>
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800">ส่งข้อมูลสำเร็จ</h3>
-                            <p class="text-gray-600 mt-1">หลังจากกด "ส่งข้อมูล" ระบบจะแสดงหน้ายืนยันว่าส่งข้อมูลสำเร็จแล้ว ท่านสามารถปิดหน้าต่างนี้เพื่อกลับสู่ห้องแชทได้ทันที</p>
-                            <div class="mt-4 p-6 border-2 border-gray-200 rounded-lg bg-gray-50 max-w-sm mx-auto">
-                                <div class="text-center p-6">
-                                    <svg class="w-16 h-16 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <h1 class="text-2xl font-bold text-gray-800 mt-4">ส่งข้อมูลสำเร็จ</h1>
-                                    <p class="text-gray-600 mt-2">ได้รับเรื่องการนัดหมายของท่านแล้ว</p>
-                                    <p class="text-gray-600 mt-1">จะมีการแจ้งผลการนัดหมายให้ทราบภายหลัง</p>
-                                    <p class="text-sm text-gray-500 mt-4">ท่านสามารถปิดหน้าต่างการนัดหมายนี้ได้</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Step 6: Confirmation Message (REVISED) -->
-                    <div class="flex items-start gap-6">
-                        <div class="step-number">6</div>
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800">รอการตรวจสอบ</h3>
-                            <p class="text-gray-600 mt-1">หลังจากนั้น ท่านจะได้รับข้อความสรุปการนัดหมายในห้องแชท เพื่อรอเจ้าหน้าที่ตรวจสอบและยืนยัน</p>
-                             <div class="mt-4 p-4 bg-[#06C755] rounded-lg max-w-sm">
-                                <div class="bg-white rounded-lg p-3 shadow-lg text-sm">
-                                    <p class="whitespace-pre-wrap">🟡 ได้รับเรื่องการนัดหมายของท่านแล้ว
-ขณะนี้กำลังรอการยืนยันจากเจ้าหน้าที่
-
-[สรุปข้อมูลการนัดหมาย]
-- ผู้รับบริการ: อารี ยิ้มแย้ม
-- เบอร์โทร: 0812345678
-- ความสัมพันธ์: เจ้าหน้าที่เอง
-- อาการ: ปวดศีรษะ มีไข้ต่ำๆ
-- ประเภทนัด: นัดใหม่
-- แพทย์: นพ. สมชาย ใจดี
-- แผนก: ห้องตรวจผู้ป่วยนอกทั่วไป
-- วันเวลาที่ขอ: 10 ต.ค. 2568, 10:30 น.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Step 7: Final Result PUSH MESSAGE (REVISED) -->
-                    <div class="flex items-start gap-6">
-                        <div class="step-number">7</div>
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800">รับผลการพิจารณา</h3>
-                            <p class="text-gray-600 mt-1">หลังจากแอดมินดำเนินการแล้ว ท่านจะได้รับข้อความแจ้งผลอย่างใดอย่างหนึ่งในห้องแชท ดังนี้:</p>
-                            <div class="mt-4 space-y-4">
-                                <!-- Approved Example -->
-                                <div class="p-4 bg-[#06C755] rounded-lg max-w-sm">
-                                    <div class="bg-white rounded-lg p-3 shadow-lg text-sm">
-                                        <p class="whitespace-pre-wrap">🟢 ยืนยันการนัดหมาย
-
-ของคุณ อารี ยิ้มแย้ม
-ในวันที่ 10 ต.ค. 2568, 10:30 น.
-
-ได้รับการยืนยันเรียบร้อยแล้ว
-กรุณาพิมพ์ "ยืนยัน" เพื่อรับทราบนัด</p>
-                                    </div>
-                                </div>
-                                <!-- Denied Example -->
-                                <div class="p-4 bg-[#06C755] rounded-lg max-w-sm">
-                                    <div class="bg-white rounded-lg p-3 shadow-lg text-sm">
-                                        <p class="whitespace-pre-wrap">🔴 การนัดหมายถูกปฏิเสธ
-
-การนัดหมายของคุณ อารี ยิ้มแย้ม
-ในวันที่ 10 ต.ค. 2568, 10:30 น.
-
-ถูกปฏิเสธเนื่องจาก: แพทย์ติดภารกิจด่วน</p>
-                                    </div>
-                                </div>
-                                <!-- Rescheduled Example -->
-                                <div class="p-4 bg-[#06C755] rounded-lg max-w-sm">
-                                    <div class="bg-white rounded-lg p-3 shadow-lg text-sm">
-                                        <p class="whitespace-pre-wrap">❗️ มีการเลื่อนนัด
-
-การนัดหมายของคุณ อารี ยิ้มแย้ม
-จากเดิม: 10 ต.ค. 2568, 10:30 น.
-
-ได้ถูกเลื่อนเป็น: 13 ต.ค. 2568, 14:00 น. ที่แผนก ห้องตรวจผู้ป่วยนอกทั่วไป
-
-กรุณาพิมพ์ "ยืนยัน" เพื่อรับทราบการเลื่อนนัด</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 8: Service Instructions CARDS -->
+                    <!-- Step 8: Service Instructions CARDS (RE-ADDED & MODIFIED) -->
                     <div class="flex items-start gap-6">
                         <div class="step-number">8</div>
                         <div>
-                            <h3 class="text-xl font-bold text-gray-800">รับคำแนะนำการเข้ารับบริการ</h3>
-                            <p class="text-gray-600 mt-1">ถัดมา, หากนัดหมายของท่าน <span class="font-semibold text-green-600">ได้รับการอนุมัติ</span> ท่านจะได้รับข้อความแนะนำการเข้ารับบริการตามสถานะของผู้ป่วยที่ได้ระบุไว้ในฟอร์ม ดังตัวอย่าง:</p>
+                            <h3 class="text-xl font-bold text-gray-800">รับคำแนะนำการเข้ารับบริการและแบบประเมินความพึงพอใจ</h3>
+                            <p class="text-gray-600 mt-1">
+                                ถัดมา, หากนัดหมายของท่าน <span class="font-semibold text-green-600">ได้รับการอนุมัติ</span> ท่านจะได้รับข้อความแนะนำการเข้ารับบริการ และแบบประเมินความพึงพอใจ ดังตัวอย่าง:
+                            </p>
                             <div class="mt-4 space-y-6">
                                 <!-- Case 1: Ambulatory Patient -->
                                 <div>
@@ -384,16 +193,26 @@
                                         <img src="https://i.postimg.cc/VLfmbWk0/Stretcher-PT.png" alt="คำแนะนำสำหรับผู้ป่วยนอนเปล" class="rounded-md shadow-lg w-full">
                                     </div>
                                 </div>
+                                <!-- Case 4: Satisfaction Survey (NEW) -->
+                                <div>
+                                    <h4 class="font-semibold text-gray-700">4. แบบประเมินความพึงพอใจ (หลังเสร็จสิ้นบริการ):</h4>
+                                    <p class="text-gray-600 mt-1 text-sm">หลังจากท่านเข้ารับบริการเสร็จสิ้น ระบบจะส่งแบบประเมินความพึงพอใจให้ท่านทาง LINE เพื่อนำไปพัฒนาบริการต่อไป</p>
+                                    <div class="mt-2 p-4 bg-[#06C755] rounded-lg max-w-sm">
+                                         <img src="https://i.postimg.cc/t4BQD2NX/Rate.png" alt="แบบประเมินความพึงพอใจ" class="rounded-md shadow-lg w-full">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Step 9: Reminder Notification -->
+                    <!-- Step 9: Reminder Notification (RE-NUMBERED from 8) -->
                     <div class="flex items-start gap-6">
                         <div class="step-number">9</div>
                         <div>
                             <h3 class="text-xl font-bold text-gray-800">รับการแจ้งเตือนล่วงหน้า</h3>
-                            <p class="text-gray-600 mt-1">ก่อนถึงวันนัดหมาย 1 วัน ระบบจะส่งข้อความแจ้งเตือนอัตโนมัติ เพื่อให้ท่านไม่พลาดนัดสำคัญ เป็นอันเสร็จสิ้นขั้นตอนทั้งหมด</p>
+                            <p class="text-gray-600 mt-1">
+                                ก่อนถึงวันนัดหมาย 1 วัน (หากนัดของท่านได้รับการอนุมัติ) ระบบจะส่งข้อความแจ้งเตือนอัตโนมัติ เพื่อให้ท่านไม่พลาดนัดสำคัญ เป็นอันเสร็จสิ้นขั้นตอนทั้งหมด
+                            </p>
                             <div class="mt-4 max-w-sm">
                                 <div class="rounded-lg shadow-lg overflow-hidden">
                                     <div class="bg-orange-400 p-3">
