@@ -1,0 +1,342 @@
+import React, { useState } from 'react';
+import { 
+  Activity, 
+  Wind, 
+  Thermometer, 
+  Calendar, 
+  Users, 
+  FileText, 
+  Smartphone, 
+  ExternalLink,
+  ChevronRight,
+  AlertTriangle,
+  HeartPulse,
+  Share2,
+  Download,
+  X,
+  Maximize2
+} from 'lucide-react';
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [zoomedImage, setZoomedImage] = useState(null); // State สำหรับเก็บ URL รูปภาพที่ต้องการขยาย
+
+  // ข้อมูลจำลองสำหรับการแสดงผล
+  const staffHealthStats = {
+    total: 738,
+    period: "1-19 ธันวาคม 2568",
+    status: "อยู่ระหว่างดำเนินการส่งผลสุขภาพตามช่องทางที่ได้แจ้งรับผลการตรวจไว้"
+  };
+
+  const volunteerSchedule = {
+    target: "อาสาสมัครดับไฟป่า",
+    period: "ปลายเดือน มกราคม 2569",
+    status: "เตรียมความพร้อม"
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-800 pb-12">
+      {/* Inject Sarabun Font */}
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+          
+          body, .font-sans {
+            font-family: 'Sarabun', sans-serif !important;
+            font-size: 16px;
+          }
+        `}
+      </style>
+
+      {/* Image Zoom Modal (Lightbox) */}
+      {zoomedImage && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 animate-in fade-in"
+          onClick={() => setZoomedImage(null)}
+        >
+          <div className="relative max-w-4xl w-full flex flex-col items-center">
+             <button 
+                onClick={() => setZoomedImage(null)}
+                className="absolute -top-12 right-0 text-white/80 hover:text-white transition-colors p-2 bg-white/10 rounded-full"
+             >
+                <X className="w-6 h-6" />
+             </button>
+             
+             <img 
+               src={zoomedImage} 
+               alt="Zoomed View" 
+               className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl animate-in zoom-in duration-200 bg-white p-2"
+               onClick={(e) => e.stopPropagation()} // ป้องกันการปิดเมื่อคลิกที่รูป
+             />
+             <p className="text-white/70 text-sm mt-4 font-medium bg-black/50 px-4 py-2 rounded-full backdrop-blur-md">
+                แตะบริเวณว่างเพื่อปิด
+             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Header / Navbar */}
+      <header className="bg-emerald-600 text-white shadow-lg sticky top-0 z-50 print:hidden">
+        {/* Changed max-w-7xl to w-full to expand full width */}
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            <div className="bg-white p-2 rounded-full shadow-sm">
+              <Activity className="text-emerald-600 w-6 h-6" />
+            </div>
+            <div>
+              <h1 className="text-lg md:text-xl font-bold leading-tight">PM2.5 Action Plan</h1>
+              <p className="text-xs md:text-sm text-emerald-100 opacity-90">โรงพยาบาลสันทราย ปี 2569</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <div className="bg-gradient-to-b from-emerald-600 to-emerald-500 text-white pb-16 pt-8 px-4 rounded-b-[2.5rem] shadow-md mb-8 print:hidden">
+        <div className="max-w-4xl mx-auto text-center space-y-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">รวมพลังสู้ภัยฝุ่น PM2.5</h2>
+          <p className="text-emerald-100 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+            เตรียมความพร้อม เฝ้าระวัง และดูแลสุขภาพประชาชนในเขตอำเภอสันทราย 
+            ด้วยนวัตกรรมและการบริการเชิงรุก
+          </p>
+        </div>
+      </div>
+
+      {/* Main Content - Changed max-w-7xl to w-full */}
+      <main className="w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-8 -mt-12">
+        
+        {/* 1. Real-time Monitoring Section */}
+        <section className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 print:shadow-none print:border-none">
+          <div className="p-6 md:p-8 lg:p-10">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+              <div className="flex items-center space-x-3">
+                <div className="bg-orange-100 p-2 rounded-lg">
+                  <Wind className="text-orange-600 w-6 h-6 md:w-8 md:h-8" />
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold text-slate-800">การเฝ้าระวังค่าฝุ่น PM2.5 (Real-time)</h3>
+              </div>
+            </div>
+            
+            {/* Header Text */}
+            <div className="mb-8 border-b border-slate-100 pb-6 text-center lg:text-left">
+                <p className="text-slate-700 text-lg md:text-xl font-medium">
+                จุดตรวจวัด: <span className="font-bold text-emerald-700">โรงพยาบาลสันทราย</span>
+                </p>
+                <p className="text-slate-500 mt-2 text-base md:text-lg">
+                สนับสนุนเครื่อง DustBoy โดย คณะวิศวกรรมศาสตร์ มหาวิทยาลัยเชียงใหม่
+                </p>
+            </div>
+            
+            {/* Grid Layout: Adjusted to 3 columns, Left takes 2, Right takes 1 */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 xl:gap-16 items-start mb-8">
+              
+              {/* Left Column: Web Preview (Takes 2 columns on Large screens) */}
+              <div className="flex flex-col items-center w-full space-y-4 lg:col-span-2">
+                <h4 className="font-bold text-slate-700 text-lg flex items-center bg-slate-50 px-4 py-2 rounded-full">
+                    <Smartphone className="w-5 h-5 mr-2 text-emerald-600" />
+                    หน้าเว็บไซต์ (Dashboard)
+                </h4>
+                {/* Iframe Wrapper - Expanded width */}
+                <div className="w-full h-[700px] max-w-full mx-auto rounded-xl overflow-hidden shadow-2xl border-4 border-slate-100 bg-white">
+                    <iframe 
+                        src="https://pm25-sansai-dashboard-tuc6yczy4hhl8vbmxdyxcp.streamlit.app/?embed=true&embed_options=light_theme" 
+                        title="PM2.5 Dashboard"
+                        className="w-full h-full"
+                        style={{ border: 'none' }}
+                        allowFullScreen
+                    />
+                </div>
+              </div>
+
+              {/* Right Column: Report Card Only */}
+              <div className="flex flex-col items-center w-full space-y-6 lg:pt-4">
+                 <div className="flex flex-col items-center w-full">
+                    <h4 className="font-bold text-slate-700 text-lg flex items-center mb-4 bg-slate-50 px-4 py-2 rounded-full">
+                        <Download className="w-5 h-5 mr-2 text-emerald-600" />
+                        รูปรายงานผล (ดาวน์โหลดได้จากเวป)
+                    </h4>
+                    <div className="relative group w-full max-w-xs mx-auto shadow-xl rounded-xl overflow-hidden border border-slate-200">
+                        <img 
+                            src="https://i.postimg.cc/qMTCvMHp/pm25-report-20260114-0413.png" 
+                            alt="รายงานสถานการณ์ฝุ่น PM2.5 รพ.สันทราย" 
+                            className="w-full h-auto object-cover"
+                        />
+                    </div>
+                    <p className="text-base text-slate-500 mt-3 text-center px-4">
+                        *ท่านสามารถกดรับรูปรายงานผลแบบนี้ได้ที่หน้า Dashboard
+                    </p>
+                 </div>
+              </div>
+            </div>
+
+            {/* QR Code & Link Section - Moved below grid, Full Width, Row Layout */}
+            <div className="w-full bg-slate-50/80 p-6 md:p-8 rounded-2xl border border-slate-200 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 backdrop-blur-sm">
+                
+                {/* Text & QR Group */}
+                <div className="flex flex-col md:flex-row items-center gap-6">
+                    <div className="text-center md:text-right flex flex-col items-center md:items-end">
+                        <p className="font-bold text-slate-800 text-lg md:text-xl mb-1">เข้าใช้งานระบบ</p>
+                        <p className="text-slate-600 font-medium text-base">สแกนเพื่อดูค่าฝุ่น Real-time</p>
+                        <button 
+                            onClick={() => setZoomedImage('https://i.postimg.cc/9fnJ6wS3/rad-b-PM2-5-rph-s-nth-ray.png')}
+                            className="text-emerald-600 text-sm mt-2 flex items-center hover:text-emerald-700 hover:underline transition-colors"
+                        >
+                            <Maximize2 className="w-4 h-4 mr-1" />
+                            (คลิกรูปเพื่อขยาย)
+                        </button>
+                    </div>
+                    
+                    <div 
+                        className="bg-white p-3 border border-slate-200 rounded-xl shadow-sm w-40 h-40 flex items-center justify-center cursor-zoom-in hover:shadow-md hover:scale-105 transition-all duration-300 group"
+                        onClick={() => setZoomedImage('https://i.postimg.cc/9fnJ6wS3/rad-b-PM2-5-rph-s-nth-ray.png')}
+                        title="คลิกเพื่อขยาย QR Code"
+                    >
+                        <img 
+                            src="https://i.postimg.cc/9fnJ6wS3/rad-b-PM2-5-rph-s-nth-ray.png" 
+                            alt="QR Code Dashboard" 
+                            className="w-full h-full object-contain"
+                        />
+                    </div>
+                </div>
+
+                {/* Vertical Divider (Hidden on mobile) */}
+                <div className="hidden md:block w-px h-24 bg-slate-300"></div>
+
+                {/* Button Block */}
+                <div className="w-full max-w-xs text-center md:text-left">
+                    <a 
+                    href="https://pm25-sansai-dashboard-tuc6yczy4hhl8vbmxdyxcp.streamlit.app/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-emerald-200 hover:-translate-y-1 group print:hidden"
+                    >
+                    เปิด Dashboard
+                    <ExternalLink className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </a>
+                    <p className="text-sm text-slate-400 mt-3 font-mono break-all px-2">
+                        pm25-sansai-dashboard.streamlit.app
+                    </p>
+                </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* 2. Service / Clinic Section */}
+        <section className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 print:break-inside-avoid">
+          <div className="p-6 md:p-8 lg:p-10">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="bg-red-100 p-2 rounded-lg">
+                <HeartPulse className="text-red-600 w-6 h-6 md:w-8 md:h-8" />
+              </div>
+              <h3 className="text-xl md:text-2xl font-bold text-slate-800">คลินิกมลพิษ (บริการเชิงรับ)</h3>
+            </div>
+
+            <div className="flex flex-col items-center">
+                <div className="text-slate-600 mb-8 text-center max-w-4xl mx-auto space-y-4">
+                    <p className="text-lg md:text-xl leading-relaxed font-medium">
+                        คลินิกมลพิษ ซึ่งประชาชนทั่วไปสามารถนัดหมายได้ง่ายผ่านหมอพร้อม เปิดให้บริการนัดหมาย จันทร์-ศุกร์ 8.00-14.00 น. ไม่ว่าจะเป็นทางแอพพลิเคชั่น หมอพร้อม หรือทางไลน์ หมอพร้อม ดังรูป
+                    </p>
+                </div>
+              
+                {/* Flexible Image Container */}
+                <div className="w-full max-w-6xl bg-slate-50 rounded-2xl p-4 md:p-6 border border-slate-100 shadow-inner flex justify-center">
+                  <div className="relative w-full rounded-lg overflow-hidden shadow-md">
+                      <img 
+                        src="https://i.postimg.cc/R0DP1WxQ/hmx-phr-xm.png" 
+                        alt="ช่องทางการนัดหมายหมอพร้อม" 
+                        className="w-full h-auto object-contain"
+                        onError={(e) => {e.target.src='https://via.placeholder.com/800x1000?text=Clinic+Info'}}
+                      />
+                  </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 3. Health Checks (Split Grid) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 print:break-inside-avoid">
+            {/* Volunteer Check */}
+            <section className="bg-white rounded-2xl shadow-lg border-t-8 border-indigo-500 p-6 md:p-8 flex flex-col h-full hover:shadow-xl transition-shadow">
+                <div className="flex items-center mb-6">
+                    <div className="bg-indigo-100 p-3 rounded-full mr-4">
+                        <Users className="w-8 h-8 text-indigo-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-800">ตรวจสุขภาพอาสาสมัครดับไฟป่า</h3>
+                </div>
+                <div className="flex-grow space-y-6">
+                    <div className="flex items-start bg-slate-50 p-4 rounded-xl">
+                        <Calendar className="w-6 h-6 text-indigo-400 mr-3 mt-0.5" />
+                        <div>
+                            <span className="block text-sm text-slate-500 font-medium uppercase tracking-wide">กำหนดการ</span>
+                            <span className="text-lg font-semibold text-slate-800">{volunteerSchedule.period}</span>
+                        </div>
+                    </div>
+                    <div className="flex items-start bg-slate-50 p-4 rounded-xl">
+                        <Activity className="w-6 h-6 text-indigo-400 mr-3 mt-0.5" />
+                        <div>
+                            <span className="block text-sm text-slate-500 font-medium uppercase tracking-wide">สถานะ</span>
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 mt-1">
+                                {volunteerSchedule.status}
+                            </span>
+                        </div>
+                    </div>
+                    <p className="text-slate-600 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 leading-relaxed text-base">
+                        อยู่ระหว่างประสานไปยัง สสอ.สันทราย เพื่อนัดหมาย วันเวลา และ สถานที่
+                    </p>
+                </div>
+            </section>
+
+            {/* Staff Check */}
+            <section className="bg-white rounded-2xl shadow-lg border-t-8 border-teal-500 p-6 md:p-8 flex flex-col h-full hover:shadow-xl transition-shadow">
+                <div className="flex items-center mb-6">
+                    <div className="bg-teal-100 p-3 rounded-full mr-4">
+                        <FileText className="w-8 h-8 text-teal-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-800">ผลตรวจสุขภาพเจ้าหน้าที่ รพ.</h3>
+                </div>
+                <div className="flex-grow space-y-6">
+                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-teal-50 p-5 rounded-xl border border-teal-100">
+                        <div className="mb-2 sm:mb-0">
+                            <span className="text-sm text-teal-600 font-medium uppercase tracking-wide block mb-1">ผู้เข้ารับการตรวจ</span>
+                            <div className="flex items-baseline">
+                                <span className="text-4xl font-bold text-teal-700">{staffHealthStats.total}</span>
+                                <span className="text-teal-600 ml-2 font-medium">คน</span>
+                            </div>
+                        </div>
+                        <div className="text-left sm:text-right bg-white/50 px-3 py-2 rounded-lg">
+                             <span className="text-xs text-slate-500 block uppercase tracking-wide">ดำเนินการแล้ว</span>
+                             <span className="text-sm font-semibold text-slate-700">{staffHealthStats.period}</span>
+                        </div>
+                     </div>
+
+                     <ul className="space-y-4 text-slate-600">
+                         <li className="flex items-center bg-green-50 p-3 rounded-lg text-green-800 border border-green-100 text-base">
+                             <div className="w-3 h-3 bg-green-500 rounded-full mr-3 shrink-0"></div>
+                             ผู้ที่มีความเสี่ยง/พบความผิดปกติได้ส่งต่อพบแพทย์แล้ว
+                         </li>
+                         <li className="flex items-center bg-orange-50 p-3 rounded-lg text-orange-800 border border-orange-100 text-base">
+                             <div className="w-3 h-3 bg-orange-400 rounded-full mr-3 shrink-0 animate-pulse"></div>
+                             รายงานผลฉบับเต็ม: <span className="font-semibold ml-1">{staffHealthStats.status}</span>
+                         </li>
+                     </ul>
+                </div>
+            </section>
+        </div>
+
+      </main>
+
+      {/* Footer - Changed max-w-7xl to w-full */}
+      <footer className="bg-slate-800 text-slate-300 py-12 mt-12 print:hidden">
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+            <h5 className="font-bold text-white text-lg md:text-xl">กลุ่มงานอาชีวเวชกรรม โรงพยาบาลสันทราย</h5>
+            <div className="pt-6 border-t border-slate-700 mt-6 text-xs text-slate-500">
+                © 2026 Sansai Hospital PM2.5 Action Plan. All rights reserved.
+            </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
