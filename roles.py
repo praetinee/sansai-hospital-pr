@@ -109,11 +109,11 @@ def render_roles():
                 <!-- ================= COLUMN 1: รุก (ชุมชนและฟื้นฟู) ================= -->
                 <div class="col-bg-left border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full" id="col-left">
                     <h3 class="text-center font-bold text-green-800 dark:text-green-400 text-lg mb-4 border-b-2 border-green-200 dark:border-green-800 pb-2">
-                        1. ชุมชนและการดูแลต่อเนื่อง (รุก)
+                        ชุมชนและการดูแลต่อเนื่อง (รุก)
                     </h3>
                     
                     <div class="space-y-4 flex-grow flex flex-col justify-end xl:justify-center">
-                        <!-- 7. การดูแลต่อเนื่อง -->
+                        <!-- การดูแลต่อเนื่อง -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm w-full" id="card-postcare">
                             <div class="p-4 sm:p-5">
                                 <div class="flex items-center gap-3 mb-3">
@@ -121,7 +121,7 @@ def render_roles():
                                         <i data-lucide="home" class="w-6 h-6 text-emerald-600"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-lg font-bold bg-main-title leading-tight">7. ทีมดูแลต่อเนื่อง</h4>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">ทีมดูแลต่อเนื่อง</h4>
                                         <p class="text-xs font-medium text-emerald-600">ทีม 3 หมอ / อปท.</p>
                                     </div>
                                 </div>
@@ -146,11 +146,11 @@ def render_roles():
                 <!-- ================= COLUMN 2: รับ (คัดกรองและรักษา) ================= -->
                 <div class="col-bg-mid border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full" id="col-mid">
                     <h3 class="text-center font-bold text-orange-800 dark:text-orange-400 text-lg mb-4 border-b-2 border-orange-200 dark:border-orange-800 pb-2">
-                        2. การรับผู้ป่วยและดูแลรักษา (รับ)
+                        การรับผู้ป่วยและดูแลรักษา (รับ)
                     </h3>
                     
                     <div class="space-y-4 flex-grow">
-                        <!-- 1. บริการออนไลน์ -->
+                        <!-- บริการออนไลน์ -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-online">
                             <div class="p-4">
                                 <div class="flex items-center gap-3 mb-3">
@@ -158,7 +158,7 @@ def render_roles():
                                         <i data-lucide="monitor-smartphone" class="w-6 h-6 text-blue-600"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-lg font-bold bg-main-title leading-tight">1. ทีมให้บริการออนไลน์</h4>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">ทีมให้บริการออนไลน์</h4>
                                         <p class="text-xs font-medium text-blue-600">ระบบหมอพร้อม / Telemedicine</p>
                                     </div>
                                 </div>
@@ -180,7 +180,7 @@ def render_roles():
                             </div>
                         </div>
 
-                        <!-- 2. จุดรับบริการปฐมภูมิ -->
+                        <!-- จุดรับบริการปฐมภูมิ -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-onsite">
                             <div class="p-4">
                                 <div class="flex items-center gap-3 mb-3">
@@ -188,7 +188,7 @@ def render_roles():
                                         <i data-lucide="hospital" class="w-6 h-6 text-pink-600"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-lg font-bold bg-main-title leading-tight">2. จุดรับบริการ / ปฐมภูมิ</h4>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">จุดรับบริการ / ปฐมภูมิ</h4>
                                         <p class="text-xs font-medium text-pink-600">รพ. / รพ.สต. / PCU หนองหาร</p>
                                     </div>
                                 </div>
@@ -212,7 +212,7 @@ def render_roles():
                             </div>
                         </div>
 
-                        <!-- 5. คลินิกมลพิษ -->
+                        <!-- คลินิกมลพิษ -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-clinic">
                             <div class="p-4">
                                 <div class="flex items-center gap-3 mb-3">
@@ -220,7 +220,7 @@ def render_roles():
                                         <i data-lucide="stethoscope" class="w-6 h-6 text-orange-600"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-lg font-bold bg-main-title leading-tight">5. ทีมคลินิกมลพิษ</h4>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">ทีมคลินิกมลพิษ</h4>
                                         <p class="text-xs font-medium text-orange-600">คลินิกมลพิษ (เฉพาะ รพ.)</p>
                                     </div>
                                 </div>
@@ -247,11 +247,11 @@ def render_roles():
                 <!-- ================= COLUMN 3: ส่งต่อ (ฉุกเฉินและสนับสนุน) ================= -->
                 <div class="col-bg-right border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full" id="col-right">
                     <h3 class="text-center font-bold text-blue-800 dark:text-blue-400 text-lg mb-4 border-b-2 border-blue-200 dark:border-blue-800 pb-2">
-                        3. ฉุกเฉินและระบบสนับสนุน (ส่งต่อ)
+                        ฉุกเฉินและระบบสนับสนุน (ส่งต่อ)
                     </h3>
                     
                     <div class="space-y-4 flex-grow">
-                        <!-- 6. ฉุกเฉิน -->
+                        <!-- ฉุกเฉิน -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-er">
                             <div class="p-4">
                                 <div class="flex items-center gap-3 mb-3">
@@ -259,7 +259,7 @@ def render_roles():
                                         <i data-lucide="ambulance" class="w-6 h-6 text-red-600"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-lg font-bold bg-main-title leading-tight">6. ทีมแพทย์ฉุกเฉิน</h4>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">ทีมแพทย์ฉุกเฉิน</h4>
                                         <p class="text-xs font-medium text-red-600">ห้องฉุกเฉิน (ER) / สายด่วน 1669</p>
                                     </div>
                                 </div>
@@ -279,7 +279,7 @@ def render_roles():
                             </div>
                         </div>
 
-                        <!-- 4. ทีมควบคุมโรค -->
+                        <!-- ทีมควบคุมโรค -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-control">
                             <div class="p-4">
                                 <div class="flex items-center gap-3 mb-3">
@@ -287,7 +287,7 @@ def render_roles():
                                         <i data-lucide="shield-alert" class="w-6 h-6 text-indigo-600"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-lg font-bold bg-main-title leading-tight">4. ทีมควบคุมโรค</h4>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">ทีมควบคุมโรค</h4>
                                         <p class="text-xs font-medium text-indigo-600">หน่วยงานควบคุมโรค</p>
                                     </div>
                                 </div>
@@ -307,7 +307,7 @@ def render_roles():
                             </div>
                         </div>
 
-                        <!-- 3. ทีมเฝ้าระวัง -->
+                        <!-- ทีมเฝ้าระวัง -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-surv">
                             <div class="p-4">
                                 <div class="flex items-center gap-3 mb-3">
@@ -315,7 +315,7 @@ def render_roles():
                                         <i data-lucide="activity" class="w-6 h-6 text-purple-600"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-lg font-bold bg-main-title leading-tight">3. ทีมเฝ้าระวัง</h4>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">ทีมเฝ้าระวัง</h4>
                                         <p class="text-xs font-medium text-purple-600 leading-tight">คลินิกมลพิษ / OPD / ER / PCU หนองหาร</p>
                                     </div>
                                 </div>
