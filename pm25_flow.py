@@ -38,10 +38,6 @@ def render_pm25_flow():
                 --c3-bg: #f0fdf4; --c3-border: #86efac; 
                 --c3-title-bg: #dcfce7; --c3-title-text: #166534; 
                 --c3-icon: #059669; 
-
-                /* Inner Boxes in Col 3 */
-                --ref-bg: #fef2f2; --ref-border: #fca5a5; 
-                --ref-title-bg: #fee2e2; --ref-title-text: #991b1b; 
                 
                 /* Disease Control (Purple) */
                 --dc-bg: #faf5ff; --dc-border: #d8b4fe;
@@ -89,10 +85,6 @@ def render_pm25_flow():
 
             .col-3 { background-color: var(--c3-bg); border-color: var(--c3-border); }
             .c3-title { background-color: var(--c3-title-bg); color: var(--c3-title-text); }
-            
-            .box-refer { background-color: var(--ref-bg); border-color: var(--ref-border); border-width: 3px; }
-            .box-refer-title { background-color: var(--ref-title-bg); color: var(--ref-title-text); }
-            .box-refer-icon { color: var(--ref-title-text); }
 
             .box-dc { background-color: var(--dc-bg); border-color: var(--dc-border); border-width: 3px; }
             .box-dc-title { background-color: var(--dc-title-bg); color: var(--dc-title-text); }
@@ -275,35 +267,12 @@ def render_pm25_flow():
                     </div>
                 </div>
 
-                <!-- ================= Column 3: Right (Refer, Control & Discharge) ================= -->
+                <!-- ================= Column 3: Right (Control & Discharge) ================= -->
                 <div id="col-right" class="col-3 flow-col">
-                    <h2 class="text-lg sm:text-xl font-extrabold text-center c3-title py-2.5 rounded-full mx-2 sm:mx-4 shadow-sm">ระบบส่งต่อ จำหน่าย และควบคุมโรค</h2>
+                    <h2 class="text-lg sm:text-xl font-extrabold text-center c3-title py-2.5 rounded-full mx-2 sm:mx-4 shadow-sm">ควบคุมโรค และจำหน่ายผู้ป่วย</h2>
                     
                     <div class="flex flex-col gap-4 h-full mt-2">
-                        <!-- 1. Referral System -->
-                        <div class="rounded-2xl p-4 sm:p-5 box-refer shadow-sm flex-1 flex flex-col justify-center relative transition-transform hover:-translate-y-1 bg-white">
-                            <h3 class="font-bold text-center mb-3 sm:mb-4 text-sm sm:text-lg box-refer-title py-1.5 rounded-full mx-2 sm:mx-6 leading-tight">
-                                ระบบส่งต่อผู้ป่วย (Referral)
-                            </h3>
-                            <div class="flex justify-between items-center text-center">
-                                <div class="flex-1 flex flex-col items-center">
-                                    <i data-lucide="hospital" class="w-7 h-7 sm:w-9 sm:h-9 mb-1 box-refer-icon"></i>
-                                    <p class="font-bold text-[13px] sm:text-base text-main leading-tight">รพ.ประเมินการ</p>
-                                    <p class="text-[11px] sm:text-sm text-muted font-medium leading-tight mt-1 opacity-90">สำรองเตียงพร้อมรับ<br/>และ Ventilator พร้อมใช้</p>
-                                </div>
-                                <div class="flex items-center px-1">
-                                    <i data-lucide="arrow-right" class="w-5 h-5 sm:w-7 sm:h-7 box-refer-icon opacity-70"></i>
-                                </div>
-                                <div class="flex-1 flex flex-col items-center">
-                                    <i data-lucide="building-2" class="w-7 h-7 sm:w-9 sm:h-9 mb-1 box-refer-icon"></i>
-                                    <p class="font-bold text-[13px] sm:text-base text-main leading-tight">หาก Overcapacity</p>
-                                    <p class="text-[11px] sm:text-sm text-muted font-medium mt-1 opacity-90">ส่งต่อโรงพยาบาล</p>
-                                    <p class="font-extrabold text-base sm:text-lg mt-0.5" style="color: var(--ref-title-text);">ลำพูน</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 2. Disease Control (NEW) -->
+                        <!-- 1. Disease Control -->
                         <div class="rounded-2xl p-4 sm:p-5 box-dc shadow-sm flex-1 flex flex-col justify-center relative transition-transform hover:-translate-y-1 bg-white">
                             <h3 class="font-bold text-center mb-3 sm:mb-4 text-sm sm:text-lg box-dc-title py-1.5 rounded-full mx-2 sm:mx-6 leading-tight">
                                 งานควบคุมโรค (Disease Control)
@@ -325,7 +294,7 @@ def render_pm25_flow():
                             </div>
                         </div>
 
-                        <!-- 3. Discharge -->
+                        <!-- 2. Discharge -->
                         <div class="rounded-2xl p-4 sm:p-5 box-discharge shadow-sm flex-1 flex flex-col justify-center relative transition-transform hover:-translate-y-1 bg-white">
                             <h3 class="font-bold text-center mb-3 sm:mb-4 text-sm sm:text-lg box-discharge-title py-1.5 rounded-full mx-2 sm:mx-6 leading-tight">
                                 การจำหน่ายผู้ป่วย (Discharge)
