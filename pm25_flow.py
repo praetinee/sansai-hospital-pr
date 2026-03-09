@@ -159,7 +159,7 @@ def render_pm25_flow():
                             <i data-lucide="clipboard-list" class="w-6 h-6 sm:w-7 sm:h-7 col-1-icon shrink-0 mt-1"></i>
                             <div>
                                 <p class="font-bold col-1-text text-sm sm:text-base">การลงพื้นที่เชิงรุก: อสม. และ รพ.สต.</p>
-                                <p class="text-xs sm:text-sm col-1-sub leading-relaxed mt-0.5">เคาะประตูบ้านคัดกรองสุขภาพ (SCPM-66/QAP-F4) เน้น 4 กลุ่มเปราะบาง (ติดเตียง/ผู้สูงอายุ/ตั้งครรภ์/เด็กเล็ก)</p>
+                                <p class="text-xs sm:text-sm col-1-sub leading-relaxed mt-0.5">เคาะประตูบ้านคัดกรองสุขภาพ เน้น 4 กลุ่มเปราะบาง (ติดเตียง/ผู้สูงอายุ/ตั้งครรภ์/เด็กเล็ก)</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3 sm:gap-4">
@@ -170,10 +170,10 @@ def render_pm25_flow():
                             </div>
                         </div>
                         <div class="flex items-start gap-3 sm:gap-4">
-                            <i data-lucide="truck" class="w-6 h-6 sm:w-7 sm:h-7 col-1-icon shrink-0 mt-1"></i>
+                            <i data-lucide="pill" class="w-6 h-6 sm:w-7 sm:h-7 col-1-icon shrink-0 mt-1"></i>
                             <div>
-                                <p class="font-bold col-1-text text-sm sm:text-base">จัดส่งยาถึงบ้าน:</p>
-                                <p class="text-xs sm:text-sm col-1-sub leading-relaxed mt-0.5">สำหรับผู้ป่วยโรคเรื้อรังที่อาการคงที่ ลดความเสี่ยงสัมผัสฝุ่น</p>
+                                <p class="font-bold col-1-text text-sm sm:text-base">สั่งจ่ายยาผ่าน Telemedicine :</p>
+                                <p class="text-xs sm:text-sm col-1-sub leading-relaxed mt-0.5">ติดตามและสั่งจ่ายยาสำหรับผู้ป่วยอาการคงที่ เพื่อลดความเสี่ยงสัมผัสฝุ่น</p>
                             </div>
                         </div>
                     </div>
