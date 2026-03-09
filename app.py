@@ -13,9 +13,9 @@ st.set_page_config(
 # 2. ปรับแต่ง CSS แบบขั้นสุด
 hide_streamlit_style = """
 <style>
-    /* ซ่อนแถบเมนู, Header, Footer ของ Streamlit ให้หมดจด */
-    #MainMenu {visibility: hidden !important;}
-    header {visibility: hidden !important;}
+    /* อนุญาตให้แสดงแถบเมนูและ Header ของ Streamlit */
+    /* #MainMenu {visibility: hidden !important;} */
+    /* header {visibility: hidden !important;} */
     footer {visibility: hidden !important;}
 
     /* ปรับระยะขอบของ Streamlit Container ให้เต็มจอ */
