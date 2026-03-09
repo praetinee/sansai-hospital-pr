@@ -14,75 +14,75 @@ def render_pm25_flow():
         <style type="text/tailwindcss">
             /* =========================================
                THEME VARIABLES (Light Mode & Dark Mode)
-               ปรับโทนสีใหม่ให้สดใส ชัดเจน และไม่หม่นหมอง
+               ปรับโทนสีตัวอักษรให้ "เข้มขึ้น" เพื่อการอ่านที่ชัดเจนสูงสุด
                ========================================= */
             :root {
-                --text-main: #0f172a;
-                --text-muted: #334155;
+                --text-main: #020617; /* Slate 950 - ดำเกือบสนิท */
+                --text-muted: #1e293b; /* Slate 800 - เทาเข้มจัด */
                 --bg-card: #ffffff;
                 --border-card: #cbd5e1;
                 --shadow-box: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
 
-                /* Column 1 (Amber/Community) - สว่าง สดใส */
+                /* Column 1 (Amber/Community) */
                 --c1-bg: #fffbeb; --c1-border: #f59e0b; 
-                --c1-title-bg: #fef3c7; --c1-title-text: #b45309;
-                --c1-icon: #d97706;
+                --c1-title-bg: #fef3c7; --c1-title-text: #78350f; /* Amber 900 - น้ำตาลเหลืองเข้ม */
+                --c1-icon: #b45309; /* Amber 700 */
 
-                /* Column 2 (Orange/Clinic) - ส้มสด ไม่ตุ่น */
+                /* Column 2 (Orange/Clinic) */
                 --c2-bg: #fff7ed; --c2-border: #f97316; 
-                --c2-title-bg: #ffedd5; --c2-title-text: #c2410c;
-                --c2-icon: #ea580c;
+                --c2-title-bg: #ffedd5; --c2-title-text: #7c2d12; /* Orange 900 - ส้มอิฐเข้ม */
+                --c2-icon: #c2410c; /* Orange 700 */
 
-                /* Column 3 (Emerald/Refer) - เขียวสว่าง สบายตา */
+                /* Column 3 (Emerald/Refer) */
                 --c3-bg: #ecfdf5; --c3-border: #10b981; 
-                --c3-title-bg: #d1fae5; --c3-title-text: #047857;
-                --c3-icon: #059669;
+                --c3-title-bg: #d1fae5; --c3-title-text: #064e3b; /* Emerald 900 - เขียวเข้มจัด */
+                --c3-icon: #047857; /* Emerald 700 */
 
                 /* Inner Boxes in Col 3 */
                 --ref-bg: #fef2f2; --ref-border: #ef4444; 
-                --ref-title-bg: #fee2e2; --ref-title-text: #b91c1c;
+                --ref-title-bg: #fee2e2; --ref-title-text: #7f1d1d; /* Red 900 - แดงเลือดหมู */
                 
                 --dis-bg: #ecfdf5; --dis-border: #10b981; 
-                --dis-title-bg: #d1fae5; --dis-title-text: #047857;
+                --dis-title-bg: #d1fae5; --dis-title-text: #064e3b; /* Emerald 900 */
 
-                /* Alert & Tags - ใช้สี Teal เข้มให้ดูทันสมัย */
+                /* Alert & Tags */
                 --alert-bg: #0f766e; --alert-border: #115e59; 
                 --alert-text: #ffffff; --alert-hl: #fde047;
                 
-                /* Connecting Lines - ใช้สีฟ้าให้เด่นชัด */
+                /* Connecting Lines */
                 --svg-line: #3b82f6; 
                 --svg-return: #0ea5e9; 
             }
 
             @media (prefers-color-scheme: dark) {
                 :root {
-                    --text-main: #f8fafc;
-                    --text-muted: #cbd5e1;
+                    --text-main: #ffffff; /* ขาวสนิทให้อ่านง่ายบนพื้นดำ */
+                    --text-muted: #f1f5f9; /* Slate 100 - ขาวอมเทานิดๆ */
                     --bg-card: #1e293b;
                     --border-card: #475569;
                     --shadow-box: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -1px rgba(0,0,0,0.2);
 
-                    /* Column 1 (Yellow/Community) - สว่างขึ้นกว่าเดิม */
+                    /* Column 1 (Yellow/Community) */
                     --c1-bg: rgba(217, 119, 6, 0.12); --c1-border: rgba(245, 158, 11, 0.7); 
-                    --c1-title-bg: rgba(217, 119, 6, 0.3); --c1-title-text: #fde68a;
+                    --c1-title-bg: rgba(217, 119, 6, 0.3); --c1-title-text: #fef3c7; /* สว่างเพื่อให้ตัดกับพื้นมืด */
                     --c1-icon: #fbbf24;
 
                     /* Column 2 (Orange/Clinic) */
                     --c2-bg: rgba(234, 88, 12, 0.12); --c2-border: rgba(249, 115, 22, 0.7); 
-                    --c2-title-bg: rgba(234, 88, 12, 0.3); --c2-title-text: #fed7aa;
+                    --c2-title-bg: rgba(234, 88, 12, 0.3); --c2-title-text: #ffedd5; 
                     --c2-icon: #fb923c;
 
                     /* Column 3 (Emerald/Refer) */
                     --c3-bg: rgba(16, 185, 129, 0.12); --c3-border: rgba(16, 185, 129, 0.7); 
-                    --c3-title-bg: rgba(16, 185, 129, 0.3); --c3-title-text: #a7f3d0;
+                    --c3-title-bg: rgba(16, 185, 129, 0.3); --c3-title-text: #d1fae5; 
                     --c3-icon: #34d399;
 
                     /* Inner Boxes in Col 3 */
                     --ref-bg: rgba(239, 68, 68, 0.15); --ref-border: rgba(239, 68, 68, 0.7); 
-                    --ref-title-bg: rgba(239, 68, 68, 0.3); --ref-title-text: #fecaca;
+                    --ref-title-bg: rgba(239, 68, 68, 0.3); --ref-title-text: #fee2e2;
                     
                     --dis-bg: rgba(16, 185, 129, 0.15); --dis-border: rgba(16, 185, 129, 0.7); 
-                    --dis-title-bg: rgba(16, 185, 129, 0.3); --dis-title-text: #a7f3d0;
+                    --dis-title-bg: rgba(16, 185, 129, 0.3); --dis-title-text: #d1fae5;
 
                     /* Alert & Tags */
                     --alert-bg: #134e4a; --alert-border: #0f766e; 
@@ -186,21 +186,21 @@ def render_pm25_flow():
                             <i data-lucide="clipboard-list" class="w-6 h-6 sm:w-7 sm:h-7 c1-icon shrink-0 mt-1"></i>
                             <div>
                                 <p class="font-bold text-main text-sm sm:text-base">การลงพื้นที่เชิงรุก: อสม. และ รพ.สต.</p>
-                                <p class="text-xs sm:text-sm text-muted leading-relaxed mt-0.5">เคาะประตูบ้านคัดกรองสุขภาพ เน้น 4 กลุ่มเปราะบาง (ติดเตียง/ผู้สูงอายุ/ตั้งครรภ์/เด็กเล็ก)</p>
+                                <p class="text-xs sm:text-sm text-muted leading-relaxed mt-0.5 font-medium">เคาะประตูบ้านคัดกรองสุขภาพ เน้น 4 กลุ่มเปราะบาง (ติดเตียง/ผู้สูงอายุ/ตั้งครรภ์/เด็กเล็ก)</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3 sm:gap-4">
                             <i data-lucide="shield-check" class="w-6 h-6 sm:w-7 sm:h-7 c1-icon shrink-0 mt-1"></i>
                             <div>
                                 <p class="font-bold text-main text-sm sm:text-base">สนับสนุนพื้นที่ปลอดฝุ่น:</p>
-                                <p class="text-xs sm:text-sm text-muted leading-relaxed mt-0.5">แจกหน้ากาก N95, จัดทำมุ้งสู้ฝุ่นให้ผู้ป่วยติดเตียง, ห้องปลอดฝุ่นในศูนย์เด็กเล็ก/โรงเรียน</p>
+                                <p class="text-xs sm:text-sm text-muted leading-relaxed mt-0.5 font-medium">แจกหน้ากาก N95, จัดทำมุ้งสู้ฝุ่นให้ผู้ป่วยติดเตียง, ห้องปลอดฝุ่นในศูนย์เด็กเล็ก/โรงเรียน</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3 sm:gap-4">
                             <i data-lucide="pill" class="w-6 h-6 sm:w-7 sm:h-7 c1-icon shrink-0 mt-1"></i>
                             <div>
                                 <p class="font-bold text-main text-sm sm:text-base">สั่งจ่ายยาผ่าน Telemedicine :</p>
-                                <p class="text-xs sm:text-sm text-muted leading-relaxed mt-0.5">ติดตามและสั่งจ่ายยาสำหรับผู้ป่วยอาการคงที่ เพื่อลดความเสี่ยงสัมผัสฝุ่น</p>
+                                <p class="text-xs sm:text-sm text-muted leading-relaxed mt-0.5 font-medium">ติดตามและสั่งจ่ายยาสำหรับผู้ป่วยอาการคงที่ เพื่อลดความเสี่ยงสัมผัสฝุ่น</p>
                             </div>
                         </div>
                     </div>
@@ -217,14 +217,14 @@ def render_pm25_flow():
                                 <i data-lucide="smartphone" class="w-8 h-8 sm:w-9 sm:h-9 c2-icon shrink-0"></i>
                                 <div class="min-w-0">
                                     <h3 class="font-bold text-main text-sm sm:text-base">ระบบก่อนถึง รพ. และออนไลน์</h3>
-                                    <p class="text-[11px] sm:text-xs text-muted leading-tight mt-0.5 truncate sm:whitespace-normal">คลินิกมลพิษออนไลน์ ผ่าน Line OA หรือ หมอพร้อม</p>
+                                    <p class="text-[11px] sm:text-xs text-muted leading-tight mt-0.5 truncate sm:whitespace-normal font-medium">คลินิกมลพิษออนไลน์ ผ่าน Line OA หรือ หมอพร้อม</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 shrink-0 sm:w-auto w-full justify-end sm:justify-center mt-2 sm:mt-0">
                                 <i data-lucide="arrow-right" class="arrow-icon w-5 h-5 hidden sm:block"></i>
                                 <div class="text-right sm:text-center">
                                     <p class="font-bold text-[13px] sm:text-sm text-main">ประเมินเบื้องต้น</p>
-                                    <p class="text-[11px] sm:text-xs text-muted">& Telemedicine</p>
+                                    <p class="text-[11px] sm:text-xs text-muted font-medium">& Telemedicine</p>
                                 </div>
                             </div>
                         </div>
@@ -244,17 +244,17 @@ def render_pm25_flow():
                             <div class="flex-grow flex items-center justify-between sm:justify-around gap-1 text-[11px] sm:text-xs">
                                 <div class="text-center shrink-0">
                                     <p class="font-bold text-main">คัดกรองอาการ</p>
-                                    <p class="text-[9px] sm:text-[10px] text-muted">(PM2.5 > 37.5)</p>
+                                    <p class="text-[9px] sm:text-[10px] text-muted font-medium">(PM2.5 > 37.5)</p>
                                 </div>
                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
                                 <div class="text-center shrink-0">
-                                    <p class="text-muted">ส่งเข้า</p>
+                                    <p class="text-muted font-medium">ส่งเข้า</p>
                                     <p class="font-bold c2-text">Pollution Clinic</p>
                                 </div>
                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
                                 <div class="text-center shrink-0 w-16 sm:w-20">
                                     <p class="font-bold text-main">จ่ายยา/แนะนำ</p>
-                                    <p class="text-[9px] sm:text-[10px] text-muted">นัดติดตาม 7 วัน</p>
+                                    <p class="text-[9px] sm:text-[10px] text-muted font-medium">นัดติดตาม 7 วัน</p>
                                 </div>
                             </div>
                         </div>
@@ -263,7 +263,7 @@ def render_pm25_flow():
                         <div class="inner-box pt-8 sm:pt-6 flex flex-wrap items-center gap-2 relative">
                             <div class="tag-code">รหัส Z58.1</div>
                             <div class="flex items-center gap-2 w-full lg:w-auto mb-2 lg:mb-0 shrink-0">
-                                <i data-lucide="ambulance" class="w-6 h-6 sm:w-7 sm:h-7 text-red-500 shrink-0"></i>
+                                <i data-lucide="ambulance" class="w-6 h-6 sm:w-7 sm:h-7 text-red-600 shrink-0"></i>
                                 <div>
                                     <h3 class="font-bold text-[13px] sm:text-sm text-main leading-tight">ผู้ป่วยฉุกเฉิน (ER) <br/>และระบบ 1669</h3>
                                 </div>
@@ -271,17 +271,17 @@ def render_pm25_flow():
                             <div class="flex-grow flex items-center justify-between sm:justify-around gap-1 text-[11px] sm:text-xs">
                                 <div class="text-center shrink-0">
                                     <p class="font-bold text-main">อาการรุนแรง</p>
-                                    <p class="text-[9px] sm:text-[10px] text-muted">(หอบหืด, COPD..)</p>
+                                    <p class="text-[9px] sm:text-[10px] text-muted font-medium">(หอบหืด, COPD..)</p>
                                 </div>
                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
                                 <div class="text-center shrink-0">
                                     <p class="font-bold text-main">1669 ติดต่อ EMS</p>
-                                    <p class="text-muted">รับเข้า ER</p>
+                                    <p class="text-muted font-medium">รับเข้า ER</p>
                                 </div>
                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
                                 <div class="text-center shrink-0 w-16 sm:w-20">
                                     <p class="font-bold text-main">ประเมิน Admit</p>
-                                    <p class="text-muted">หรือ กลับบ้าน</p>
+                                    <p class="text-muted font-medium">หรือ กลับบ้าน</p>
                                 </div>
                             </div>
                         </div>
@@ -290,13 +290,13 @@ def render_pm25_flow():
                         <div class="inner-box pt-8 sm:pt-6 flex items-center justify-between gap-2 sm:gap-4 relative">
                             <div class="tag-code">รหัส Z58.1</div>
                             <div class="flex items-center gap-2 shrink-0">
-                                <i data-lucide="bed" class="w-6 h-6 sm:w-8 sm:h-8 text-blue-500"></i>
+                                <i data-lucide="bed" class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600"></i>
                                 <h3 class="font-bold text-[13px] sm:text-sm text-main">ผู้ป่วยใน (IPD)</h3>
                             </div>
                             <div class="flex items-center gap-2 sm:gap-4 flex-grow justify-end">
                                 <div class="text-right sm:text-center text-[11px] sm:text-sm">
                                      <p class="font-bold text-main">รับ Admit</p>
-                                     <p class="text-[10px] sm:text-xs text-muted">เข้าหอผู้ป่วย</p>
+                                     <p class="text-[10px] sm:text-xs text-muted font-medium">เข้าหอผู้ป่วย</p>
                                 </div>
                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
                                 <div class="text-center text-[11px] sm:text-sm shrink-0">
@@ -319,7 +319,7 @@ def render_pm25_flow():
                                 <div class="flex-1 flex flex-col items-center">
                                     <i data-lucide="hospital" class="w-8 h-8 sm:w-10 sm:h-10 mb-2 box-refer-icon"></i>
                                     <p class="font-bold text-[13px] sm:text-base text-main leading-tight">รพ.ประเมินการ</p>
-                                    <p class="text-[11px] sm:text-sm text-muted leading-tight mt-1 opacity-90">สำรองเตียงพร้อมรับ<br/>และ Ventilator พร้อมใช้</p>
+                                    <p class="text-[11px] sm:text-sm text-muted font-medium leading-tight mt-1 opacity-90">สำรองเตียงพร้อมรับ<br/>และ Ventilator พร้อมใช้</p>
                                 </div>
                                 <div class="flex items-center px-1 sm:px-2">
                                     <i data-lucide="arrow-right" class="w-6 h-6 sm:w-8 sm:h-8 box-refer-icon"></i>
@@ -327,7 +327,7 @@ def render_pm25_flow():
                                 <div class="flex-1 flex flex-col items-center">
                                     <i data-lucide="building-2" class="w-8 h-8 sm:w-10 sm:h-10 mb-2 box-refer-icon"></i>
                                     <p class="font-bold text-[13px] sm:text-base text-main leading-tight">หาก Overcapacity</p>
-                                    <p class="text-[11px] sm:text-sm text-muted mt-1 opacity-90">ส่งต่อโรงพยาบาล</p>
+                                    <p class="text-[11px] sm:text-sm text-muted font-medium mt-1 opacity-90">ส่งต่อโรงพยาบาล</p>
                                     <p class="font-extrabold text-base sm:text-lg mt-0.5" style="color: var(--ref-title-text);">ลำพูน</p>
                                 </div>
                             </div>
