@@ -159,47 +159,99 @@ def render_dashboard():
 
             <!-- 3. Health Checks -->
             <section class="bg-white rounded-2xl shadow-lg border-t-8 border-indigo-500 p-6 md:p-8 flex flex-col hover:shadow-xl transition-shadow">
-                <div class="flex items-center mb-8 border-b border-slate-100 pb-6">
+                <div class="flex items-center mb-6 border-b border-slate-100 pb-6">
                     <div class="bg-indigo-100 p-3.5 rounded-xl mr-4">
                         <i data-lucide="users" class="w-8 h-8 text-indigo-600"></i>
                     </div>
                     <h3 class="text-xl md:text-2xl font-bold text-slate-800">สรุปผลการตรวจสุขภาพอาสาสมัครดับไฟป่า</h3>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div class="flex items-start bg-slate-50 p-5 rounded-xl border border-slate-100">
-                        <i data-lucide="calendar" class="w-6 h-6 text-indigo-400 mr-4 mt-0.5"></i>
-                        <div>
-                            <span class="block text-sm text-slate-500 font-bold uppercase tracking-wide mb-1">วันที่ตรวจ</span>
-                            <span class="text-lg font-semibold text-slate-800">2 กุมภาพันธ์ 2569</span>
-                        </div>
-                    </div>
-                    <div class="flex items-start bg-slate-50 p-5 rounded-xl border border-slate-100">
-                        <i data-lucide="activity" class="w-6 h-6 text-indigo-400 mr-4 mt-0.5"></i>
-                        <div>
-                            <span class="block text-sm text-slate-500 font-bold uppercase tracking-wide mb-1">หน่วยงานและสถานที่</span>
-                            <span class="text-base font-semibold text-slate-800 block">โดยทีม สสอ.สันทราย และ โรงพยาบาลสันทราย</span>
-                            <span class="block text-sm text-slate-600 mt-1">ณ ที่ว่าการอำเภอสันทราย</span>
-                        </div>
-                    </div>
+
+                <div class="mb-4">
+                    <h4 class="text-lg font-bold text-slate-700">รวมอาสาดับไฟป่าที่ได้รับการตรวจสุขภาพก่อนภารกิจดับไฟป่า</h4>
                 </div>
-                <div class="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 md:p-8 rounded-2xl border border-indigo-100">
+
+                <div class="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 md:p-8 rounded-2xl border border-indigo-100 mb-8">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center text-center">
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-indigo-50/50 flex flex-col justify-center h-full">
-                            <span class="block text-base text-slate-600 font-medium mb-3">จำนวนผู้เข้ารับการตรวจรวม</span>
+                            <span class="block text-base text-slate-600 font-medium mb-3">จำนวนทั้งหมด</span>
                             <div class="flex items-baseline justify-center">
-                                <span class="text-5xl font-extrabold text-indigo-700">128</span>
+                                <span class="text-5xl font-extrabold text-indigo-700">153</span>
                                 <span class="text-indigo-600 ml-2 font-medium text-lg">คน</span>
                             </div>
                         </div>
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-emerald-50/50 flex flex-col justify-center h-full relative overflow-hidden">
                             <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-100 rounded-bl-full opacity-50"></div>
-                            <span class="block text-base text-slate-600 font-medium mb-3">สุขภาพเหมาะสมสำหรับการเป็น<br class="hidden md:block"/>ด่านหน้าผจญเพลิง</span>
+                            <span class="block text-base text-slate-600 font-medium mb-3">คนที่เหมาะเป็นด่านหน้า</span>
                             <div class="flex flex-col items-center justify-center">
                                 <div class="flex items-baseline">
-                                    <span class="text-5xl font-extrabold text-emerald-600">68</span>
+                                    <span class="text-5xl font-extrabold text-emerald-600">84</span>
                                     <span class="text-emerald-600 ml-2 font-medium text-lg">คน</span>
                                 </div>
-                                <span class="text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full text-sm font-bold mt-2">คิดเป็น 53.1%</span>
+                                <span class="text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full text-sm font-bold mt-2">คิดเป็น 54.9%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="text-md font-bold text-slate-700 border-l-4 border-indigo-500 pl-3">รายละเอียดแยกตามสถานที่ตรวจ</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Location 1 -->
+                    <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-5 flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div class="flex items-start mb-4">
+                            <div class="bg-indigo-50 p-2 rounded-lg mr-3">
+                                <i data-lucide="map-pin" class="w-5 h-5 text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-base">ที่ว่าการอำเภอสันทราย</p>
+                                <p class="text-sm text-slate-500">โดย สสอ.สันทราย และ รพ.</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-4 rounded-lg border border-slate-100">
+                            <div class="text-center w-1/2 border-r border-slate-200">
+                                <p class="text-xs text-slate-500 font-medium mb-1 uppercase tracking-wide">ตรวจทั้งหมด</p>
+                                <div class="flex items-baseline justify-center">
+                                    <p class="font-bold text-2xl text-indigo-700">128</p>
+                                    <span class="text-sm font-medium text-slate-500 ml-1">คน</span>
+                                </div>
+                            </div>
+                            <div class="text-center w-1/2">
+                                <p class="text-xs text-slate-500 font-medium mb-1 uppercase tracking-wide">เหมาะเป็นหน้าด่าน</p>
+                                <div class="flex items-baseline justify-center">
+                                    <p class="font-bold text-2xl text-emerald-600">68</p>
+                                    <span class="text-sm font-medium text-slate-500 ml-1">คน</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location 2 -->
+                    <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-5 flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div class="flex items-start mb-4">
+                            <div class="bg-indigo-50 p-2 rounded-lg mr-3">
+                                <i data-lucide="hospital" class="w-5 h-5 text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-base">รพ.สต.</p>
+                                <p class="text-sm text-slate-500">ในเขตอำเภอสันทราย</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-4 rounded-lg border border-slate-100">
+                            <div class="text-center w-1/2 border-r border-slate-200">
+                                <p class="text-xs text-slate-500 font-medium mb-1 uppercase tracking-wide">ตรวจทั้งหมด</p>
+                                <div class="flex items-baseline justify-center">
+                                    <p class="font-bold text-2xl text-indigo-700">25</p>
+                                    <span class="text-sm font-medium text-slate-500 ml-1">คน</span>
+                                </div>
+                            </div>
+                            <div class="text-center w-1/2">
+                                <p class="text-xs text-slate-500 font-medium mb-1 uppercase tracking-wide">เหมาะเป็นด่านหน้า</p>
+                                <div class="flex items-baseline justify-center">
+                                    <p class="font-bold text-2xl text-emerald-600">16</p>
+                                    <span class="text-sm font-medium text-slate-500 ml-1">คน</span>
+                                </div>
                             </div>
                         </div>
                     </div>
