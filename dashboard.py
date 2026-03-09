@@ -160,8 +160,8 @@ def render_dashboard():
             <!-- 3. Health Checks -->
             <section class="bg-white rounded-2xl shadow-lg border-t-8 border-indigo-500 p-6 md:p-8 flex flex-col hover:shadow-xl transition-shadow">
                 <div class="flex items-center mb-6 border-b border-slate-100 pb-6">
-                    <div class="bg-indigo-100 p-3.5 rounded-xl mr-4">
-                        <i data-lucide="users" class="w-8 h-8 text-indigo-600"></i>
+                    <div class="bg-red-100 p-3.5 rounded-xl mr-4">
+                        <i data-lucide="flame" class="w-8 h-8 text-red-600"></i>
                     </div>
                     <h3 class="text-xl md:text-2xl font-bold text-slate-800">สรุปผลการตรวจสุขภาพอาสาสมัครดับไฟป่า</h3>
                 </div>
@@ -277,5 +277,4 @@ def render_dashboard():
     </html>
     """
     
-    # กำหนดความสูงให้ครอบคลุมหน้าจอ (เผื่อพื้นที่ล้นได้ ไม่เป็นไร)
     components.html(html_code, height=3600, scrolling=True)
