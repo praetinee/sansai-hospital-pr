@@ -180,7 +180,6 @@ def render_roles():
                                         <li>รับผู้ป่วย Walk-in / รับผู้ป่วยส่งต่อ</li>
                                         <li>เจ้าหน้าที่ซักประวัติ / อาการเบื้องต้น</li>
                                         <li>บันทึกข้อมูลผู้ป่วยลง GG sheets</li>
-                                        <li>ลงแบบคัดกรองสอบสวนโรคจาก PM 2.5</li>
                                     </ul>
                                 </div>
                             </div>
@@ -211,8 +210,9 @@ def render_roles():
                                     <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
                                     <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
                                         <li>ให้บริการปรึกษาและคัดกรองผ่านออนไลน์ (หมอพร้อม / Telemedicine)</li>
-                                        <li>รับดูแลผู้ป่วยที่ส่งต่อมาจาก รพ.สต./PCU</li>
+                                        <li>รับดูแลผู้ป่วยที่ส่งต่อมาจาก รพ.สต./OPD/PCU หนองหาร</li>
                                         <li>แพทย์/สหวิชาชีพ ซักประวัติ ตรวจร่างกาย/Lab</li>
+                                        <li>ลงแบบคัดกรองสอบสวนโรคจาก PM 2.5</li>
                                         <li>วางแผนการรักษาให้แก่ผู้ป่วย</li>
                                     </ul>
                                 </div>
