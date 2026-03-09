@@ -125,7 +125,7 @@ def render_flow():
                             </div>
                             <div class="line-v h-4 my-1"></div>
                             <div class="bg-emerald-100 border border-emerald-200 rounded-lg p-2 shadow-sm text-left w-full flex-grow relative z-10">
-                                <p class="text-emerald-900 font-bold text-[12px] sm:text-[13px] leading-snug mb-2 card-text">1. ส่งต่อเข้ารับบริการ<br>ที่รพ./รพ.สต.</p>
+                                <p class="text-emerald-900 font-bold text-[12px] sm:text-[13px] leading-snug mb-2 card-text">1. ส่งต่อเข้ารับบริการ<br>ที่รพ./รพ.สต./PCU หนองหาร</p>
                                 <!-- กล่องต้นทางของเส้นสีแดง -->
                                 <div id="red-source" class="bg-red-200 text-red-900 border border-red-300 px-2 py-1 rounded text-[12px] sm:text-[13px] font-bold leading-snug inline-block shadow-sm">
                                     2. ถ้าอาการรุนแรง<br>ประสาน 1669
@@ -147,7 +147,7 @@ def render_flow():
                         <!-- 2. เข้ารับบริการ -->
                         <div class="flex items-center justify-center gap-1 sm:gap-2 bg-pink-50 border-2 border-pink-200 rounded-full px-1 sm:px-2 py-2 shadow-sm z-10 w-[95%] sm:w-full h-[55px] sm:h-[65px]">
                             <div class="bg-pink-500 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center font-bold text-sm sm:text-lg shadow-inner shrink-0">2</div>
-                            <h3 class="text-pink-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center">เข้ารับบริการ<br>ที่รพ./รพ.สต.</h3>
+                            <h3 class="text-pink-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center">เข้ารับบริการ<br>ที่รพ./รพ.สต./PCU หนองหาร</h3>
                         </div>
                         <div class="line-v flex-grow min-h-[30px] sm:min-h-[40px]"></div>
                     </div>
