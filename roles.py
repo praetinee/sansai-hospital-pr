@@ -2,7 +2,7 @@ import streamlit.components.v1 as components
 
 def render_roles():
     # โค้ด HTML สำหรับหน้าบทบาทหน่วยงาน ปรับโครงสร้างเป็น Flow 3 คอลัมน์ (รุก-รับ-ส่งต่อ) 
-    # พร้อมวาดเส้นลูกศรเชื่อมโยงการทำงาน ตามรูปแบบเทมเพลตที่ผู้ใช้ต้องการ
+    # รองรับ Responsive และ Theme (Light/Dark) เต็มรูปแบบ
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -27,46 +27,61 @@ def render_roles():
                 box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
             }
             
-            /* สีสำหรับธีมสว่างและมืด */
+            /* สีสำหรับธีมสว่างและมืดแบบยืดหยุ่น */
+            :root {
+                --bg-main-title: #1e3a8a;
+                --bg-sub-title: #475569;
+                --card-bg: rgba(255, 255, 255, 0.95);
+                --card-border: #e2e8f0;
+                --card-forward-bg: rgba(248, 250, 252, 0.95);
+                --text-normal: #334155;
+                --col-bg-left: rgba(240, 253, 244, 0.6);
+                --col-border-left: #bbf7d0;
+                --col-bg-mid: rgba(255, 247, 237, 0.6);
+                --col-border-mid: #fed7aa;
+                --col-bg-right: rgba(239, 246, 255, 0.6);
+                --col-border-right: #bfdbfe;
+            }
+
             @media (prefers-color-scheme: dark) {
-                body { color: #e2e8f0; }
-                .bg-main-title { color: #93c5fd; }
-                .bg-sub-title { color: #cbd5e1; }
-                .card-bg { background-color: #1e293b; border-color: #334155; }
-                .card-forward { background-color: #0f172a; border-color: #334155; }
-                .text-normal { color: #e2e8f0; }
-                .text-muted { color: #94a3b8; }
-                /* Column Backgrounds for Dark Mode */
-                .col-bg-left { background-color: rgba(20, 83, 45, 0.2); border-color: rgba(34, 197, 94, 0.3); }
-                .col-bg-mid { background-color: rgba(124, 45, 18, 0.2); border-color: rgba(249, 115, 22, 0.3); }
-                .col-bg-right { background-color: rgba(30, 58, 138, 0.2); border-color: rgba(59, 130, 246, 0.3); }
+                :root {
+                    --bg-main-title: #93c5fd;
+                    --bg-sub-title: #cbd5e1;
+                    --card-bg: rgba(30, 41, 59, 0.95);
+                    --card-border: #334155;
+                    --card-forward-bg: rgba(15, 23, 42, 0.95);
+                    --text-normal: #e2e8f0;
+                    --col-bg-left: rgba(20, 83, 45, 0.2);
+                    --col-border-left: rgba(34, 197, 94, 0.3);
+                    --col-bg-mid: rgba(124, 45, 18, 0.2);
+                    --col-border-mid: rgba(249, 115, 22, 0.3);
+                    --col-bg-right: rgba(30, 58, 138, 0.2);
+                    --col-border-right: rgba(59, 130, 246, 0.3);
+                }
             }
-            @media (prefers-color-scheme: light) {
-                body { color: #334155; }
-                .bg-main-title { color: #1e3a8a; }
-                .bg-sub-title { color: #475569; }
-                .card-bg { background-color: #ffffff; border-color: #e2e8f0; }
-                .card-forward { background-color: #f8fafc; border-color: #e2e8f0; }
-                .text-normal { color: #334155; }
-                .text-muted { color: #64748b; }
-                /* Column Backgrounds for Light Mode */
-                .col-bg-left { background-color: #f0fdf4; border-color: #bbf7d0; }
-                .col-bg-mid { background-color: #fff7ed; border-color: #fed7aa; }
-                .col-bg-right { background-color: #eff6ff; border-color: #bfdbfe; }
-            }
+
+            body { color: var(--text-normal); }
+            .bg-main-title { color: var(--bg-main-title); }
+            .bg-sub-title { color: var(--bg-sub-title); }
+            .card-bg { background-color: var(--card-bg); border-color: var(--card-border); }
+            .card-forward { background-color: var(--card-forward-bg); border-color: var(--card-border); }
+            .text-normal { color: var(--text-normal); }
+            .col-bg-left { background-color: var(--col-bg-left); border-color: var(--col-border-left); }
+            .col-bg-mid { background-color: var(--col-bg-mid); border-color: var(--col-border-mid); }
+            .col-bg-right { background-color: var(--col-bg-right); border-color: var(--col-border-right); }
         </style>
     </head>
     <body>
         
-        <div class="max-w-[1400px] mx-auto relative" id="main-container">
+        <div class="w-full max-w-[1400px] mx-auto relative" id="main-container">
             
             <!-- Header -->
-            <div class="text-center mb-8 relative z-20">
+            <div class="text-center mb-8 relative z-20 px-4">
                 <div class="inline-flex items-center justify-center p-3 bg-blue-100 rounded-full mb-3 shadow-sm">
                     <i data-lucide="git-merge" class="w-8 h-8 text-blue-600"></i>
                 </div>
-                <h2 class="text-3xl sm:text-4xl font-extrabold bg-main-title mb-2 tracking-wide">บทบาทของแต่ละหน่วยงาน</h2>
-                <p class="text-base sm:text-lg bg-sub-title max-w-3xl mx-auto">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold bg-main-title mb-2 tracking-wide">บทบาทของแต่ละหน่วยงาน</h2>
+                <p class="text-sm sm:text-base md:text-lg bg-sub-title max-w-3xl mx-auto">
                     สรุปหน้าที่รับผิดชอบและทิศทางการส่งต่อผู้ป่วย แบ่งตามกระบวนการ รุก-รับ-ส่งต่อ
                 </p>
             </div>
@@ -89,10 +104,10 @@ def render_roles():
             </svg>
 
             <!-- 3 Columns Layout -->
-            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 relative z-10">
 
                 <!-- ================= COLUMN 1: รุก (ชุมชนและฟื้นฟู) ================= -->
-                <div class="col-bg-left border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full" id="col-left">
+                <div class="col-bg-left border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full" id="col-left">
                     <h3 class="text-center font-bold text-green-800 dark:text-green-400 text-lg mb-4 border-b-2 border-green-200 dark:border-green-800 pb-2">
                         1. ชุมชนและการดูแลต่อเนื่อง (รุก)
                     </h3>
@@ -116,7 +131,7 @@ def render_roles():
                                         <li>ให้คำปรึกษาก่อนผู้ป่วยกลับบ้าน</li>
                                         <li>ลงพื้นที่เยี่ยมบ้านโดยทีม 3 หมอ และ อปท.</li>
                                         <li>ประเมินสภาพที่อยู่ซ้ำให้เหมาะสมกับผู้ป่วย</li>
-                                        <li class="font-semibold text-emerald-600">กรณีผู้ป่วยอาการคงที่: ติดตาม/สั่งยาผ่าน Telemedicine</li>
+                                        <li class="font-semibold text-emerald-600 dark:text-emerald-400">กรณีผู้ป่วยอาการคงที่: ติดตาม/สั่งยาผ่าน Telemedicine</li>
                                     </ul>
                                 </div>
                             </div>
@@ -129,7 +144,7 @@ def render_roles():
                 </div>
 
                 <!-- ================= COLUMN 2: รับ (คัดกรองและรักษา) ================= -->
-                <div class="col-bg-mid border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full" id="col-mid">
+                <div class="col-bg-mid border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full" id="col-mid">
                     <h3 class="text-center font-bold text-orange-800 dark:text-orange-400 text-lg mb-4 border-b-2 border-orange-200 dark:border-orange-800 pb-2">
                         2. การรับผู้ป่วยและดูแลรักษา (รับ)
                     </h3>
@@ -160,7 +175,7 @@ def render_roles():
                                 <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
                                     <span class="text-orange-500 font-bold">➔</span> <b>ทีม 3 หมอ</b> (อาการเล็กน้อย)<br>
                                     <span class="text-orange-500 font-bold">➔</span> <b>รพ./รพ.สต.</b> (เข้าข่ายสงสัย)<br>
-                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600">1669</b> (รุนแรง)
+                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">1669</b> (รุนแรง)
                                 </p>
                             </div>
                         </div>
@@ -192,7 +207,7 @@ def render_roles():
                                     <span class="text-orange-500 font-bold">➔</span> <b>คลินิกทั่วไป</b> (ไม่เข้าข่าย)<br>
                                     <span class="text-orange-500 font-bold">➔</span> <b>คลินิกมลพิษ</b> (เล็กน้อย/ปานกลาง)<br>
                                     <span class="text-orange-500 font-bold">➔</span> <b>ทีมควบคุมโรค</b> (แจ้งข้อมูลสอบสวน)<br>
-                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600">ห้องฉุกเฉิน ER</b> (รุนแรง)
+                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">ห้องฉุกเฉิน ER</b> (รุนแรง)
                                 </p>
                             </div>
                         </div>
@@ -222,7 +237,7 @@ def render_roles():
                                 <p class="font-bold text-normal text-sm mb-1">ผลการรักษา:</p>
                                 <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
                                     <span class="text-orange-500 font-bold">➔</span> <b>ให้ยากลับบ้าน / Admit:</b> เข้าสู่การดูแลต่อเนื่อง<br>
-                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600">ส่ง REFER:</b> ส่งรักษา รพ. ระดับสูง
+                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">ส่ง REFER:</b> ส่งรักษา รพ. ระดับสูง
                                 </p>
                             </div>
                         </div>
@@ -230,7 +245,7 @@ def render_roles():
                 </div>
 
                 <!-- ================= COLUMN 3: ส่งต่อ (ฉุกเฉินและสนับสนุน) ================= -->
-                <div class="col-bg-right border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full" id="col-right">
+                <div class="col-bg-right border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full" id="col-right">
                     <h3 class="text-center font-bold text-blue-800 dark:text-blue-400 text-lg mb-4 border-b-2 border-blue-200 dark:border-blue-800 pb-2">
                         3. ฉุกเฉินและระบบสนับสนุน (ส่งต่อ)
                     </h3>
@@ -259,7 +274,7 @@ def render_roles():
                             <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
                                 <p class="font-bold text-normal text-sm mb-1">ส่งต่อ:</p>
                                 <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
-                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600">ส่ง REFER:</b> ประสานส่งต่อ รพ.ระดับสูง
+                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">ส่ง REFER:</b> ประสานส่งต่อ รพ.ระดับสูง
                                 </p>
                             </div>
                         </div>
@@ -301,15 +316,28 @@ def render_roles():
                                     </div>
                                     <div>
                                         <h4 class="text-lg font-bold bg-main-title leading-tight">3. ทีมเฝ้าระวัง</h4>
-                                        <p class="text-xs font-medium text-purple-600">OPD / ER / PCU หนองหาร</p>
+                                        <p class="text-xs font-medium text-purple-600 leading-tight">คลินิกมลพิษ / OPD / ER / PCU หนองหาร</p>
                                     </div>
                                 </div>
                                 <div class="pl-2 sm:pl-[3.2rem]">
                                     <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
-                                    <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
-                                        <li>ดึงข้อมูล ICD-10 โรคที่เกี่ยวข้องกับ PM 2.5</li>
-                                        <li>แจ้งข้อมูลผู้ป่วยผ่านระบบ Google Sheets</li>
-                                    </ul>
+                                    
+                                    <div class="text-normal text-[13px] sm:text-[14px] space-y-3 mb-2 ml-1">
+                                        <div>
+                                            <p class="font-bold text-purple-700 dark:text-purple-400">OPD / ER / PCU หนองหาร:</p>
+                                            <ul class="list-disc list-outside ml-5 mt-1 space-y-1">
+                                                <li>แจ้งข้อมูลผู้ป่วยผ่านระบบ Google Sheets</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-orange-600 dark:text-orange-400">คลินิกมลพิษ:</p>
+                                            <ul class="list-disc list-outside ml-5 mt-1 space-y-1">
+                                                <li>ดึงข้อมูลผู้ป่วยจาก ICD-10 โรคที่เกี่ยวข้องกับ PM 2.5</li>
+                                                <li>ตรวจสอบข้อมูล gg sheets ที่หน่วยงานอื่นกรอกมา</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -388,4 +416,4 @@ def render_roles():
     </html>
     """
     
-    components.html(html_code, height=1900, scrolling=True)
+    components.html(html_code, height=1950, scrolling=True)
