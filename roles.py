@@ -112,7 +112,7 @@ def render_roles():
                         ชุมชนและการดูแลต่อเนื่อง (รุก)
                     </h3>
                     
-                    <div class="space-y-4 flex-grow flex flex-col justify-end xl:justify-center">
+                    <div class="space-y-4 flex-grow flex flex-col justify-start">
                         <!-- การดูแลต่อเนื่อง -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm w-full" id="card-postcare">
                             <div class="p-4 sm:p-5">
