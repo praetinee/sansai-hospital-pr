@@ -2,7 +2,7 @@ import streamlit.components.v1 as components
 
 def render_roles():
     # โค้ด HTML สำหรับหน้าบทบาทหน่วยงาน ปรับโครงสร้างเป็น Flow 3 คอลัมน์ (รุก-รับ-ส่งต่อ) 
-    # แก้ไขล่าสุด: เปลี่ยนชื่อผู้รับผิดชอบบริการออนไลน์เป็น "ทีมคลินิกมลพิษ"
+    # แก้ไขล่าสุด: ยุบรวม "ทีมบริการออนไลน์" เข้าไปเป็นหน้าที่หนึ่งของ "ทีมคลินิกมลพิษ" อย่างสมบูรณ์
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -41,7 +41,7 @@ def render_roles():
                 --col-border-mid: #fed7aa;
                 --col-bg-right: rgba(239, 246, 255, 0.6);
                 --col-border-right: #bfdbfe;
-                --bg-knockout: #ffffff; /* เส้นขอบตัดสีขาวสำหรับเส้นเชื่อมใน Light Mode */
+                --bg-knockout: #ffffff;
             }
 
             @media (prefers-color-scheme: dark) {
@@ -58,7 +58,7 @@ def render_roles():
                     --col-border-mid: rgba(249, 115, 22, 0.3);
                     --col-bg-right: rgba(30, 58, 138, 0.2);
                     --col-border-right: rgba(59, 130, 246, 0.3);
-                    --bg-knockout: #0e1117; /* เส้นขอบตัดสีดำสำหรับเส้นเชื่อมใน Dark Mode */
+                    --bg-knockout: #0e1117;
                 }
             }
 
@@ -88,36 +88,29 @@ def render_roles():
                 </p>
             </div>
 
-            <!-- SVG Lines Overlay (ระบบวาดเส้นแบบแกนรวมวงจร ไม่มีหัวลูกศร) -->
+            <!-- SVG Lines Overlay -->
             <svg id="flow-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none hidden xl:block z-[100]" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2));">
-                
-                <!-- ชั้นพื้นหลังสำหรับตัดขอบ (Knockout) -->
+                <!-- ชั้นพื้นหลังสำหรับตัดขอบ -->
                 <g stroke="var(--bg-knockout)" stroke-width="10" fill="none" stroke-linejoin="round" stroke-linecap="round">
-                    <path id="bg-lm-1" /> <path id="bg-lm-2" /> <path id="bg-lm-3" />
-                    <path id="bg-mr-1" /> <path id="bg-mr-2" /> <path id="bg-mr-3" />
+                    <path id="bg-lm-1" /> <path id="bg-lm-2" />
+                    <path id="bg-mr-1" /> <path id="bg-mr-2" /> <path id="bg-mr-3" /> <path id="bg-mr-bus" />
                     <path id="bg-return" />
                 </g>
 
-                <!-- เส้นแกนหลักและแขนงต่างๆ (นำ marker-end ออกทั้งหมด) -->
-                <!-- Left to Middle (สีเขียว) -->
+                <!-- Left to Middle -->
                 <g stroke="#16a34a" stroke-width="4" fill="none" stroke-linejoin="round" stroke-linecap="round">
-                    <path id="path-lm-1" />
-                    <path id="path-lm-2" />
-                    <path id="path-lm-3" />
+                    <path id="path-lm-1" /> <path id="path-lm-2" />
                 </g>
 
-                <!-- Middle to Right (สีส้ม) -->
+                <!-- Middle to Right -->
                 <g stroke="#ea580c" stroke-width="4" fill="none" stroke-linejoin="round" stroke-linecap="round">
-                    <path id="path-mr-1" />
-                    <path id="path-mr-2" />
-                    <path id="path-mr-3" />
+                    <path id="path-mr-1" /> <path id="path-mr-2" /> <path id="path-mr-3" /> <path id="path-mr-bus" />
                 </g>
 
-                <!-- Right to Left Bottom Return (สีฟ้า) -->
+                <!-- Return -->
                 <path id="path-return" fill="none" stroke="#0284c7" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,5" />
             </svg>
             
-            <!-- ป้ายข้อความเส้นวนกลับด้านล่าง -->
             <div id="return-text" class="absolute hidden xl:flex items-center justify-center font-bold text-blue-700 bg-blue-50 px-5 py-2 rounded-full border-2 border-blue-400 text-[15px] z-[110] shadow-md">
                 <i data-lucide="refresh-cw" class="w-5 h-5 mr-2 text-blue-600"></i> การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
             </div>
@@ -132,7 +125,6 @@ def render_roles():
                     </h3>
                     
                     <div class="space-y-4 flex-grow flex flex-col justify-center">
-                        <!-- การดูแลต่อเนื่อง -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm w-full" id="card-postcare">
                             <div class="p-4 sm:p-5">
                                 <div class="flex items-center gap-3 mb-3">
@@ -169,36 +161,7 @@ def render_roles():
                     </h3>
                     
                     <div class="space-y-6 flex-grow flex flex-col justify-center">
-                        <!-- บริการออนไลน์ -->
-                        <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-online">
-                            <div class="p-4">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <div class="bg-blue-100 p-2 rounded-lg shrink-0">
-                                        <i data-lucide="monitor-smartphone" class="w-6 h-6 text-blue-600"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-lg font-bold bg-main-title leading-tight">ทีมคลินิกมลพิษ</h4>
-                                        <p class="text-xs font-medium text-blue-600">ให้บริการออนไลน์ผ่านระบบหมอพร้อม / Telemedicine</p>
-                                    </div>
-                                </div>
-                                <div class="pl-2 sm:pl-[3.2rem]">
-                                    <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
-                                    <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
-                                        <li>รับปรึกษาออนไลน์</li>
-                                        <li>ทำการคัดกรองอาการเบื้องต้น</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
-                                <p class="font-bold text-normal text-sm mb-1">ส่งต่อ:</p>
-                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
-                                    <span class="text-orange-500 font-bold">➔</span> <b>ทีม 3 หมอ</b> (อาการเล็กน้อย)<br>
-                                    <span class="text-orange-500 font-bold">➔</span> <b>รพ./รพ.สต.</b> (เข้าข่ายสงสัย)<br>
-                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">1669</b> (รุนแรง)
-                                </p>
-                            </div>
-                        </div>
-
+                        
                         <!-- จุดรับบริการปฐมภูมิ -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-onsite">
                             <div class="p-4">
@@ -214,7 +177,7 @@ def render_roles():
                                 <div class="pl-2 sm:pl-[3.2rem]">
                                     <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
                                     <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
-                                        <li>รับผู้ป่วย Walk-in / ส่งต่อออนไลน์</li>
+                                        <li>รับผู้ป่วย Walk-in / รับผู้ป่วยส่งต่อ</li>
                                         <li>เจ้าหน้าที่ซักประวัติ / อาการเบื้องต้น</li>
                                         <li>ลงแบบคัดกรองสอบสวนโรคจาก PM 2.5</li>
                                     </ul>
@@ -231,7 +194,7 @@ def render_roles():
                             </div>
                         </div>
 
-                        <!-- คลินิกมลพิษ -->
+                        <!-- คลินิกมลพิษ (รวมบริการออนไลน์) -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-clinic">
                             <div class="p-4">
                                 <div class="flex items-center gap-3 mb-3">
@@ -240,23 +203,25 @@ def render_roles():
                                     </div>
                                     <div>
                                         <h4 class="text-lg font-bold bg-main-title leading-tight">ทีมคลินิกมลพิษ</h4>
-                                        <p class="text-xs font-medium text-orange-600">คลินิกมลพิษ (เฉพาะ รพ.)</p>
+                                        <p class="text-xs font-medium text-orange-600">คลินิกมลพิษ / ระบบบริการออนไลน์</p>
                                     </div>
                                 </div>
                                 <div class="pl-2 sm:pl-[3.2rem]">
                                     <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
                                     <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
-                                        <li>รับส่งต่อจาก รพ.สต./PCU</li>
+                                        <li>ให้บริการปรึกษาและคัดกรองผ่านออนไลน์ (หมอพร้อม / Telemedicine)</li>
+                                        <li>รับดูแลผู้ป่วยที่ส่งต่อมาจาก รพ.สต./PCU</li>
                                         <li>แพทย์/สหวิชาชีพ ซักประวัติ ตรวจร่างกาย/Lab</li>
                                         <li>วางแผนการรักษาให้แก่ผู้ป่วย</li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
-                                <p class="font-bold text-normal text-sm mb-1">ผลการรักษา:</p>
+                                <p class="font-bold text-normal text-sm mb-1">ผลการตรวจ / รักษา:</p>
                                 <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
+                                    <span class="text-orange-500 font-bold">➔</span> <b>ทีม 3 หมอ / รพ.สต.:</b> กรณีคัดกรองออนไลน์พบอาการเล็กน้อย<br>
                                     <span class="text-orange-500 font-bold">➔</span> <b>ให้ยากลับบ้าน / Admit:</b> เข้าสู่การดูแลต่อเนื่อง<br>
-                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">ส่ง REFER:</b> ส่งรักษา รพ. ระดับสูง
+                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">ส่ง REFER / 1669:</b> กรณีอาการรุนแรง
                                 </p>
                             </div>
                         </div>
@@ -387,7 +352,7 @@ def render_roles():
 
                     const colL = getR('col-left'); const colM = getR('col-mid'); const colR = getR('col-right');
                     const cPost = getR('card-postcare');
-                    const cOnline = getR('card-online'); const cOnsite = getR('card-onsite'); const cClinic = getR('card-clinic');
+                    const cOnsite = getR('card-onsite'); const cClinic = getR('card-clinic');
                     const cEr = getR('card-er'); const cControl = getR('card-control'); const cSurv = getR('card-surv');
 
                     const draw = (id, pathString) => {
@@ -395,27 +360,24 @@ def render_roles():
                         document.getElementById(id.replace('path-', 'bg-')).setAttribute('d', pathString);
                     };
 
-                    // 1. Left to Middle (Branching from Postcare to Middle Cards)
-                    // นำช่องว่างเผื่อหัวลูกศร ( - 8) ออก เพื่อให้เส้นลากชนขอบการ์ดพอดี
+                    // 1. Left to Middle
                     const gapLM = colM.left - colL.right;
                     const midX_LM = colL.right + gapLM * 0.4;
                     const outL_Y = cPost.cy; 
 
-                    draw('path-lm-1', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cOnline.cy} L ${colM.left} ${cOnline.cy}`);
-                    draw('path-lm-2', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cOnsite.cy} L ${colM.left} ${cOnsite.cy}`);
-                    draw('path-lm-3', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cClinic.cy} L ${colM.left} ${cClinic.cy}`);
+                    draw('path-lm-1', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cOnsite.cy} L ${colM.left} ${cOnsite.cy}`);
+                    draw('path-lm-2', `M ${midX_LM} ${outL_Y} L ${midX_LM} ${cClinic.cy} L ${colM.left} ${cClinic.cy}`);
 
-                    // 2. Middle to Right (Branching from Middle Cards to Right Cards)
-                    // นำช่องว่างเผื่อหัวลูกศร ( - 8) ออก เพื่อให้เส้นลากชนขอบการ์ดพอดี
+                    // 2. Middle to Right
                     const gapMR = colR.left - colM.right;
                     const midX_MR = colM.right + gapMR * 0.5;
 
-                    draw('path-mr-1', `M ${colM.right} ${cOnline.cy} L ${midX_MR} ${cOnline.cy} L ${midX_MR} ${cEr.cy} L ${colR.left} ${cEr.cy}`);
-                    draw('path-mr-2', `M ${colM.right} ${cOnsite.cy} L ${midX_MR} ${cOnsite.cy} L ${midX_MR} ${cControl.cy} L ${colR.left} ${cControl.cy}`);
+                    draw('path-mr-bus', `M ${midX_MR} ${cOnsite.cy} L ${midX_MR} ${cClinic.cy}`);
+                    draw('path-mr-1', `M ${colM.right} ${cOnsite.cy} L ${midX_MR} ${cOnsite.cy} L ${midX_MR} ${cEr.cy} L ${colR.left} ${cEr.cy}`);
+                    draw('path-mr-2', `M ${midX_MR} ${cControl.cy} L ${colR.left} ${cControl.cy}`);
                     draw('path-mr-3', `M ${colM.right} ${cClinic.cy} L ${midX_MR} ${cClinic.cy} L ${midX_MR} ${cSurv.cy} L ${colR.left} ${cSurv.cy}`);
 
-                    // 3. Right to Left (Return Loop Bottom)
-                    // ปรับปลายเส้นให้ชนกับขอบล่างของกล่องซ้ายพอดี (ลบระยะเผื่อหัวลูกศรออก)
+                    // 3. Return Line (Right to Left Bottom)
                     const dropY = Math.max(colL.bottom, colM.bottom, colR.bottom) + 50;
                     const dRet = `M ${colR.cx} ${colR.bottom} L ${colR.cx} ${dropY} L ${colL.cx} ${dropY} L ${colL.cx} ${colL.bottom}`;
                     
