@@ -300,7 +300,6 @@ def render_pm25_flow():
                                 การจำหน่ายผู้ป่วย (Discharge)
                             </h3>
                             <div class="text-center space-y-2 sm:space-y-3">
-                                <p class="font-bold text-sm sm:text-lg text-main">วางแผนตามหลัก D-METHOD</p>
                                 <div class="w-12 sm:w-16 h-1 bg-current opacity-30 mx-auto rounded-full" style="color: var(--dis-title-text);"></div>
                                 <p class="text-[11px] sm:text-sm font-bold text-muted leading-relaxed opacity-90">ประสานทีมเยี่ยมบ้าน<br/>ประเมินสภาพที่อยู่อาศัยไม่ให้กำเริบซ้ำ</p>
                             </div>
