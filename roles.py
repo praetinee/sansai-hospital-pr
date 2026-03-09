@@ -1,7 +1,8 @@
 import streamlit.components.v1 as components
 
 def render_roles():
-    # โค้ด HTML สำหรับหน้าบทบาทหน่วยงาน อ้างอิงข้อมูลจาก Flow การให้บริการโดยตรง
+    # โค้ด HTML สำหรับหน้าบทบาทหน่วยงาน ปรับโครงสร้างเป็น Flow 3 คอลัมน์ (รุก-รับ-ส่งต่อ) 
+    # พร้อมวาดเส้นลูกศรเชื่อมโยงการทำงาน ตามรูปแบบเทมเพลตที่ผู้ใช้ต้องการ
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -16,252 +17,303 @@ def render_roles():
                 font-family: 'Sarabun', sans-serif !important; 
                 background-color: transparent; 
                 margin: 0; 
-                padding: 1rem 1rem 3rem 1rem; 
+                padding: 1rem 1rem 4rem 1rem; 
             }
-            .card-hover:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            .role-card {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
             }
-            /* สีสำหรับธีมสว่างและมืดตามระบบ Streamlit */
+            .role-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            }
+            
+            /* สีสำหรับธีมสว่างและมืด */
             @media (prefers-color-scheme: dark) {
                 body { color: #e2e8f0; }
-                .bg-custom-card { background-color: #1e293b; border-color: #334155; }
-                .bg-forward { background-color: #334155; }
-                .text-custom-title { color: #93c5fd; }
-                .text-custom-body { color: #cbd5e1; }
-                .border-separator { border-color: #475569; }
+                .bg-main-title { color: #93c5fd; }
+                .bg-sub-title { color: #cbd5e1; }
+                .card-bg { background-color: #1e293b; border-color: #334155; }
+                .card-forward { background-color: #0f172a; border-color: #334155; }
+                .text-normal { color: #e2e8f0; }
+                .text-muted { color: #94a3b8; }
+                /* Column Backgrounds for Dark Mode */
+                .col-bg-left { background-color: rgba(20, 83, 45, 0.2); border-color: rgba(34, 197, 94, 0.3); }
+                .col-bg-mid { background-color: rgba(124, 45, 18, 0.2); border-color: rgba(249, 115, 22, 0.3); }
+                .col-bg-right { background-color: rgba(30, 58, 138, 0.2); border-color: rgba(59, 130, 246, 0.3); }
             }
             @media (prefers-color-scheme: light) {
                 body { color: #334155; }
-                .bg-custom-card { background-color: #ffffff; border-color: #e2e8f0; }
-                .bg-forward { background-color: #f8fafc; }
-                .text-custom-title { color: #1e3a8a; }
-                .text-custom-body { color: #475569; }
-                .border-separator { border-color: #e2e8f0; }
+                .bg-main-title { color: #1e3a8a; }
+                .bg-sub-title { color: #475569; }
+                .card-bg { background-color: #ffffff; border-color: #e2e8f0; }
+                .card-forward { background-color: #f8fafc; border-color: #e2e8f0; }
+                .text-normal { color: #334155; }
+                .text-muted { color: #64748b; }
+                /* Column Backgrounds for Light Mode */
+                .col-bg-left { background-color: #f0fdf4; border-color: #bbf7d0; }
+                .col-bg-mid { background-color: #fff7ed; border-color: #fed7aa; }
+                .col-bg-right { background-color: #eff6ff; border-color: #bfdbfe; }
             }
         </style>
     </head>
     <body>
         
-        <div class="max-w-5xl mx-auto">
+        <div class="max-w-[1400px] mx-auto relative" id="main-container">
+            
             <!-- Header -->
-            <div class="text-center mb-10">
-                <div class="inline-flex items-center justify-center p-3 bg-blue-100 rounded-full mb-4">
-                    <i data-lucide="network" class="w-8 h-8 text-blue-600"></i>
+            <div class="text-center mb-8 relative z-20">
+                <div class="inline-flex items-center justify-center p-3 bg-blue-100 rounded-full mb-3 shadow-sm">
+                    <i data-lucide="git-merge" class="w-8 h-8 text-blue-600"></i>
                 </div>
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-custom-title mb-3 tracking-wide">บทบาทของแต่ละหน่วยงาน</h2>
-                <p class="text-lg text-custom-body max-w-2xl mx-auto">
-                    สรุปหน้าที่รับผิดชอบและลำดับการส่งต่อผู้ป่วย อ้างอิงตาม Flow การให้บริการ
+                <h2 class="text-3xl sm:text-4xl font-extrabold bg-main-title mb-2 tracking-wide">บทบาทของแต่ละหน่วยงาน</h2>
+                <p class="text-base sm:text-lg bg-sub-title max-w-3xl mx-auto">
+                    สรุปหน้าที่รับผิดชอบและทิศทางการส่งต่อผู้ป่วย แบ่งตามกระบวนการ รุก-รับ-ส่งต่อ
                 </p>
             </div>
 
-            <!-- Timeline/Grid of Roles -->
-            <div class="space-y-6">
+            <!-- SVG Lines Overlay (วาดลูกศรเชื่อมคอลัมน์เฉพาะหน้าจอ Desktop) -->
+            <svg id="flow-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none hidden xl:block z-0" style="filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.15));">
+                <defs>
+                    <marker id="arrow-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#f97316" />
+                    </marker>
+                    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
+                    </marker>
+                </defs>
+                <!-- เส้นส่งต่อ: กลาง ไป ขวา -->
+                <path id="path-m-r-1" fill="none" stroke="#f97316" stroke-width="3" stroke-dasharray="4,4" marker-end="url(#arrow-orange)" />
+                <path id="path-m-r-2" fill="none" stroke="#f97316" stroke-width="3" stroke-dasharray="4,4" marker-end="url(#arrow-orange)" />
+                <!-- เส้นส่งต่อกลับ: กลาง/ขวา กลับไป ซ้าย (ดูแลต่อเนื่อง) -->
+                <path id="path-return" fill="none" stroke="#16a34a" stroke-width="4" marker-end="url(#arrow-green)" />
+            </svg>
 
-                <!-- 1. บริการออนไลน์ -->
-                <div class="bg-custom-card border rounded-2xl p-0 overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-blue-100 p-3 rounded-xl shrink-0">
-                                <i data-lucide="monitor-smartphone" class="w-7 h-7 text-blue-600"></i>
+            <!-- 3 Columns Layout -->
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 relative z-10">
+
+                <!-- ================= COLUMN 1: รุก (ชุมชนและฟื้นฟู) ================= -->
+                <div class="col-bg-left border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full" id="col-left">
+                    <h3 class="text-center font-bold text-green-800 dark:text-green-400 text-lg mb-4 border-b-2 border-green-200 dark:border-green-800 pb-2">
+                        1. ชุมชนและการดูแลต่อเนื่อง (รุก)
+                    </h3>
+                    
+                    <div class="space-y-4 flex-grow flex flex-col justify-end xl:justify-center">
+                        <!-- 7. การดูแลต่อเนื่อง -->
+                        <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm w-full" id="card-postcare">
+                            <div class="p-4 sm:p-5">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="bg-emerald-100 p-2 rounded-lg shrink-0">
+                                        <i data-lucide="home" class="w-6 h-6 text-emerald-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">7. ทีมดูแลต่อเนื่อง</h4>
+                                        <p class="text-xs font-medium text-emerald-600">ทีม 3 หมอ / อปท.</p>
+                                    </div>
+                                </div>
+                                <div class="pl-2 sm:pl-[3.2rem]">
+                                    <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
+                                    <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-3">
+                                        <li>ให้คำปรึกษาก่อนผู้ป่วยกลับบ้าน</li>
+                                        <li>ลงพื้นที่เยี่ยมบ้านโดยทีม 3 หมอ และ อปท.</li>
+                                        <li>ประเมินสภาพที่อยู่ซ้ำให้เหมาะสมกับผู้ป่วย</li>
+                                        <li class="font-semibold text-emerald-600">กรณีผู้ป่วยอาการคงที่: ติดตาม/สั่งยาผ่าน Telemedicine</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-custom-title">1. ทีมให้บริการออนไลน์</h3>
-                                <p class="text-sm font-medium text-blue-600 dark:text-blue-400">ระบบหมอพร้อม / Telemedicine</p>
+                            <div class="card-forward border-t px-4 sm:px-5 py-3 pl-4 sm:pl-[4.2rem]">
+                                <p class="font-bold text-normal text-sm mb-1">การส่งต่อ/สิ้นสุด:</p>
+                                <p class="text-[13px] text-normal"><span class="text-emerald-500 font-bold">➔</span> <span class="font-bold">สิ้นสุดกระบวนการ:</span> เฝ้าระวังผู้ป่วยในชุมชนต่อเนื่องป้องกันกำเริบซ้ำ</p>
                             </div>
-                        </div>
-                        <div class="pl-[4.5rem]">
-                            <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4 text-emerald-500"></i> หน้าที่รับผิดชอบ:</p>
-                            <ul class="list-disc list-outside ml-5 text-custom-body text-[15px] space-y-1 mb-4">
-                                <li>รับปรึกษาออนไลน์</li>
-                                <li>ทำการคัดกรองอาการเบื้องต้น</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="bg-forward border-t border-separator px-6 py-4 pl-[6rem]">
-                        <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="arrow-right-circle" class="w-4 h-4 text-orange-500"></i> การส่งต่อหน่วยงานถัดไป:</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-custom-body">
-                            <div class="flex items-start gap-2"><span class="text-orange-500 font-bold">➔</span> <span><span class="font-bold text-slate-700 dark:text-slate-300">ทีม 3 หมอ:</span> กรณีไม่เข้าข่าย/อาการเล็กน้อย (เพื่อให้คำแนะนำการปฏิบัติตัว)</span></div>
-                            <div class="flex items-start gap-2"><span class="text-orange-500 font-bold">➔</span> <span><span class="font-bold text-slate-700 dark:text-slate-300">รพ./รพ.สต./PCU:</span> กรณีเข้าข่ายมีอาการที่สงสัย</span></div>
-                            <div class="flex items-start gap-2 md:col-span-2"><span class="text-red-500 font-bold">➔</span> <span><span class="font-bold text-red-600 dark:text-red-400">1669:</span> กรณีผู้ป่วยมีอาการรุนแรง</span></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. จุดรับบริการปฐมภูมิ -->
-                <div class="bg-custom-card border rounded-2xl p-0 overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-pink-100 p-3 rounded-xl shrink-0">
-                                <i data-lucide="hospital" class="w-7 h-7 text-pink-600"></i>
+                <!-- ================= COLUMN 2: รับ (คัดกรองและรักษา) ================= -->
+                <div class="col-bg-mid border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full" id="col-mid">
+                    <h3 class="text-center font-bold text-orange-800 dark:text-orange-400 text-lg mb-4 border-b-2 border-orange-200 dark:border-orange-800 pb-2">
+                        2. การรับผู้ป่วยและดูแลรักษา (รับ)
+                    </h3>
+                    
+                    <div class="space-y-4 flex-grow">
+                        <!-- 1. บริการออนไลน์ -->
+                        <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-online">
+                            <div class="p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="bg-blue-100 p-2 rounded-lg shrink-0">
+                                        <i data-lucide="monitor-smartphone" class="w-6 h-6 text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">1. ทีมให้บริการออนไลน์</h4>
+                                        <p class="text-xs font-medium text-blue-600">ระบบหมอพร้อม / Telemedicine</p>
+                                    </div>
+                                </div>
+                                <div class="pl-2 sm:pl-[3.2rem]">
+                                    <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
+                                    <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
+                                        <li>รับปรึกษาออนไลน์</li>
+                                        <li>ทำการคัดกรองอาการเบื้องต้น</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-custom-title">2. จุดรับบริการ / ปฐมภูมิ</h3>
-                                <p class="text-sm font-medium text-pink-600 dark:text-pink-400">รพ. / รพ.สต. / PCU หนองหาร</p>
+                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
+                                <p class="font-bold text-normal text-sm mb-1">ส่งต่อ:</p>
+                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
+                                    <span class="text-orange-500 font-bold">➔</span> <b>ทีม 3 หมอ</b> (อาการเล็กน้อย)<br>
+                                    <span class="text-orange-500 font-bold">➔</span> <b>รพ./รพ.สต.</b> (เข้าข่ายสงสัย)<br>
+                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600">1669</b> (รุนแรง)
+                                </p>
                             </div>
                         </div>
-                        <div class="pl-[4.5rem]">
-                            <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4 text-emerald-500"></i> หน้าที่รับผิดชอบ:</p>
-                            <ul class="list-disc list-outside ml-5 text-custom-body text-[15px] space-y-1 mb-4">
-                                <li>รับผู้ป่วย Walk-in และผู้ป่วยที่ส่งต่อมาจากระบบออนไลน์</li>
-                                <li>เจ้าหน้าที่ซักประวัติ / อาการเบื้องต้น</li>
-                                <li>ลงแบบคัดกรองสอบสวนโรคที่เกิดจาก PM 2.5</li>
-                            </ul>
+
+                        <!-- 2. จุดรับบริการปฐมภูมิ -->
+                        <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-onsite">
+                            <div class="p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="bg-pink-100 p-2 rounded-lg shrink-0">
+                                        <i data-lucide="hospital" class="w-6 h-6 text-pink-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">2. จุดรับบริการ / ปฐมภูมิ</h4>
+                                        <p class="text-xs font-medium text-pink-600">รพ. / รพ.สต. / PCU หนองหาร</p>
+                                    </div>
+                                </div>
+                                <div class="pl-2 sm:pl-[3.2rem]">
+                                    <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
+                                    <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
+                                        <li>รับผู้ป่วย Walk-in / ส่งต่อออนไลน์</li>
+                                        <li>เจ้าหน้าที่ซักประวัติ / อาการเบื้องต้น</li>
+                                        <li>ลงแบบคัดกรองสอบสวนโรคจาก PM 2.5</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
+                                <p class="font-bold text-normal text-sm mb-1">ส่งต่อ:</p>
+                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
+                                    <span class="text-orange-500 font-bold">➔</span> <b>คลินิกทั่วไป</b> (ไม่เข้าข่าย)<br>
+                                    <span class="text-orange-500 font-bold">➔</span> <b>คลินิกมลพิษ</b> (เล็กน้อย/ปานกลาง)<br>
+                                    <span class="text-orange-500 font-bold">➔</span> <b>ทีมควบคุมโรค</b> (แจ้งข้อมูลสอบสวน)<br>
+                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600">ห้องฉุกเฉิน ER</b> (รุนแรง)
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="bg-forward border-t border-separator px-6 py-4 pl-[6rem]">
-                        <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="arrow-right-circle" class="w-4 h-4 text-orange-500"></i> การส่งต่อหน่วยงานถัดไป:</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-custom-body">
-                            <div class="flex items-start gap-2"><span class="text-orange-500 font-bold">➔</span> <span><span class="font-bold text-slate-700 dark:text-slate-300">คลินิกทั่วไป:</span> กรณีไม่เข้าข่าย (ส่งตรวจตามอาการโรค)</span></div>
-                            <div class="flex items-start gap-2"><span class="text-orange-500 font-bold">➔</span> <span><span class="font-bold text-slate-700 dark:text-slate-300">ทีมควบคุมโรค:</span> แจ้งข้อมูลเมื่อพบผู้ป่วยเข้าข่าย/อาการรุนแรง</span></div>
-                            <div class="flex items-start gap-2"><span class="text-orange-500 font-bold">➔</span> <span><span class="font-bold text-slate-700 dark:text-slate-300">คลินิกมลพิษ:</span> กรณีเข้าข่ายอาการเล็กน้อย/ปานกลาง (รพ.สต./PCU ให้ส่งต่อ รพ.)</span></div>
-                            <div class="flex items-start gap-2"><span class="text-red-500 font-bold">➔</span> <span><span class="font-bold text-red-600 dark:text-red-400">ห้องฉุกเฉิน (ER):</span> กรณีผู้ป่วยอาการรุนแรง</span></div>
+
+                        <!-- 5. คลินิกมลพิษ -->
+                        <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-clinic">
+                            <div class="p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="bg-orange-100 p-2 rounded-lg shrink-0">
+                                        <i data-lucide="stethoscope" class="w-6 h-6 text-orange-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">5. ทีมคลินิกมลพิษ</h4>
+                                        <p class="text-xs font-medium text-orange-600">คลินิกมลพิษ (เฉพาะ รพ.)</p>
+                                    </div>
+                                </div>
+                                <div class="pl-2 sm:pl-[3.2rem]">
+                                    <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
+                                    <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
+                                        <li>รับส่งต่อจาก รพ.สต./PCU</li>
+                                        <li>แพทย์/สหวิชาชีพ ซักประวัติ ตรวจร่างกาย/Lab</li>
+                                        <li>วางแผนการรักษาให้แก่ผู้ป่วย</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
+                                <p class="font-bold text-normal text-sm mb-1">ผลการรักษา:</p>
+                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
+                                    <span class="text-orange-500 font-bold">➔</span> <b>ให้ยากลับบ้าน / Admit:</b> เข้าสู่การดูแลต่อเนื่อง<br>
+                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600">ส่ง REFER:</b> ส่งรักษา รพ. ระดับสูง
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 3. ทีมเฝ้าระวัง -->
-                <div class="bg-custom-card border rounded-2xl p-0 overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-purple-100 p-3 rounded-xl shrink-0">
-                                <i data-lucide="activity" class="w-7 h-7 text-purple-600"></i>
+                <!-- ================= COLUMN 3: ส่งต่อ (ฉุกเฉินและสนับสนุน) ================= -->
+                <div class="col-bg-right border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full" id="col-right">
+                    <h3 class="text-center font-bold text-blue-800 dark:text-blue-400 text-lg mb-4 border-b-2 border-blue-200 dark:border-blue-800 pb-2">
+                        3. ฉุกเฉินและระบบสนับสนุน (ส่งต่อ)
+                    </h3>
+                    
+                    <div class="space-y-4 flex-grow">
+                        <!-- 6. ฉุกเฉิน -->
+                        <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-er">
+                            <div class="p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="bg-red-100 p-2 rounded-lg shrink-0">
+                                        <i data-lucide="ambulance" class="w-6 h-6 text-red-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">6. ทีมแพทย์ฉุกเฉิน</h4>
+                                        <p class="text-xs font-medium text-red-600">ห้องฉุกเฉิน (ER) / สายด่วน 1669</p>
+                                    </div>
+                                </div>
+                                <div class="pl-2 sm:pl-[3.2rem]">
+                                    <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
+                                    <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
+                                        <li>รับแจ้งเหตุ 1669 ออกรับผู้ป่วยรุนแรง</li>
+                                        <li>ประเมินและให้การรักษาเบื้องต้นในห้องฉุกเฉิน</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-custom-title">3. ทีมเฝ้าระวัง</h3>
-                                <p class="text-sm font-medium text-purple-600 dark:text-purple-400">OPD / ER / PCU หนองหาร</p>
+                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
+                                <p class="font-bold text-normal text-sm mb-1">ส่งต่อ:</p>
+                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
+                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600">ส่ง REFER:</b> ประสานส่งต่อ รพ.ระดับสูง
+                                </p>
                             </div>
                         </div>
-                        <div class="pl-[4.5rem]">
-                            <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4 text-emerald-500"></i> หน้าที่รับผิดชอบ:</p>
-                            <ul class="list-disc list-outside ml-5 text-custom-body text-[15px] space-y-1 mb-4">
-                                <li>ดึงข้อมูล ICD-10 โรคที่เกี่ยวข้องกับการสัมผัส PM 2.5</li>
-                                <li>หน่วยงานที่เกี่ยวข้อง แจ้งข้อมูลผู้ป่วยผ่านระบบ Google Sheets</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="bg-forward border-t border-separator px-6 py-4 pl-[6rem]">
-                        <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="arrow-right-circle" class="w-4 h-4 text-orange-500"></i> การนำข้อมูลไปใช้:</p>
-                        <div class="text-sm text-custom-body">
-                            <div class="flex items-start gap-2"><span class="text-orange-500 font-bold">➔</span> <span>นำข้อมูลไปประกอบการซักประวัติและคัดกรองสอบสวนโรคที่เกิดจาก PM 2.5</span></div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- 4. ทีมควบคุมโรค -->
-                <div class="bg-custom-card border rounded-2xl p-0 overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-indigo-100 p-3 rounded-xl shrink-0">
-                                <i data-lucide="shield-alert" class="w-7 h-7 text-indigo-600"></i>
+                        <!-- 4. ทีมควบคุมโรค -->
+                        <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-control">
+                            <div class="p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="bg-indigo-100 p-2 rounded-lg shrink-0">
+                                        <i data-lucide="shield-alert" class="w-6 h-6 text-indigo-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">4. ทีมควบคุมโรค</h4>
+                                        <p class="text-xs font-medium text-indigo-600">หน่วยงานควบคุมโรค</p>
+                                    </div>
+                                </div>
+                                <div class="pl-2 sm:pl-[3.2rem]">
+                                    <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
+                                    <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
+                                        <li>รับข้อมูลผู้ป่วยเข้าข่าย/รุนแรง</li>
+                                        <li>ลงพื้นที่ซักประวัติและสอบสวนโรคเพิ่มเติม</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-custom-title">4. ทีมควบคุมโรค</h3>
-                                <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400">หน่วยงานควบคุมโรค</p>
+                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
+                                <p class="font-bold text-normal text-sm mb-1">รายงานผล:</p>
+                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
+                                    <span class="text-indigo-500 font-bold">➔</span> <b>สสจ.เชียงใหม่:</b> รายงานสถานการณ์โรค
+                                </p>
                             </div>
                         </div>
-                        <div class="pl-[4.5rem]">
-                            <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4 text-emerald-500"></i> หน้าที่รับผิดชอบ:</p>
-                            <ul class="list-disc list-outside ml-5 text-custom-body text-[15px] space-y-1 mb-4">
-                                <li>รับข้อมูลผู้ป่วยที่เข้าข่าย / ผู้ป่วยอาการรุนแรง</li>
-                                <li>ลงพื้นที่เพื่อทำการซักประวัติและสอบสวนโรคเพิ่มเติม</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="bg-forward border-t border-separator px-6 py-4 pl-[6rem]">
-                        <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="arrow-right-circle" class="w-4 h-4 text-orange-500"></i> การส่งต่อหน่วยงานถัดไป:</p>
-                        <div class="text-sm text-custom-body">
-                            <div class="flex items-start gap-2"><span class="text-orange-500 font-bold">➔</span> <span><span class="font-bold text-slate-700 dark:text-slate-300">สสจ.เชียงใหม่:</span> แจ้งข้อมูลและรายงานสถานการณ์ให้สำนักงานสาธารณสุขจังหวัดรับทราบ</span></div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- 5. คลินิกมลพิษ -->
-                <div class="bg-custom-card border rounded-2xl p-0 overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-orange-100 p-3 rounded-xl shrink-0">
-                                <i data-lucide="stethoscope" class="w-7 h-7 text-orange-600"></i>
+                        <!-- 3. ทีมเฝ้าระวัง -->
+                        <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-surv">
+                            <div class="p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="bg-purple-100 p-2 rounded-lg shrink-0">
+                                        <i data-lucide="activity" class="w-6 h-6 text-purple-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">3. ทีมเฝ้าระวัง</h4>
+                                        <p class="text-xs font-medium text-purple-600">OPD / ER / PCU หนองหาร</p>
+                                    </div>
+                                </div>
+                                <div class="pl-2 sm:pl-[3.2rem]">
+                                    <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
+                                    <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
+                                        <li>ดึงข้อมูล ICD-10 โรคที่เกี่ยวข้องกับ PM 2.5</li>
+                                        <li>แจ้งข้อมูลผู้ป่วยผ่านระบบ Google Sheets</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-custom-title">5. ทีมคลินิกมลพิษ</h3>
-                                <p class="text-sm font-medium text-orange-600 dark:text-orange-400">คลินิกมลพิษ (เฉพาะ รพ.)</p>
-                            </div>
                         </div>
-                        <div class="pl-[4.5rem]">
-                            <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4 text-emerald-500"></i> หน้าที่รับผิดชอบ:</p>
-                            <ul class="list-disc list-outside ml-5 text-custom-body text-[15px] space-y-1 mb-4">
-                                <li>รับผู้ป่วยที่ส่งต่อมาจาก รพ.สต. และ PCU หนองหาร</li>
-                                <li>แพทย์/สหวิชาชีพ ทำการซักประวัติ ตรวจร่างกาย และตรวจทางห้องปฏิบัติการ</li>
-                                <li>วางแผนการรักษาให้แก่ผู้ป่วย</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="bg-forward border-t border-separator px-6 py-4 pl-[6rem]">
-                        <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="arrow-right-circle" class="w-4 h-4 text-orange-500"></i> ผลการรักษา / การส่งต่อ:</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-custom-body">
-                            <div class="flex items-start gap-2"><span class="text-orange-500 font-bold">➔</span> <span><span class="font-bold text-slate-700 dark:text-slate-300">ให้ยากลับบ้าน:</span> เข้าสู่กระบวนการดูแลต่อเนื่อง</span></div>
-                            <div class="flex items-start gap-2"><span class="text-orange-500 font-bold">➔</span> <span><span class="font-bold text-slate-700 dark:text-slate-300">Admit ให้การรักษา:</span> เข้าสู่กระบวนการดูแลต่อเนื่องหลังจำหน่าย</span></div>
-                            <div class="flex items-start gap-2"><span class="text-red-500 font-bold">➔</span> <span><span class="font-bold text-red-600 dark:text-red-400">ส่ง REFER:</span> ส่งต่อผู้ป่วยไปรักษาตัวยังสถานพยาบาลอื่น</span></div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- 6. ฉุกเฉิน -->
-                <div class="bg-custom-card border rounded-2xl p-0 overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-red-100 p-3 rounded-xl shrink-0">
-                                <i data-lucide="ambulance" class="w-7 h-7 text-red-600"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-custom-title">6. ทีมแพทย์ฉุกเฉิน</h3>
-                                <p class="text-sm font-medium text-red-600 dark:text-red-400">ห้องฉุกเฉิน (ER) / สายด่วน 1669</p>
-                            </div>
-                        </div>
-                        <div class="pl-[4.5rem]">
-                            <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4 text-emerald-500"></i> หน้าที่รับผิดชอบ:</p>
-                            <ul class="list-disc list-outside ml-5 text-custom-body text-[15px] space-y-1 mb-4">
-                                <li>รับแจ้งเหตุ ประสานงาน และออกรับผู้ป่วยที่มีอาการรุนแรงผ่าน 1669</li>
-                                <li>รับผู้ป่วยอาการรุนแรงเข้าห้องฉุกเฉิน เพื่อประเมินและให้การรักษาเบื้องต้น</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="bg-forward border-t border-separator px-6 py-4 pl-[6rem]">
-                        <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="arrow-right-circle" class="w-4 h-4 text-orange-500"></i> การส่งต่อหน่วยงานถัดไป:</p>
-                        <div class="text-sm text-custom-body">
-                            <div class="flex items-start gap-2"><span class="text-red-500 font-bold">➔</span> <span><span class="font-bold text-red-600 dark:text-red-400">ส่ง REFER:</span> ประสานงานส่งต่อผู้ป่วยอาการรุนแรงไปยังสถานพยาบาลระดับสูง</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 7. การดูแลต่อเนื่อง -->
-                <div class="bg-custom-card border rounded-2xl p-0 overflow-hidden transition-all duration-300 card-hover">
-                    <div class="p-6">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-emerald-100 p-3 rounded-xl shrink-0">
-                                <i data-lucide="home" class="w-7 h-7 text-emerald-600"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-custom-title">7. ทีมดูแลต่อเนื่อง</h3>
-                                <p class="text-sm font-medium text-emerald-600 dark:text-emerald-400">ทีม 3 หมอ / อปท.</p>
-                            </div>
-                        </div>
-                        <div class="pl-[4.5rem]">
-                            <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4 text-emerald-500"></i> หน้าที่รับผิดชอบ:</p>
-                            <ul class="list-disc list-outside ml-5 text-custom-body text-[15px] space-y-1 mb-4">
-                                <li>ให้คำปรึกษาก่อนผู้ป่วยกลับบ้าน</li>
-                                <li>ลงพื้นที่เยี่ยมบ้านโดยทีม 3 หมอ และ อปท.</li>
-                                <li>ประเมินสภาพที่อยู่ซ้ำให้เหมาะสมกับผู้ป่วย</li>
-                                <li><span class="font-semibold text-emerald-600 dark:text-emerald-400">กรณีผู้ป่วยอาการคงที่:</span> ติดตามและสั่งยาผ่าน Telemedicine เพื่อลดความเสี่ยงสัมผัสฝุ่น</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="bg-forward border-t border-separator px-6 py-4 pl-[6rem]">
-                        <p class="font-bold text-custom-body mb-2 flex items-center gap-2"><i data-lucide="arrow-right-circle" class="w-4 h-4 text-orange-500"></i> การส่งต่อ/สิ้นสุด:</p>
-                        <div class="text-sm text-custom-body">
-                            <div class="flex items-start gap-2"><span class="text-emerald-500 font-bold">➔</span> <span><span class="font-bold text-slate-700 dark:text-slate-300">สิ้นสุดกระบวนการ:</span> เฝ้าระวังผู้ป่วยในชุมชนอย่างต่อเนื่องเพื่อป้องกันการกำเริบซ้ำ</span></div>
-                        </div>
                     </div>
                 </div>
 
@@ -269,14 +321,71 @@ def render_roles():
         </div>
 
         <script>
-            // สร้างไอคอนเมื่อโหลดหน้าเสร็จ
+            // สร้างไอคอน
             document.addEventListener('DOMContentLoaded', () => {
                 lucide.createIcons();
             });
+
+            // ฟังก์ชันวาดเส้นเชื่อมโยง SVG อัตโนมัติ (เฉพาะหน้าจอคอมพิวเตอร์ที่วาง 3 คอลัมน์)
+            function drawLines() {
+                const svg = document.getElementById('flow-svg');
+                const colL = document.getElementById('col-left');
+                const colM = document.getElementById('col-mid');
+                const colR = document.getElementById('col-right');
+                const container = document.getElementById('main-container');
+
+                const pathMR1 = document.getElementById('path-m-r-1');
+                const pathMR2 = document.getElementById('path-m-r-2');
+                const pathReturn = document.getElementById('path-return');
+
+                // ทำงานเฉพาะหน้าจอขนาด xl (1280px ขึ้นไปตาม Tailwind) ที่แสดงผลแบบ 3 คอลัมน์
+                if(window.innerWidth >= 1280 && colL && colM && colR && svg && container) {
+                    svg.classList.remove('hidden');
+
+                    const contRect = container.getBoundingClientRect();
+                    const lRect = colL.getBoundingClientRect();
+                    const mRect = colM.getBoundingClientRect();
+                    const rRect = colR.getBoundingClientRect();
+
+                    // เส้นส่งต่อ 1 (บน): กลาง ไป ขวา (แทนการส่งฉุกเฉิน)
+                    const mr1StartX = mRect.right - contRect.left;
+                    const mr1StartY = (mRect.top - contRect.top) + (mRect.height * 0.3);
+                    const mr1EndX = rRect.left - contRect.left;
+                    pathMR1.setAttribute('d', `M ${mr1StartX} ${mr1StartY} L ${mr1EndX - 10} ${mr1StartY}`);
+
+                    // เส้นส่งต่อ 2 (กลาง): กลาง ไป ขวา (แทนการส่งทีมควบคุมโรค)
+                    const mr2StartX = mRect.right - contRect.left;
+                    const mr2StartY = (mRect.top - contRect.top) + (mRect.height * 0.6);
+                    const mr2EndX = rRect.left - contRect.left;
+                    pathMR2.setAttribute('d', `M ${mr2StartX} ${mr2StartY} L ${mr2EndX - 10} ${mr2StartY}`);
+
+                    // เส้นย้อนกลับด้านล่าง (การดูแลต่อเนื่อง): จากใต้คอลัมน์กลาง โยงกลับไปใต้คอลัมน์ซ้าย
+                    const retStartX = (mRect.left - contRect.left) + (mRect.width / 2);
+                    const retStartY = mRect.bottom - contRect.top;
+                    const retEndX = (lRect.left - contRect.left) + (lRect.width / 2);
+                    const retEndY = lRect.bottom - contRect.top;
+                    
+                    // หากรอบล่างสุดเพื่อเว้นระยะไม่ให้ทับกล่อง (ลงไป 30px)
+                    const dropY = Math.max(retStartY, retEndY) + 30; 
+
+                    // วาด Path: ลากลง -> ลากซ้ายยาวๆ -> ลากขึ้น -> ชี้เข้าใต้กล่องซ้าย
+                    pathReturn.setAttribute('d', `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${retEndY + 12}`);
+
+                } else {
+                    // ปิดเส้นบนมือถือ/แท็บเล็ต ปล่อยให้การ์ดเรียงต่อกันเป็นแนวตั้งตามธรรมชาติ
+                    if(svg) svg.classList.add('hidden');
+                }
+            }
+
+            // วาดเส้นตอนโหลดเสร็จและตอนย่อขยายจอ
+            window.addEventListener('resize', drawLines);
+            window.onload = () => { 
+                setTimeout(drawLines, 100); 
+                setTimeout(drawLines, 500); 
+            };
         </script>
     </body>
     </html>
     """
     
-    # ปรับความสูงตามจำนวนเนื้อหา
     components.html(html_code, height=1900, scrolling=True)
