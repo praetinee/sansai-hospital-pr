@@ -14,79 +14,83 @@ def render_pm25_flow():
         <style type="text/tailwindcss">
             /* =========================================
                THEME VARIABLES (Light Mode & Dark Mode)
-               เพื่อการอ่านที่ง่ายและสีไม่กลืนกัน
+               ปรับโทนสีใหม่ให้สดใส ชัดเจน และไม่หม่นหมอง
                ========================================= */
             :root {
-                --text-main: #1e293b;
-                --text-muted: #475569;
+                --text-main: #0f172a;
+                --text-muted: #334155;
                 --bg-card: #ffffff;
-                --border-card: #e2e8f0;
+                --border-card: #cbd5e1;
+                --shadow-box: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
 
-                /* Column 1 (Yellow/Community) */
-                --c1-bg: #fefce8; --c1-border: #fde047; 
-                --c1-title-bg: #fef9c3; --c1-title-text: #854d0e;
-                --c1-icon: #ca8a04;
+                /* Column 1 (Amber/Community) - สว่าง สดใส */
+                --c1-bg: #fffbeb; --c1-border: #f59e0b; 
+                --c1-title-bg: #fef3c7; --c1-title-text: #b45309;
+                --c1-icon: #d97706;
 
-                /* Column 2 (Orange/Clinic) */
-                --c2-bg: #fff7ed; --c2-border: #fb923c; 
-                --c2-title-bg: #ffedd5; --c2-title-text: #9a3412;
+                /* Column 2 (Orange/Clinic) - ส้มสด ไม่ตุ่น */
+                --c2-bg: #fff7ed; --c2-border: #f97316; 
+                --c2-title-bg: #ffedd5; --c2-title-text: #c2410c;
                 --c2-icon: #ea580c;
 
-                /* Column 3 (Green/Refer) */
-                --c3-bg: #f0fdf4; --c3-border: #86efac; 
-                --c3-title-bg: #dcfce7; --c3-title-text: #166534;
-                --c3-icon: #16a34a;
+                /* Column 3 (Emerald/Refer) - เขียวสว่าง สบายตา */
+                --c3-bg: #ecfdf5; --c3-border: #10b981; 
+                --c3-title-bg: #d1fae5; --c3-title-text: #047857;
+                --c3-icon: #059669;
 
                 /* Inner Boxes in Col 3 */
-                --ref-bg: #fef2f2; --ref-border: #fca5a5; 
-                --ref-title-bg: #fee2e2; --ref-title-text: #991b1b;
+                --ref-bg: #fef2f2; --ref-border: #ef4444; 
+                --ref-title-bg: #fee2e2; --ref-title-text: #b91c1c;
                 
-                --dis-bg: #f0fdf4; --dis-border: #86efac; 
-                --dis-title-bg: #dcfce7; --dis-title-text: #166534;
+                --dis-bg: #ecfdf5; --dis-border: #10b981; 
+                --dis-title-bg: #d1fae5; --dis-title-text: #047857;
 
-                /* Alert & Tags */
-                --alert-bg: #1e4b3e; --alert-border: #123329; 
+                /* Alert & Tags - ใช้สี Teal เข้มให้ดูทันสมัย */
+                --alert-bg: #0f766e; --alert-border: #115e59; 
                 --alert-text: #ffffff; --alert-hl: #fde047;
                 
-                /* Connecting Lines */
-                --svg-line: #94a3b8; --svg-return: #475569;
+                /* Connecting Lines - ใช้สีฟ้าให้เด่นชัด */
+                --svg-line: #3b82f6; 
+                --svg-return: #0ea5e9; 
             }
 
             @media (prefers-color-scheme: dark) {
                 :root {
-                    --text-main: #f1f5f9;
+                    --text-main: #f8fafc;
                     --text-muted: #cbd5e1;
                     --bg-card: #1e293b;
-                    --border-card: #334155;
+                    --border-card: #475569;
+                    --shadow-box: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -1px rgba(0,0,0,0.2);
 
-                    /* Column 1 (Yellow/Community) */
-                    --c1-bg: rgba(66, 32, 6, 0.4); --c1-border: #78350f; 
-                    --c1-title-bg: #78350f; --c1-title-text: #fde68a;
-                    --c1-icon: #facc15;
+                    /* Column 1 (Yellow/Community) - สว่างขึ้นกว่าเดิม */
+                    --c1-bg: rgba(217, 119, 6, 0.12); --c1-border: rgba(245, 158, 11, 0.7); 
+                    --c1-title-bg: rgba(217, 119, 6, 0.3); --c1-title-text: #fde68a;
+                    --c1-icon: #fbbf24;
 
                     /* Column 2 (Orange/Clinic) */
-                    --c2-bg: rgba(67, 20, 7, 0.4); --c2-border: #7c2d12; 
-                    --c2-title-bg: #7c2d12; --c2-title-text: #fed7aa;
+                    --c2-bg: rgba(234, 88, 12, 0.12); --c2-border: rgba(249, 115, 22, 0.7); 
+                    --c2-title-bg: rgba(234, 88, 12, 0.3); --c2-title-text: #fed7aa;
                     --c2-icon: #fb923c;
 
-                    /* Column 3 (Green/Refer) */
-                    --c3-bg: rgba(6, 78, 59, 0.4); --c3-border: #14532d; 
-                    --c3-title-bg: #14532d; --c3-title-text: #86efac;
-                    --c3-icon: #4ade80;
+                    /* Column 3 (Emerald/Refer) */
+                    --c3-bg: rgba(16, 185, 129, 0.12); --c3-border: rgba(16, 185, 129, 0.7); 
+                    --c3-title-bg: rgba(16, 185, 129, 0.3); --c3-title-text: #a7f3d0;
+                    --c3-icon: #34d399;
 
                     /* Inner Boxes in Col 3 */
-                    --ref-bg: rgba(69, 10, 10, 0.5); --ref-border: #7f1d1d; 
-                    --ref-title-bg: #7f1d1d; --ref-title-text: #fca5a5;
+                    --ref-bg: rgba(239, 68, 68, 0.15); --ref-border: rgba(239, 68, 68, 0.7); 
+                    --ref-title-bg: rgba(239, 68, 68, 0.3); --ref-title-text: #fecaca;
                     
-                    --dis-bg: rgba(6, 78, 59, 0.5); --dis-border: #14532d; 
-                    --dis-title-bg: #14532d; --dis-title-text: #86efac;
+                    --dis-bg: rgba(16, 185, 129, 0.15); --dis-border: rgba(16, 185, 129, 0.7); 
+                    --dis-title-bg: rgba(16, 185, 129, 0.3); --dis-title-text: #a7f3d0;
 
                     /* Alert & Tags */
-                    --alert-bg: rgba(15, 23, 42, 0.95); --alert-border: #334155; 
-                    --alert-text: #e2e8f0; --alert-hl: #fde047;
+                    --alert-bg: #134e4a; --alert-border: #0f766e; 
+                    --alert-text: #ccfbf1; --alert-hl: #fde047;
                     
                     /* Connecting Lines */
-                    --svg-line: #64748b; --svg-return: #94a3b8;
+                    --svg-line: #60a5fa; 
+                    --svg-return: #38bdf8;
                 }
             }
 
@@ -99,9 +103,9 @@ def render_pm25_flow():
             .text-muted { color: var(--text-muted); }
 
             .flow-col { border-width: 3px; border-radius: 2rem; padding: 1.25rem; display: flex; flex-direction: column; gap: 1.25rem; position: relative; height: 100%; transition: all 0.3s; }
-            .inner-box { background-color: var(--bg-card); border: 1px solid var(--border-card); border-radius: 0.75rem; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.3s; }
+            .inner-box { background-color: var(--bg-card); border: 1px solid var(--border-card); border-radius: 0.75rem; padding: 1rem; box-shadow: var(--shadow-box); transition: all 0.3s; }
             
-            .tag-code { position: absolute; top: 0.5rem; right: 0.5rem; background-color: var(--alert-bg); color: var(--alert-text); font-size: 0.65rem; padding: 0.15rem 0.6rem; border-radius: 9999px; font-weight: 700; z-index: 10; border: 1px solid var(--alert-border); box-shadow: 0 1px 2px rgba(0,0,0,0.1); letter-spacing: 0.025em; }
+            .tag-code { position: absolute; top: 0.5rem; right: 0.5rem; background-color: var(--alert-bg); color: var(--alert-text); font-size: 0.65rem; padding: 0.2rem 0.6rem; border-radius: 9999px; font-weight: 700; z-index: 10; border: 1px solid var(--alert-border); box-shadow: 0 2px 4px rgba(0,0,0,0.15); letter-spacing: 0.025em; }
             .arrow-icon { color: var(--svg-line); flex-shrink: 0; }
 
             /* Semantic Theme Classes */
@@ -132,13 +136,13 @@ def render_pm25_flow():
             
             <!-- Alert Box -->
             <div class="flex justify-end mb-6 relative z-20">
-                <div class="px-4 py-2.5 rounded-full font-bold shadow-md text-xs sm:text-sm flex items-center border" style="background-color: var(--alert-bg); color: var(--alert-text); border-color: var(--alert-border);">
+                <div class="px-5 py-2.5 rounded-full font-bold shadow-lg text-xs sm:text-sm flex items-center border" style="background-color: var(--alert-bg); color: var(--alert-text); border-color: var(--alert-border);">
                     <span class="mr-2" style="color: var(--alert-hl);">ย้ำ!</span> บันทึกรหัสโรค Z58.1 (Exposure to air pollution) ทุกจุดบริการเพื่อวิเคราะห์ข้อมูล
                 </div>
             </div>
 
             <!-- SVG Overlay for Dynamic Line Drawing (Desktop Only) -->
-            <svg id="flow-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none hidden lg:block z-0" style="overflow: visible;">
+            <svg id="flow-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none hidden lg:block z-0" style="overflow: visible; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.15));">
                 <defs>
                     <!-- Marker Connectors -->
                     <marker id="arrow-main" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
@@ -159,7 +163,7 @@ def render_pm25_flow():
             </svg>
 
             <!-- Return Label (Desktop Dynamic) -->
-            <div id="return-label" class="absolute hidden lg:flex items-center justify-center inner-box px-8 py-2.5 rounded-full z-10 border-2" style="border-color: var(--svg-return);">
+            <div id="return-label" class="absolute hidden lg:flex items-center justify-center inner-box px-8 py-2.5 rounded-full z-10 border-[3px]" style="border-color: var(--svg-return);">
                 <p class="font-bold text-base whitespace-nowrap text-main">
                     การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
                 </p>
@@ -170,7 +174,7 @@ def render_pm25_flow():
 
                 <!-- ================= Column 1: Left (Community) ================= -->
                 <div id="col-left" class="col-1 flow-col">
-                    <h2 class="text-lg sm:text-xl font-extrabold text-center c1-title py-2 rounded-full mx-2 sm:mx-4">ชุมชนและหน่วยบริการปฐมภูมิ (รุก)</h2>
+                    <h2 class="text-lg sm:text-xl font-extrabold text-center c1-title py-2.5 rounded-full mx-2 sm:mx-4 shadow-sm">ชุมชนและหน่วยบริการปฐมภูมิ (รุก)</h2>
                     <div class="flex flex-col items-center text-center py-5 inner-box border-2 shadow-sm" style="border-color: var(--c1-border);">
                         <div class="flex justify-center mb-3">
                             <i data-lucide="users" class="w-10 h-10 sm:w-12 sm:h-12 c1-icon"></i>
@@ -204,7 +208,7 @@ def render_pm25_flow():
 
                 <!-- ================= Column 2: Middle (Clinic & ER) ================= -->
                 <div id="col-mid" class="col-2 flow-col">
-                    <h2 class="text-lg sm:text-xl font-extrabold text-center c2-title py-2 rounded-full mx-2 sm:mx-4">การรับผู้ป่วยและดูแลรักษา (รับ)</h2>
+                    <h2 class="text-lg sm:text-xl font-extrabold text-center c2-title py-2.5 rounded-full mx-2 sm:mx-4 shadow-sm">การรับผู้ป่วยและดูแลรักษา (รับ)</h2>
                     
                     <div class="space-y-4 h-full flex flex-col justify-between mt-2">
                         <!-- Row 1: Online -->
@@ -305,12 +309,12 @@ def render_pm25_flow():
 
                 <!-- ================= Column 3: Right (Refer & Discharge) ================= -->
                 <div id="col-right" class="col-3 flow-col">
-                    <h2 class="text-lg sm:text-xl font-extrabold text-center c3-title py-2 rounded-full mx-2 sm:mx-4">ระบบส่งต่อและจำหน่ายผู้ป่วย</h2>
+                    <h2 class="text-lg sm:text-xl font-extrabold text-center c3-title py-2.5 rounded-full mx-2 sm:mx-4 shadow-sm">ระบบส่งต่อและจำหน่ายผู้ป่วย</h2>
                     
                     <div class="flex flex-col gap-5 h-full mt-2">
                         <!-- Referral System -->
-                        <div class="rounded-2xl p-4 sm:p-5 box-refer shadow-sm h-1/2 flex flex-col justify-center relative">
-                            <h3 class="font-bold text-center mb-4 sm:mb-5 text-sm sm:text-lg box-refer-title py-1 rounded-full mx-2 sm:mx-6 leading-tight">ระบบส่งต่อผู้ป่วย (Referral)</h3>
+                        <div class="rounded-2xl p-4 sm:p-5 box-refer shadow-md h-1/2 flex flex-col justify-center relative transition-all hover:-translate-y-1">
+                            <h3 class="font-bold text-center mb-4 sm:mb-5 text-sm sm:text-lg box-refer-title py-1.5 rounded-full mx-2 sm:mx-6 leading-tight shadow-sm">ระบบส่งต่อผู้ป่วย (Referral)</h3>
                             <div class="flex justify-between items-center text-center">
                                 <div class="flex-1 flex flex-col items-center">
                                     <i data-lucide="hospital" class="w-8 h-8 sm:w-10 sm:h-10 mb-2 box-refer-icon"></i>
@@ -330,8 +334,8 @@ def render_pm25_flow():
                         </div>
 
                         <!-- Discharge -->
-                        <div class="rounded-2xl p-4 sm:p-5 box-discharge shadow-sm h-1/2 flex flex-col justify-center relative">
-                            <h3 class="font-bold text-center mb-4 sm:mb-5 text-sm sm:text-lg box-discharge-title py-1 rounded-full mx-2 sm:mx-6 leading-tight">การจำหน่ายผู้ป่วย (Discharge)</h3>
+                        <div class="rounded-2xl p-4 sm:p-5 box-discharge shadow-md h-1/2 flex flex-col justify-center relative transition-all hover:-translate-y-1">
+                            <h3 class="font-bold text-center mb-4 sm:mb-5 text-sm sm:text-lg box-discharge-title py-1.5 rounded-full mx-2 sm:mx-6 leading-tight shadow-sm">การจำหน่ายผู้ป่วย (Discharge)</h3>
                             <div class="text-center space-y-2 sm:space-y-3">
                                 <p class="font-bold text-base sm:text-xl text-main">วางแผนตามหลัก D-METHOD</p>
                                 <div class="w-12 sm:w-16 h-1 bg-current opacity-20 mx-auto rounded-full" style="color: var(--dis-title-text);"></div>
@@ -344,7 +348,7 @@ def render_pm25_flow():
 
             <!-- Mobile view for return arrow text (Shown only on small screens) -->
              <div class="lg:hidden text-center mt-8">
-                <div class="inline-flex items-center justify-center inner-box px-6 py-3 rounded-full border-2" style="border-color: var(--svg-return);">
+                <div class="inline-flex items-center justify-center inner-box px-6 py-3 rounded-full border-[3px]" style="border-color: var(--svg-return);">
                     <p class="font-bold text-sm sm:text-base whitespace-nowrap text-main">
                         การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
                     </p>
