@@ -10,7 +10,6 @@ def render_pm25_flow():
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://unpkg.com/lucide@latest"></script>
         <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-        <!-- เพิ่ม type="text/tailwindcss" เพื่อให้ @apply ทำงานได้ถูกต้อง -->
         <style type="text/tailwindcss">
             body {
                 font-family: 'Sarabun', sans-serif;
@@ -28,7 +27,6 @@ def render_pm25_flow():
                 @apply bg-white rounded-xl p-3 shadow-sm border border-gray-100;
             }
             
-            /* แก้ไขให้ tag อยู่มุมบนขวาของกรอบอย่างชัดเจน */
             .tag-code {
                 @apply absolute top-2 right-2 bg-[#1e4b3e] text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold z-10 shadow-sm border border-[#123329];
             }
@@ -39,30 +37,49 @@ def render_pm25_flow():
         </style>
     </head>
     <body>
-        <div class="max-w-[1280px] mx-auto relative pb-24">
+        <!-- Main Container -->
+        <div id="main-container" class="max-w-[1280px] mx-auto relative pb-32">
+            
             <!-- Alert Box -->
-            <div class="flex justify-end mb-6">
+            <div class="flex justify-end mb-6 relative z-20">
                 <div class="bg-[#1e4b3e] text-white px-4 py-2 rounded-full font-bold shadow-md text-sm flex items-center border-2 border-[#123329]">
                     <span class="text-yellow-300 mr-2">ย้ำ!</span> บันทึกรหัสโรค Z58.1 (Exposure to air pollution) ทุกจุดบริการเพื่อวิเคราะห์ข้อมูล
                 </div>
             </div>
 
+            <!-- SVG Overlay for Dynamic Line Drawing -->
+            <svg id="flow-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none hidden lg:block z-0" style="overflow: visible;">
+                <defs>
+                    <!-- Marker for Top Connectors -->
+                    <marker id="arrow-gray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
+                    </marker>
+                    <!-- Marker for Bottom Dashed Return Line -->
+                    <marker id="arrow-slate" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569" />
+                    </marker>
+                </defs>
+                
+                <!-- Path from Left to Middle -->
+                <path id="path-lm" fill="none" stroke="#94a3b8" stroke-width="5" marker-end="url(#arrow-gray)" />
+                
+                <!-- Path from Middle to Right -->
+                <path id="path-mr" fill="none" stroke="#94a3b8" stroke-width="5" marker-end="url(#arrow-gray)" />
+                
+                <!-- Bottom Return Dashed Path -->
+                <path id="path-return" fill="none" stroke="#475569" stroke-width="4" stroke-dasharray="10, 8" stroke-linejoin="round" marker-end="url(#arrow-slate)" />
+            </svg>
+
+            <!-- Return Label (Positioned Dynamically by JS) -->
+            <div id="return-label" class="absolute hidden lg:flex items-center justify-center bg-white px-8 py-2.5 rounded-full shadow-md border-[3px] border-slate-300 z-10 text-slate-700 font-bold text-base whitespace-nowrap">
+                การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
+            </div>
+
+            <!-- 3 Columns Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10 items-stretch">
-                <!-- SVG Overlay for Main Column Connectors (Desktop) -->
-                <svg class="absolute inset-0 w-full h-full pointer-events-none hidden lg:block z-20" style="overflow: visible;">
-                    <defs>
-                        <marker id="arrow-gray-lg" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
-                            <path d="M 0 0 L 12 6 L 0 12 z" fill="#6b7280" />
-                        </marker>
-                    </defs>
-                    <!-- Arrow from Left to Middle -->
-                    <path d="M 33% 50% L 35% 50%" stroke="#6b7280" stroke-width="6" marker-end="url(#arrow-gray-lg)" />
-                    <!-- Arrow from Middle to Right -->
-                    <path d="M 66% 50% L 68% 50%" stroke="#6b7280" stroke-width="6" marker-end="url(#arrow-gray-lg)" />
-                </svg>
 
                 <!-- Column 1: Left (Yellow) -->
-                <div class="flow-col col-yellow">
+                <div id="col-left" class="flow-col col-yellow">
                     <h2 class="text-xl font-extrabold text-center text-[#854d0e] mb-2 bg-[#fef9c3] py-2 rounded-full mx-4">ชุมชนและหน่วยบริการปฐมภูมิ (รุก)</h2>
                     <div class="inner-box flex flex-col items-center text-center py-5 bg-[#fef08a]/30 border-[#fde047]">
                         <div class="flex justify-center mb-3">
@@ -96,7 +113,7 @@ def render_pm25_flow():
                 </div>
 
                 <!-- Column 2: Middle (Orange) -->
-                <div class="flow-col col-orange">
+                <div id="col-mid" class="flow-col col-orange">
                     <h2 class="text-xl font-extrabold text-center text-[#9a3412] mb-2 bg-[#ffedd5] py-2 rounded-full mx-4">การรับผู้ป่วยและดูแลรักษา (รับ)</h2>
                     
                     <div class="space-y-4 h-full flex flex-col justify-between">
@@ -114,7 +131,7 @@ def render_pm25_flow():
                             </div>
                         </div>
 
-                        <!-- Row 2: OPD (เพิ่ม pt-8 เพื่อเว้นที่ให้ Tag ด้านบนขวา) -->
+                        <!-- Row 2: OPD -->
                         <div class="inner-box pt-8 flex flex-wrap items-center gap-2 relative bg-[#fff7ed] border-orange-200">
                             <div class="tag-code">รหัส Z58.1</div>
                             <div class="flex items-center gap-2 w-full sm:w-auto mb-2 sm:mb-0 shrink-0">
@@ -144,7 +161,7 @@ def render_pm25_flow():
                             </div>
                         </div>
 
-                        <!-- Row 3: ER (เพิ่ม pt-8 เพื่อเว้นที่ให้ Tag ด้านบนขวา) -->
+                        <!-- Row 3: ER -->
                         <div class="inner-box pt-8 flex flex-wrap items-center gap-2 relative bg-[#fff7ed] border-orange-200">
                             <div class="tag-code">รหัส Z58.1</div>
                             <div class="flex items-center gap-3 w-full sm:w-auto mb-2 sm:mb-0 shrink-0">
@@ -171,7 +188,7 @@ def render_pm25_flow():
                             </div>
                         </div>
 
-                        <!-- Row 4: IPD (เพิ่ม pt-8 เพื่อเว้นที่ให้ Tag ด้านบนขวา) -->
+                        <!-- Row 4: IPD -->
                         <div class="inner-box pt-8 flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-4 relative bg-[#fff7ed] border-orange-200">
                             <div class="tag-code">รหัส Z58.1</div>
                             <i data-lucide="bed" class="w-9 h-9 text-blue-600 shrink-0 hidden sm:block"></i>
@@ -193,7 +210,7 @@ def render_pm25_flow():
                 </div>
 
                 <!-- Column 3: Right (Green) -->
-                <div class="flow-col col-green">
+                <div id="col-right" class="flow-col col-green">
                     <h2 class="text-xl font-extrabold text-center text-[#166534] mb-2 bg-[#dcfce7] py-2 rounded-full mx-4">ระบบส่งต่อและจำหน่ายผู้ป่วย (ส่งต่อ)</h2>
                     
                     <!-- Referral System -->
@@ -229,36 +246,94 @@ def render_pm25_flow():
                 </div>
             </div>
 
-            <!-- Bottom Return Arrow SVG (Desktop) -->
-            <div class="absolute bottom-0 left-0 w-full h-28 pointer-events-none z-0 hidden lg:block">
-                <svg width="100%" height="100%" viewBox="0 0 1280 100" preserveAspectRatio="none" style="overflow: visible;">
-                    <defs>
-                        <marker id="arrow-return" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
-                            <path d="M 0 0 L 12 6 L 0 12 z" fill="#4b5563" />
-                        </marker>
-                    </defs>
-                    <!-- Path from bottom of right column, curving under, to bottom of left column (Dashed line format added) -->
-                    <path d="M 1050 -10 V 40 Q 1050 90 640 90 Q 230 90 230 40 V -10" stroke="#4b5563" stroke-width="4" stroke-dasharray="10, 8" fill="none" marker-end="url(#arrow-return)"/>
-                </svg>
-                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white px-6 py-2 rounded-full shadow-md border-2 border-gray-300 z-10">
-                    <p class="text-center text-gray-700 font-bold text-base flex items-center gap-2">
-                        การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
-                    </p>
-                </div>
-            </div>
-            
             <!-- Mobile view for return arrow text -->
-             <div class="lg:hidden text-center mt-6">
-                <div class="inline-block bg-white px-5 py-3 rounded-full shadow-md border-2 border-gray-300">
-                    <p class="text-gray-700 font-bold flex items-center gap-3 text-sm">
+             <div class="lg:hidden text-center mt-8">
+                <div class="inline-block bg-white px-6 py-3 rounded-full shadow-md border-2 border-slate-300">
+                    <p class="text-slate-700 font-bold text-sm">
                         การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
                     </p>
                 </div>
             </div>
 
         </div>
+        
         <script>
-            lucide.createIcons();
+            // Initialize Icons
+            document.addEventListener('DOMContentLoaded', () => {
+                lucide.createIcons();
+            });
+
+            // Dynamic Line Drawing Function
+            function drawLines() {
+                const svg = document.getElementById('flow-svg');
+                const container = document.getElementById('main-container');
+                const label = document.getElementById('return-label');
+                
+                if (window.innerWidth >= 1024 && svg && container) { // lg breakpoint in Tailwind
+                    svg.classList.remove('hidden');
+                    if (label) {
+                        label.classList.remove('hidden');
+                        label.classList.add('flex');
+                    }
+                    
+                    const contRect = container.getBoundingClientRect();
+                    const colL = document.getElementById('col-left').getBoundingClientRect();
+                    const colM = document.getElementById('col-mid').getBoundingClientRect();
+                    const colR = document.getElementById('col-right').getBoundingClientRect();
+                    
+                    // Helpers to get position relative to the container
+                    const getX = (rect) => rect.left - contRect.left;
+                    const getY = (rect) => rect.top - contRect.top;
+                    
+                    // 1. Draw Line from Left to Middle
+                    const lmStartY = getY(colL) + (colL.height / 2);
+                    const lmStartX = getX(colL) + colL.width;
+                    const lmEndX = getX(colM);
+                    document.getElementById('path-lm').setAttribute('d', `M ${lmStartX} ${lmStartY} L ${lmEndX - 10} ${lmStartY}`);
+                    
+                    // 2. Draw Line from Middle to Right
+                    const mrStartY = getY(colM) + (colM.height / 2);
+                    const mrStartX = getX(colM) + colM.width;
+                    const mrEndX = getX(colR);
+                    document.getElementById('path-mr').setAttribute('d', `M ${mrStartX} ${mrStartY} L ${mrEndX - 10} ${mrStartY}`);
+                    
+                    // 3. Draw Return Dashed Line (Right to Left at the bottom)
+                    const retStartX = getX(colR) + (colR.width / 2);
+                    const retStartY = getY(colR) + colR.height;
+                    const retEndX = getX(colL) + (colL.width / 2);
+                    const retEndY = getY(colL) + colL.height;
+                    
+                    // Drop down vertically 40px to leave space for the label
+                    const dropY = Math.max(retStartY, retEndY) + 40;
+                    
+                    // The path drops down, goes left, then goes UP into the left column
+                    const returnPath = `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${retEndY + 12}`;
+                    document.getElementById('path-return').setAttribute('d', returnPath);
+                    
+                    // Position the Text Label exactly in the middle of the bottom line
+                    if (label) {
+                        label.style.top = `${dropY}px`;
+                        label.style.left = `${getX(colM) + (colM.width / 2)}px`;
+                        label.style.transform = 'translate(-50%, -50%)';
+                    }
+                    
+                } else {
+                    // Hide SVG and Label on smaller screens
+                    if (svg) svg.classList.add('hidden');
+                    if (label) {
+                        label.classList.add('hidden');
+                        label.classList.remove('flex');
+                    }
+                }
+            }
+
+            // Redraw lines on window resize to keep them perfectly attached
+            window.addEventListener('resize', drawLines);
+            // Draw once on load with timeouts to ensure fonts and layout are fully rendered
+            window.addEventListener('load', () => { 
+                setTimeout(drawLines, 100); 
+                setTimeout(drawLines, 500); 
+            });
         </script>
     </body>
     </html>
