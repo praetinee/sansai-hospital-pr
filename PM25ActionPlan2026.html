@@ -8,8 +8,8 @@
     <!-- 1. นำเข้า Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. นำเข้า Babel สำหรับแปลงโค้ด React -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- 2. นำเข้า Lucide Icons (ใช้แบบ Global) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- 3. ตั้งค่าฟอนต์ Sarabun -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
@@ -35,658 +35,643 @@
 </head>
 <body class="bg-slate-50 text-slate-800">
     
-    <!-- พื้นที่สำหรับแสดงผล React App -->
-    <div id="root"></div>
+    <div class="min-h-screen pb-12 overflow-x-hidden relative">
+        
+        <!-- Image Zoom Modal (Lightbox) -->
+        <div id="zoom-modal" class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm items-center justify-center p-4 transition-opacity duration-300" onclick="closeZoom()">
+            <div class="relative max-w-4xl w-full flex flex-col items-center">
+                <button onclick="closeZoom()" class="absolute -top-12 right-0 text-white/80 hover:text-white transition-colors p-2 bg-white/10 rounded-full">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+                <img id="zoomed-img" src="" alt="Zoomed View" class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl bg-white p-2" onclick="event.stopPropagation()" />
+                <p class="text-white/70 text-sm mt-4 font-medium bg-black/50 px-4 py-2 rounded-full backdrop-blur-md">
+                    แตะบริเวณว่างเพื่อปิด
+                </p>
+            </div>
+        </div>
 
-    <!-- 4. โค้ด React -->
-    <script type="text/babel" data-type="module">
-        import React, { useState } from 'https://esm.sh/react@18.2.0';
-        import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
-        import { 
-            Activity, Wind, Thermometer, Calendar, Users, FileText, Smartphone, 
-            ExternalLink, ChevronRight, AlertTriangle, HeartPulse, Share2, 
-            Download, X, Maximize2, ShieldAlert, MonitorSmartphone, Hospital,
-            ClipboardList, Stethoscope, Pills, BedDouble, ArrowRightLeft,
-            Home, PhoneCall, ArrowDown, MapPin, CheckCircle2, AlertCircle
-        } from 'https://esm.sh/lucide-react@0.292.0';
-
-        const App = () => {
-            const [activeTab, setActiveTab] = useState('dashboard');
-            const [zoomedImage, setZoomedImage] = useState(null);
-
-            // Components for Flow UI to keep code clean
-            const FlowIconWrapper = ({ icon: Icon, colorClass }) => (
-                <div className={`p-3 rounded-full ${colorClass} shadow-sm border border-white/50 z-10 relative`}>
-                    <Icon className="w-6 h-6" />
+        <!-- Header / Navbar -->
+        <header class="bg-emerald-600 text-white shadow-lg sticky top-0 z-50 print:hidden">
+            <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-white p-2 rounded-full shadow-sm">
+                        <i data-lucide="activity" class="text-emerald-600 w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold leading-tight">PM2.5 Action Plan</h1>
+                        <p class="text-xs md:text-sm text-emerald-100 opacity-90">โรงพยาบาลสันทราย ปี 2569</p>
+                    </div>
                 </div>
-            );
+            </div>
+        </header>
 
-            const FlowCard = ({ title, desc, colorBorder, bgColor, icon, highlight }) => (
-                <div className={`relative flex flex-col items-center p-4 rounded-xl border-2 ${colorBorder} ${bgColor} shadow-sm transition-all hover:shadow-md text-center h-full`}>
-                    {icon && <div className="mb-2">{icon}</div>}
-                    {title && <h4 className={`font-bold ${highlight ? 'text-lg' : 'text-base'} text-slate-800 mb-1 leading-tight`}>{title}</h4>}
-                    {desc && <p className="text-sm text-slate-600 leading-snug">{desc}</p>}
-                </div>
-            );
+        <!-- Hero Section -->
+        <div class="bg-gradient-to-b from-emerald-600 to-emerald-500 text-white pb-16 pt-8 px-4 rounded-b-[2.5rem] shadow-md mb-8 print:hidden">
+            <div class="max-w-4xl mx-auto text-center space-y-4">
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">แผนรองรับวิกฤตฝุ่นละอองขนาดเล็ก PM2.5</h2>
+                <p class="text-emerald-100 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+                    เตรียมความพร้อม เฝ้าระวัง และดูแลสุขภาพประชาชนในเขตอำเภอสันทราย 
+                    ด้วยนวัตกรรมและการบริการทางการแพทย์
+                </p>
+            </div>
+        </div>
 
-            return (
-                <div className="min-h-screen pb-12 overflow-x-hidden">
-                    {/* Image Zoom Modal (Lightbox) */}
-                    {zoomedImage && (
-                        <div 
-                        className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300 animate-in fade-in"
-                        onClick={() => setZoomedImage(null)}
-                        >
-                        <div className="relative max-w-4xl w-full flex flex-col items-center">
-                            <button 
-                                onClick={() => setZoomedImage(null)}
-                                className="absolute -top-12 right-0 text-white/80 hover:text-white transition-colors p-2 bg-white/10 rounded-full"
-                            >
-                                <X className="w-6 h-6" />
-                            </button>
-                            
-                            <img 
-                            src={zoomedImage} 
-                            alt="Zoomed View" 
-                            className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl animate-in zoom-in duration-200 bg-white p-2"
-                            onClick={(e) => e.stopPropagation()} 
-                            />
-                            <p className="text-white/70 text-sm mt-4 font-medium bg-black/50 px-4 py-2 rounded-full backdrop-blur-md">
-                                แตะบริเวณว่างเพื่อปิด
-                            </p>
+        <!-- TAB NAVIGATION -->
+        <div class="w-full max-w-4xl mx-auto px-4 mb-8 print:hidden">
+            <div class="flex justify-center p-1 bg-slate-200/60 backdrop-blur-sm rounded-full shadow-inner overflow-hidden">
+                <button id="btn-dashboard" onclick="switchTab('dashboard')" class="flex-1 py-3 px-6 rounded-full text-sm md:text-base font-bold transition-all duration-300 flex items-center justify-center gap-2 bg-white text-emerald-600 shadow-md transform scale-100">
+                    <i data-lucide="activity" class="w-5 h-5"></i>
+                    <span class="hidden sm:inline">แผนการดำเนินงาน (Dashboard)</span>
+                    <span class="sm:hidden">Dashboard</span>
+                </button>
+                <button id="btn-flow" onclick="switchTab('flow')" class="flex-1 py-3 px-6 rounded-full text-sm md:text-base font-bold transition-all duration-300 flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50">
+                    <i data-lucide="share-2" class="w-5 h-5"></i>
+                    <span class="hidden sm:inline">Flow การให้บริการ</span>
+                    <span class="sm:hidden">Flow</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            
+            <!-- ================= TAB: DASHBOARD ================= -->
+            <div id="tab-dashboard" class="block space-y-8">
+                <!-- 0. PHEOC Section -->
+                <section class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 print:break-inside-avoid relative">
+                    <!-- Decorative element -->
+                    <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+                    
+                    <div class="p-6 md:p-8 lg:p-10">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="bg-blue-100 p-2.5 rounded-xl">
+                                    <i data-lucide="shield-alert" class="text-blue-600 w-7 h-7 md:w-8 md:h-8"></i>
+                                </div>
+                                <h3 class="text-xl md:text-2xl font-bold text-slate-800">การเปิดศูนย์ปฏิบัติการฉุกเฉิน (PHEOC)</h3>
+                            </div>
                         </div>
-                        </div>
-                    )}
-
-                    {/* Header / Navbar */}
-                    <header className="bg-emerald-600 text-white shadow-lg sticky top-0 z-50 print:hidden">
-                        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                            <div className="flex items-center space-x-3">
-                                <div className="bg-white p-2 rounded-full shadow-sm">
-                                    <Activity className="text-emerald-600 w-6 h-6" />
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Province Level -->
+                            <div class="bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-200 p-6 rounded-2xl flex items-center space-x-5 hover:shadow-md transition-shadow">
+                                <div class="bg-blue-600 text-white p-4 rounded-full shadow-sm">
+                                    <i data-lucide="activity" class="w-6 h-6"></i>
                                 </div>
                                 <div>
-                                    <h1 className="text-lg md:text-xl font-bold leading-tight">PM2.5 Action Plan</h1>
-                                    <p className="text-xs md:text-sm text-emerald-100 opacity-90">โรงพยาบาลสันทราย ปี 2569</p>
+                                    <p class="text-sm md:text-base text-slate-500 font-medium mb-1">ระดับจังหวัดเชียงใหม่</p>
+                                    <p class="text-xl md:text-2xl font-bold text-slate-800">12 มกราคม 2569</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Health Region Level -->
+                            <div class="bg-gradient-to-br from-slate-50 to-sky-50/30 border border-slate-200 p-6 rounded-2xl flex items-center space-x-5 hover:shadow-md transition-shadow">
+                                <div class="bg-sky-600 text-white p-4 rounded-full shadow-sm">
+                                    <i data-lucide="activity" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm md:text-base text-slate-500 font-medium mb-1">ระดับเขตสุขภาพที่ 1</p>
+                                    <p class="text-xl md:text-2xl font-bold text-slate-800">4 มีนาคม 2569</p>
                                 </div>
                             </div>
                         </div>
-                    </header>
+                    </div>
+                </section>
 
-                    {/* Hero Section */}
-                    <div className="bg-gradient-to-b from-emerald-600 to-emerald-500 text-white pb-16 pt-8 px-4 rounded-b-[2.5rem] shadow-md mb-8 print:hidden">
-                        <div className="max-w-4xl mx-auto text-center space-y-4">
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">แผนรองรับวิกฤตฝุ่นละอองขนาดเล็ก PM2.5</h2>
-                            <p className="text-emerald-100 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                                เตรียมความพร้อม เฝ้าระวัง และดูแลสุขภาพประชาชนในเขตอำเภอสันทราย 
-                                ด้วยนวัตกรรมและการบริการทางการแพทย์
+                <!-- 1. Real-time Monitoring Section -->
+                <section class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 print:shadow-none print:border-none">
+                <div class="p-6 md:p-8 lg:p-10">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-orange-100 p-2 rounded-lg">
+                            <i data-lucide="wind" class="text-orange-600 w-6 h-6 md:w-8 md:h-8"></i>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-bold text-slate-800">การเฝ้าระวังค่าฝุ่น PM2.5 (Real-time)</h3>
+                    </div>
+                    </div>
+                    
+                    <!-- Header Text -->
+                    <div class="mb-8 border-b border-slate-100 pb-6 text-center lg:text-left">
+                        <p class="text-slate-700 text-lg md:text-xl font-medium">
+                        จุดตรวจวัด: <span class="font-bold text-emerald-700">โรงพยาบาลสันทราย</span>
+                        </p>
+                        <p class="text-slate-500 mt-2 text-base md:text-lg">
+                        สนับสนุนเครื่อง DustBoy โดย คณะวิศวกรรมศาสตร์ มหาวิทยาลัยเชียงใหม่
+                        </p>
+                    </div>
+                    
+                    <!-- Grid Layout -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 xl:gap-16 items-start mb-8">
+                    
+                    <!-- Left Column: Web Preview -->
+                    <div class="flex flex-col items-center w-full space-y-4 lg:col-span-2">
+                        <h4 class="font-bold text-slate-700 text-lg flex items-center bg-slate-50 px-4 py-2 rounded-full">
+                            <i data-lucide="smartphone" class="w-5 h-5 mr-2 text-emerald-600"></i>
+                            หน้าเว็บไซต์ (Dashboard)
+                        </h4>
+                        <!-- Iframe Wrapper -->
+                        <div class="w-full h-[700px] max-w-full mx-auto rounded-xl overflow-hidden shadow-2xl border-4 border-slate-100 bg-white">
+                            <iframe 
+                                src="https://pm25-sansai-dashboard-tuc6yczy4hhl8vbmxdyxcp.streamlit.app/?embed=true&embed_options=light_theme" 
+                                title="PM2.5 Dashboard"
+                                class="w-full h-full"
+                                style="border: none;"
+                                allowfullscreen
+                            ></iframe>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Report Card Only -->
+                    <div class="flex flex-col items-center w-full space-y-6 lg:pt-4">
+                        <div class="flex flex-col items-center w-full">
+                            <h4 class="font-bold text-slate-700 text-lg flex items-center mb-4 bg-slate-50 px-4 py-2 rounded-full">
+                                <i data-lucide="download" class="w-5 h-5 mr-2 text-emerald-600"></i>
+                                รูปรายงานผล (ดาวน์โหลดได้จากเวป)
+                            </h4>
+                            <div class="relative group w-full max-w-xs mx-auto shadow-xl rounded-xl overflow-hidden border border-slate-200">
+                                <img 
+                                    src="https://i.postimg.cc/qMTCvMHp/pm25-report-20260114-0413.png" 
+                                    alt="รายงานสถานการณ์ฝุ่น PM2.5 รพ.สันทราย" 
+                                    class="w-full h-auto object-cover"
+                                />
+                            </div>
+                            <p class="text-base text-slate-500 mt-3 text-center px-4">
+                                *ท่านสามารถกดรับรูปรายงานผลแบบนี้ได้ที่หน้า Dashboard
+                            </p>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- QR Code & Link Section -->
+                    <div class="w-full bg-slate-50/80 p-6 md:p-8 rounded-2xl border border-slate-200 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 backdrop-blur-sm">
+                        
+                        <div class="flex flex-col md:flex-row items-center gap-6">
+                            <div class="text-center md:text-right flex flex-col items-center md:items-end">
+                                <p class="font-bold text-slate-800 text-lg md:text-xl mb-1">เข้าใช้งานระบบ</p>
+                                <p class="text-slate-600 font-medium text-base">สแกนเพื่อดูค่าฝุ่น Real-time</p>
+                                <button 
+                                    onclick="openZoom('https://i.postimg.cc/9fnJ6wS3/rad-b-PM2-5-rph-s-nth-ray.png')"
+                                    class="text-emerald-600 text-sm mt-2 flex items-center hover:text-emerald-700 hover:underline transition-colors"
+                                >
+                                    <i data-lucide="maximize-2" class="w-4 h-4 mr-1"></i>
+                                    (คลิกรูปเพื่อขยาย)
+                                </button>
+                            </div>
+                            
+                            <div 
+                                class="bg-white p-3 border border-slate-200 rounded-xl shadow-sm w-40 h-40 flex items-center justify-center cursor-zoom-in hover:shadow-md hover:scale-105 transition-all duration-300 group"
+                                onclick="openZoom('https://i.postimg.cc/9fnJ6wS3/rad-b-PM2-5-rph-s-nth-ray.png')"
+                                title="คลิกเพื่อขยาย QR Code"
+                            >
+                                <img 
+                                    src="https://i.postimg.cc/9fnJ6wS3/rad-b-PM2-5-rph-s-nth-ray.png" 
+                                    alt="QR Code Dashboard" 
+                                    class="w-full h-full object-contain"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="hidden md:block w-px h-24 bg-slate-300"></div>
+
+                        <div class="w-full max-w-xs text-center md:text-left">
+                            <a 
+                            href="https://pm25-sansai-dashboard-tuc6yczy4hhl8vbmxdyxcp.streamlit.app/" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            class="flex items-center justify-center w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-emerald-200 hover:-translate-y-1 group print:hidden"
+                            >
+                            เปิด Dashboard
+                            <i data-lucide="external-link" class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                            </a>
+                            <p class="text-sm text-slate-400 mt-3 font-mono break-all px-2">
+                                pm25-sansai-dashboard.streamlit.app
                             </p>
                         </div>
                     </div>
 
-                    {/* TAB NAVIGATION */}
-                    <div className="w-full max-w-4xl mx-auto px-4 mb-8 print:hidden">
-                        <div className="flex justify-center p-1 bg-slate-200/60 backdrop-blur-sm rounded-full shadow-inner overflow-hidden">
-                            <button 
-                                onClick={() => setActiveTab('dashboard')}
-                                className={`flex-1 py-3 px-6 rounded-full text-sm md:text-base font-bold transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === 'dashboard' ? 'bg-white text-emerald-600 shadow-md transform scale-100' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                            >
-                                <Activity className="w-5 h-5" />
-                                <span className="hidden sm:inline">แผนการดำเนินงาน (Dashboard)</span>
-                                <span className="sm:hidden">Dashboard</span>
-                            </button>
-                            <button 
-                                onClick={() => setActiveTab('flow')}
-                                className={`flex-1 py-3 px-6 rounded-full text-sm md:text-base font-bold transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === 'flow' ? 'bg-white text-blue-600 shadow-md transform scale-100' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                            >
-                                <Share2 className="w-5 h-5" />
-                                <span className="hidden sm:inline">Flow การให้บริการ</span>
-                                <span className="sm:hidden">Flow</span>
-                            </button>
-                        </div>
+                </div>
+                </section>
+
+                <!-- 2. Service / Clinic Section -->
+                <section class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 print:break-inside-avoid">
+                <div class="p-6 md:p-8 lg:p-10">
+                    <div class="flex items-center space-x-3 mb-6">
+                    <div class="bg-red-100 p-2 rounded-lg">
+                        <i data-lucide="heart-pulse" class="text-red-600 w-6 h-6 md:w-8 md:h-8"></i>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-800">คลินิกมลพิษ (บริการเชิงรับ)</h3>
                     </div>
 
-                    {/* Main Content Area */}
-                    <main className="w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-                        
-                        {/* ================= TAB: DASHBOARD ================= */}
-                        <div className={activeTab === 'dashboard' ? 'block animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8' : 'hidden'}>
-                            {/* 0. PHEOC Section */}
-                            <section className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 print:break-inside-avoid relative">
-                                {/* Decorative element */}
-                                <div className="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
-                                
-                                <div className="p-6 md:p-8 lg:p-10">
-                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
-                                        <div className="flex items-center space-x-3">
-                                            <div className="bg-blue-100 p-2.5 rounded-xl">
-                                                <ShieldAlert className="text-blue-600 w-7 h-7 md:w-8 md:h-8" />
-                                            </div>
-                                            <h3 className="text-xl md:text-2xl font-bold text-slate-800">การเปิดศูนย์ปฏิบัติการฉุกเฉิน (PHEOC)</h3>
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {/* Province Level */}
-                                        <div className="bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-200 p-6 rounded-2xl flex items-center space-x-5 hover:shadow-md transition-shadow">
-                                            <div className="bg-blue-600 text-white p-4 rounded-full shadow-sm">
-                                                <Activity className="w-6 h-6" />
-                                            </div>
-                                            <div>
-                                                <p className="text-sm md:text-base text-slate-500 font-medium mb-1">ระดับจังหวัดเชียงใหม่</p>
-                                                <p className="text-xl md:text-2xl font-bold text-slate-800">12 มกราคม 2569</p>
-                                            </div>
-                                        </div>
-                                        
-                                        {/* Health Region Level */}
-                                        <div className="bg-gradient-to-br from-slate-50 to-sky-50/30 border border-slate-200 p-6 rounded-2xl flex items-center space-x-5 hover:shadow-md transition-shadow">
-                                            <div className="bg-sky-600 text-white p-4 rounded-full shadow-sm">
-                                                <Activity className="w-6 h-6" />
-                                            </div>
-                                            <div>
-                                                <p className="text-sm md:text-base text-slate-500 font-medium mb-1">ระดับเขตสุขภาพที่ 1</p>
-                                                <p className="text-xl md:text-2xl font-bold text-slate-800">4 มีนาคม 2569</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-
-                            {/* 1. Real-time Monitoring Section */}
-                            <section className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 print:shadow-none print:border-none">
-                            <div className="p-6 md:p-8 lg:p-10">
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-                                <div className="flex items-center space-x-3">
-                                    <div className="bg-orange-100 p-2 rounded-lg">
-                                    <Wind className="text-orange-600 w-6 h-6 md:w-8 md:h-8" />
-                                    </div>
-                                    <h3 className="text-xl md:text-2xl font-bold text-slate-800">การเฝ้าระวังค่าฝุ่น PM2.5 (Real-time)</h3>
-                                </div>
-                                </div>
-                                
-                                {/* Header Text */}
-                                <div className="mb-8 border-b border-slate-100 pb-6 text-center lg:text-left">
-                                    <p className="text-slate-700 text-lg md:text-xl font-medium">
-                                    จุดตรวจวัด: <span className="font-bold text-emerald-700">โรงพยาบาลสันทราย</span>
-                                    </p>
-                                    <p className="text-slate-500 mt-2 text-base md:text-lg">
-                                    สนับสนุนเครื่อง DustBoy โดย คณะวิศวกรรมศาสตร์ มหาวิทยาลัยเชียงใหม่
-                                    </p>
-                                </div>
-                                
-                                {/* Grid Layout */}
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 xl:gap-16 items-start mb-8">
-                                
-                                {/* Left Column: Web Preview */}
-                                <div className="flex flex-col items-center w-full space-y-4 lg:col-span-2">
-                                    <h4 className="font-bold text-slate-700 text-lg flex items-center bg-slate-50 px-4 py-2 rounded-full">
-                                        <Smartphone className="w-5 h-5 mr-2 text-emerald-600" />
-                                        หน้าเว็บไซต์ (Dashboard)
-                                    </h4>
-                                    {/* Iframe Wrapper */}
-                                    <div className="w-full h-[700px] max-w-full mx-auto rounded-xl overflow-hidden shadow-2xl border-4 border-slate-100 bg-white">
-                                        <iframe 
-                                            src="https://pm25-sansai-dashboard-tuc6yczy4hhl8vbmxdyxcp.streamlit.app/?embed=true&embed_options=light_theme" 
-                                            title="PM2.5 Dashboard"
-                                            className="w-full h-full"
-                                            style={{ border: 'none' }}
-                                            allowFullScreen
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Right Column: Report Card Only */}
-                                <div className="flex flex-col items-center w-full space-y-6 lg:pt-4">
-                                    <div className="flex flex-col items-center w-full">
-                                        <h4 className="font-bold text-slate-700 text-lg flex items-center mb-4 bg-slate-50 px-4 py-2 rounded-full">
-                                            <Download className="w-5 h-5 mr-2 text-emerald-600" />
-                                            รูปรายงานผล (ดาวน์โหลดได้จากเวป)
-                                        </h4>
-                                        <div className="relative group w-full max-w-xs mx-auto shadow-xl rounded-xl overflow-hidden border border-slate-200">
-                                            <img 
-                                                src="https://i.postimg.cc/qMTCvMHp/pm25-report-20260114-0413.png" 
-                                                alt="รายงานสถานการณ์ฝุ่น PM2.5 รพ.สันทราย" 
-                                                className="w-full h-auto object-cover"
-                                            />
-                                        </div>
-                                        <p className="text-base text-slate-500 mt-3 text-center px-4">
-                                            *ท่านสามารถกดรับรูปรายงานผลแบบนี้ได้ที่หน้า Dashboard
-                                        </p>
-                                    </div>
-                                </div>
-                                </div>
-
-                                {/* QR Code & Link Section */}
-                                <div className="w-full bg-slate-50/80 p-6 md:p-8 rounded-2xl border border-slate-200 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 backdrop-blur-sm">
-                                    
-                                    <div className="flex flex-col md:flex-row items-center gap-6">
-                                        <div className="text-center md:text-right flex flex-col items-center md:items-end">
-                                            <p className="font-bold text-slate-800 text-lg md:text-xl mb-1">เข้าใช้งานระบบ</p>
-                                            <p className="text-slate-600 font-medium text-base">สแกนเพื่อดูค่าฝุ่น Real-time</p>
-                                            <button 
-                                                onClick={() => setZoomedImage('https://i.postimg.cc/9fnJ6wS3/rad-b-PM2-5-rph-s-nth-ray.png')}
-                                                className="text-emerald-600 text-sm mt-2 flex items-center hover:text-emerald-700 hover:underline transition-colors"
-                                            >
-                                                <Maximize2 className="w-4 h-4 mr-1" />
-                                                (คลิกรูปเพื่อขยาย)
-                                            </button>
-                                        </div>
-                                        
-                                        <div 
-                                            className="bg-white p-3 border border-slate-200 rounded-xl shadow-sm w-40 h-40 flex items-center justify-center cursor-zoom-in hover:shadow-md hover:scale-105 transition-all duration-300 group"
-                                            onClick={() => setZoomedImage('https://i.postimg.cc/9fnJ6wS3/rad-b-PM2-5-rph-s-nth-ray.png')}
-                                            title="คลิกเพื่อขยาย QR Code"
-                                        >
-                                            <img 
-                                                src="https://i.postimg.cc/9fnJ6wS3/rad-b-PM2-5-rph-s-nth-ray.png" 
-                                                alt="QR Code Dashboard" 
-                                                className="w-full h-full object-contain"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="hidden md:block w-px h-24 bg-slate-300"></div>
-
-                                    <div className="w-full max-w-xs text-center md:text-left">
-                                        <a 
-                                        href="https://pm25-sansai-dashboard-tuc6yczy4hhl8vbmxdyxcp.streamlit.app/" 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="flex items-center justify-center w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg hover:shadow-emerald-200 hover:-translate-y-1 group print:hidden"
-                                        >
-                                        เปิด Dashboard
-                                        <ExternalLink className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                        </a>
-                                        <p className="text-sm text-slate-400 mt-3 font-mono break-all px-2">
-                                            pm25-sansai-dashboard.streamlit.app
-                                        </p>
-                                    </div>
-                                </div>
-
-                            </div>
-                            </section>
-
-                            {/* 2. Service / Clinic Section */}
-                            <section className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 print:break-inside-avoid">
-                            <div className="p-6 md:p-8 lg:p-10">
-                                <div className="flex items-center space-x-3 mb-6">
-                                <div className="bg-red-100 p-2 rounded-lg">
-                                    <HeartPulse className="text-red-600 w-6 h-6 md:w-8 md:h-8" />
-                                </div>
-                                <h3 className="text-xl md:text-2xl font-bold text-slate-800">คลินิกมลพิษ (บริการเชิงรับ)</h3>
-                                </div>
-
-                                <div className="flex flex-col items-center">
-                                    <div className="text-slate-600 mb-8 text-center max-w-4xl mx-auto space-y-4">
-                                        <p className="text-lg md:text-xl leading-relaxed font-medium">
-                                            คลินิกมลพิษ ซึ่งประชาชนทั่วไปสามารถนัดหมายได้ง่ายผ่านหมอพร้อม เปิดให้บริการนัดหมาย จันทร์-ศุกร์ 8.00-14.00 น. ไม่ว่าจะเป็นทางแอพพลิเคชั่น หมอพร้อม หรือทางไลน์ หมอพร้อม ดังรูป
-                                        </p>
-                                    </div>
-                                
-                                    <div className="w-full max-w-6xl bg-slate-50 rounded-2xl p-4 md:p-6 border border-slate-100 shadow-inner flex justify-center">
-                                    <div className="relative w-full rounded-lg overflow-hidden shadow-md">
-                                        <img 
-                                            src="https://i.postimg.cc/R0DP1WxQ/hmx-phr-xm.png" 
-                                            alt="ช่องทางการนัดหมายหมอพร้อม" 
-                                            className="w-full h-auto object-contain"
-                                        />
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            </section>
-
-                            {/* 3. Health Checks */}
-                            <div className="print:break-inside-avoid">
-                                {/* Volunteer Check */}
-                                <section className="bg-white rounded-2xl shadow-lg border-t-8 border-indigo-500 p-6 md:p-8 flex flex-col h-full hover:shadow-xl transition-shadow relative">
-                                    <div className="flex items-center mb-8 border-b border-slate-100 pb-6">
-                                        <div className="bg-indigo-100 p-3.5 rounded-xl mr-4">
-                                            <Users className="w-8 h-8 text-indigo-600" />
-                                        </div>
-                                        <h3 className="text-xl md:text-2xl font-bold text-slate-800">สรุปผลการตรวจสุขภาพอาสาสมัครดับไฟป่า</h3>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                                        <div className="flex items-start bg-slate-50 p-5 rounded-xl border border-slate-100">
-                                            <Calendar className="w-6 h-6 text-indigo-400 mr-4 mt-0.5" />
-                                            <div>
-                                                <span className="block text-sm text-slate-500 font-bold uppercase tracking-wide mb-1">วันที่ตรวจ</span>
-                                                <span className="text-lg font-semibold text-slate-800">2 กุมภาพันธ์ 2569</span>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start bg-slate-50 p-5 rounded-xl border border-slate-100">
-                                            <Activity className="w-6 h-6 text-indigo-400 mr-4 mt-0.5" />
-                                            <div>
-                                                <span className="block text-sm text-slate-500 font-bold uppercase tracking-wide mb-1">หน่วยงานและสถานที่</span>
-                                                <span className="text-base font-semibold text-slate-800 block">โดยทีม สสอ.สันทราย และ โรงพยาบาลสันทราย</span>
-                                                <span className="block text-sm text-slate-600 mt-1">ณ ที่ว่าการอำเภอสันทราย</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 md:p-8 rounded-2xl border border-indigo-100">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center text-center">
-                                            <div className="bg-white p-6 rounded-xl shadow-sm border border-indigo-50/50 flex flex-col justify-center h-full">
-                                                <span className="block text-base text-slate-600 font-medium mb-3">จำนวนผู้เข้ารับการตรวจรวม</span>
-                                                <div className="flex items-baseline justify-center">
-                                                    <span className="text-5xl font-extrabold text-indigo-700">128</span>
-                                                    <span className="text-indigo-600 ml-2 font-medium text-lg">คน</span>
-                                                </div>
-                                            </div>
-                                            <div className="bg-white p-6 rounded-xl shadow-sm border border-emerald-50/50 flex flex-col justify-center h-full relative overflow-hidden">
-                                                <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-100 rounded-bl-full -z-10 opacity-50"></div>
-                                                <span className="block text-base text-slate-600 font-medium mb-3">สุขภาพเหมาะสมสำหรับการเป็น<br className="hidden md:block"/>ด่านหน้าผจญเพลิง</span>
-                                                <div className="flex flex-col items-center justify-center">
-                                                    <div className="flex items-baseline">
-                                                        <span className="text-5xl font-extrabold text-emerald-600">68</span>
-                                                        <span className="text-emerald-600 ml-2 font-medium text-lg">คน</span>
-                                                    </div>
-                                                    <span className="text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full text-sm font-bold mt-2">
-                                                        คิดเป็น 53.1%
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </section>
-                            </div>
+                    <div class="flex flex-col items-center">
+                        <div class="text-slate-600 mb-8 text-center max-w-4xl mx-auto space-y-4">
+                            <p class="text-lg md:text-xl leading-relaxed font-medium">
+                                คลินิกมลพิษ ซึ่งประชาชนทั่วไปสามารถนัดหมายได้ง่ายผ่านหมอพร้อม เปิดให้บริการนัดหมาย จันทร์-ศุกร์ 8.00-14.00 น. ไม่ว่าจะเป็นทางแอพพลิเคชั่น หมอพร้อม หรือทางไลน์ หมอพร้อม ดังรูป
+                            </p>
                         </div>
-
-                        {/* ================= TAB: FLOW CHART ================= */}
-                        <div className={activeTab === 'flow' ? 'block animate-in fade-in slide-in-from-bottom-4 duration-500' : 'hidden'}>
-                            <section className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
-                                
-                                {/* Flow Header */}
-                                <div className="bg-gradient-to-r from-blue-900 to-indigo-800 text-white p-8 text-center relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-1/3 -translate-y-1/3"></div>
-                                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-white opacity-5 rounded-full transform -translate-x-1/2 translate-y-1/2"></div>
-                                    
-                                    <h2 className="text-3xl md:text-4xl font-extrabold mb-3 relative z-10 tracking-wide">Flow การให้บริการ</h2>
-                                    <p className="text-blue-100 text-lg md:text-xl font-medium relative z-10 max-w-2xl mx-auto">
-                                        กรณีผู้ป่วยสงสัยตนเอง/ญาติได้รับผลกระทบจาก PM 2.5 จังหวัดเชียงใหม่
-                                    </p>
-                                </div>
-
-                                <div className="p-6 md:p-10 bg-slate-50/50">
-                                    
-                                    {/* Entry Points Split */}
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 relative">
-                                        
-                                        {/* Path 1: Online */}
-                                        <div className="flex flex-col items-center">
-                                            {/* Step Header */}
-                                            <div className="w-full text-center mb-6 relative">
-                                                <div className="absolute inset-0 flex items-center justify-center">
-                                                    <div className="w-full border-t-2 border-blue-200"></div>
-                                                </div>
-                                                <div className="relative inline-flex items-center justify-center bg-blue-100 border-2 border-blue-300 rounded-full px-6 py-2 shadow-sm">
-                                                    <span className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mr-3">1</span>
-                                                    <h3 className="text-xl font-bold text-blue-900">ปรึกษาออนไลน์</h3>
-                                                </div>
-                                            </div>
-
-                                            <FlowIconWrapper icon={MonitorSmartphone} colorClass="bg-blue-100 text-blue-600" />
-                                            <div className="flow-line-vertical"></div>
-                                            
-                                            <div className="w-full max-w-sm">
-                                                <FlowCard 
-                                                    desc="ผ่านระบบหมอพร้อม / telemedicine ของโรงพยาบาล" 
-                                                    bgColor="bg-white" colorBorder="border-slate-200"
-                                                />
-                                            </div>
-                                            
-                                            <div className="flow-line-vertical"></div>
-                                            
-                                            <div className="w-full max-w-sm">
-                                                <FlowCard 
-                                                    title="ทำการคัดกรอง" 
-                                                    bgColor="bg-blue-50" colorBorder="border-blue-200" highlight
-                                                />
-                                            </div>
-
-                                            <div className="flow-line-vertical h-8 relative">
-                                                <div className="absolute bottom-0 left-1/2 w-[90%] -translate-x-1/2 border-t-2 border-slate-300"></div>
-                                            </div>
-
-                                            {/* Sub-branches for Online */}
-                                            <div className="w-full max-w-md grid grid-cols-2 gap-4 mt-2">
-                                                {/* Mild */}
-                                                <div className="flex flex-col">
-                                                    <div className="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                                    <FlowCard 
-                                                        title="ไม่เข้าข่าย / อาการเล็กน้อย" 
-                                                        bgColor="bg-green-50" colorBorder="border-green-400"
-                                                        icon={<CheckCircle2 className="text-green-500 w-5 h-5 mx-auto" />}
-                                                    />
-                                                    <div className="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                                    <FlowCard 
-                                                        desc="ให้คำแนะนำการปฏิบัติตัว และส่งต่อทีม 3 หมอ" 
-                                                        bgColor="bg-white" colorBorder="border-green-200"
-                                                    />
-                                                </div>
-                                                
-                                                {/* Suspected */}
-                                                <div className="flex flex-col">
-                                                    <div className="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                                    <FlowCard 
-                                                        title="เข้าข่าย มีอาการที่สงสัย" 
-                                                        bgColor="bg-orange-50" colorBorder="border-orange-400"
-                                                        icon={<AlertCircle className="text-orange-500 w-5 h-5 mx-auto" />}
-                                                    />
-                                                    <div className="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                                    <div className="flex-1 bg-white border-2 border-orange-200 rounded-xl p-3 flex flex-col justify-center text-sm shadow-sm">
-                                                        <div className="flex items-start mb-2">
-                                                            <span className="bg-orange-100 text-orange-800 font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 mr-2 text-xs mt-0.5">1</span>
-                                                            <p className="text-slate-700">ส่งต่อเข้ารับบริการที่ รพ./รพ.สต.</p>
-                                                        </div>
-                                                        <div className="flex items-start">
-                                                            <span className="bg-orange-100 text-orange-800 font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 mr-2 text-xs mt-0.5">2</span>
-                                                            <p className="text-slate-700">ถ้าอาการรุนแรง ประสาน <span className="font-bold text-red-600">1669</span></p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Path 2: On-site */}
-                                        <div className="flex flex-col items-center mt-12 lg:mt-0">
-                                            {/* Step Header */}
-                                            <div className="w-full text-center mb-6 relative">
-                                                <div className="absolute inset-0 flex items-center justify-center">
-                                                    <div className="w-full border-t-2 border-purple-200"></div>
-                                                </div>
-                                                <div className="relative inline-flex items-center justify-center bg-purple-100 border-2 border-purple-300 rounded-full px-6 py-2 shadow-sm">
-                                                    <span className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold mr-3">2</span>
-                                                    <h3 className="text-xl font-bold text-purple-900">เข้ารับบริการที่ รพ./รพ.สต.</h3>
-                                                </div>
-                                            </div>
-
-                                            <FlowIconWrapper icon={Hospital} colorClass="bg-purple-100 text-purple-600" />
-                                            <div className="flow-line-vertical"></div>
-
-                                            <div className="w-full max-w-sm">
-                                                <FlowCard 
-                                                    desc="เจ้าหน้าที่ซักประวัติ/อาการเบื้องต้น และลงแบบคัดกรองสอบสวนโรคที่เกิดจาก PM2.5" 
-                                                    bgColor="bg-purple-50" colorBorder="border-purple-200"
-                                                />
-                                            </div>
-                                            
-                                            <div className="flow-line-vertical h-8 relative">
-                                                <div className="absolute bottom-0 left-1/6 right-1/6 w-2/3 mx-auto border-t-2 border-slate-300"></div>
-                                            </div>
-
-                                            {/* Sub-branches for On-site */}
-                                            <div className="w-full grid grid-cols-3 gap-2 sm:gap-4 mt-2">
-                                                {/* Safe */}
-                                                <div className="flex flex-col">
-                                                    <div className="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                                    <FlowCard 
-                                                        title="กรณีไม่เข้าข่าย" 
-                                                        bgColor="bg-blue-50" colorBorder="border-blue-400"
-                                                    />
-                                                    <div className="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                                    <FlowCard 
-                                                        desc="ส่งตรวจคลินิกตามอาการของโรค" 
-                                                        bgColor="bg-white" colorBorder="border-slate-200"
-                                                    />
-                                                </div>
-                                                
-                                                {/* Moderate */}
-                                                <div className="flex flex-col relative z-20">
-                                                    <div className="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                                    <div className="relative h-full flex flex-col">
-                                                        <FlowCard 
-                                                            title="เข้าข่าย อาการเล็กน้อย / ปานกลาง" 
-                                                            bgColor="bg-orange-100" colorBorder="border-orange-400" highlight
-                                                        />
-                                                        {/* This specific branch connects straight down to pollution clinic */}
-                                                        <div className="mx-auto w-[4px] h-12 bg-orange-400 my-2 shadow-[0_0_10px_rgba(251,146,60,0.5)]"></div>
-                                                    </div>
-                                                </div>
-
-                                                {/* Severe */}
-                                                <div className="flex flex-col">
-                                                    <div className="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                                    <FlowCard 
-                                                        title="ผู้ป่วย อาการรุนแรง" 
-                                                        bgColor="bg-red-50" colorBorder="border-red-400"
-                                                    />
-                                                    <div className="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                                    <FlowCard 
-                                                        title="ส่งเข้าห้องฉุกเฉิน" 
-                                                        bgColor="bg-red-100" colorBorder="border-red-200"
-                                                    />
-                                                    <div className="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                                    <FlowCard 
-                                                        title="ส่ง REFER" 
-                                                        bgColor="bg-red-500" colorBorder="border-red-600"
-                                                    />
-                                                    {/* Text color fix for the red box */}
-                                                    <style>{`.bg-red-500 h4 { color: white; }`}</style>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Visual connection indication from Online to Onsite */}
-                                        <div className="hidden lg:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32">
-                                            <div className="flex flex-col items-center opacity-40">
-                                                <ArrowRightLeft className="w-8 h-8 text-slate-400" />
-                                                <span className="text-xs text-slate-400 font-medium text-center mt-1">ส่งต่อผู้ป่วย</span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                    {/* Merged Path: Pollution Clinic */}
-                                    <div className="max-w-3xl mx-auto mt-6">
-                                        
-                                        <div className="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-300 rounded-3xl p-6 sm:p-8 shadow-lg relative text-center">
-                                            {/* Top connector arrow */}
-                                            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white rounded-full p-1 shadow-md">
-                                                <ArrowDown className="w-6 h-6" />
-                                            </div>
-
-                                            <div className="flex items-center justify-center mb-4">
-                                                <div className="bg-orange-100 p-3 rounded-full mr-3 text-orange-600">
-                                                    <Stethoscope className="w-8 h-8" />
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-2xl font-bold text-orange-900 leading-tight">ส่งเข้าคลินิกมลพิษ เฉพาะ รพ.</h3>
-                                                    <p className="text-orange-700 font-medium">(กรณี รพ.สต. ให้ส่งต่อ รพ.)</p>
-                                                </div>
-                                            </div>
-
-                                            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 mb-4 border border-orange-200 inline-block w-full max-w-lg mx-auto">
-                                                <p className="font-semibold text-slate-800 text-lg">
-                                                    ซักประวัติ / ตรวจร่างกาย / ตรวจทางห้องปฏิบัติการ โดยแพทย์/สหวิชาชีพ
-                                                </p>
-                                            </div>
-
-                                            <div className="flex justify-center my-3">
-                                                <ArrowDown className="w-6 h-6 text-orange-400" />
-                                            </div>
-
-                                            <div className="bg-white rounded-xl py-3 px-8 inline-block shadow-sm border border-slate-200">
-                                                <p className="font-bold text-lg text-slate-800">วางแผนการรักษา</p>
-                                            </div>
-                                            
-                                            <div className="w-full relative mt-6 pt-4">
-                                                {/* Horizontal connecting line for outcomes */}
-                                                <div className="absolute top-0 left-1/6 right-1/6 w-2/3 mx-auto border-t-2 border-slate-300"></div>
-                                                
-                                                <div className="grid grid-cols-3 gap-4">
-                                                    <div className="flex flex-col items-center">
-                                                        <div className="w-[2px] h-4 bg-slate-300 -mt-4 mb-2"></div>
-                                                        <FlowCard title="ให้ยากลับบ้าน" bgColor="bg-amber-100" colorBorder="border-amber-300" icon={<Pills className="w-6 h-6 text-amber-600" />} />
-                                                    </div>
-                                                    <div className="flex flex-col items-center">
-                                                        <div className="w-[2px] h-4 bg-slate-300 -mt-4 mb-2"></div>
-                                                        <FlowCard title="Admit ให้การรักษา" bgColor="bg-amber-100" colorBorder="border-amber-300" icon={<BedDouble className="w-6 h-6 text-amber-600" />} />
-                                                    </div>
-                                                    <div className="flex flex-col items-center">
-                                                        <div className="w-[2px] h-4 bg-slate-300 -mt-4 mb-2"></div>
-                                                        <FlowCard title="ส่ง REFER" bgColor="bg-red-500" colorBorder="border-red-600" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Post Care Section */}
-                                        <div className="flex flex-col items-center mt-6">
-                                            {/* Connectors from Admit/Home to Post Care */}
-                                            <div className="w-1/2 border-t-2 border-slate-300 h-8 border-l-2 border-r-2 rounded-t-xl relative">
-                                                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full w-[2px] h-8 bg-slate-300"></div>
-                                            </div>
-                                            
-                                            <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 w-full max-w-xl shadow-md flex items-start mt-8">
-                                                <div className="bg-blue-100 p-4 rounded-xl text-blue-700 mr-5 shrink-0 hidden sm:block">
-                                                    <Home className="w-10 h-10" />
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-bold text-lg text-blue-900 mb-3 flex items-center sm:hidden">
-                                                        <Home className="w-6 h-6 mr-2" /> การดูแลต่อเนื่อง
-                                                    </h4>
-                                                    <ul className="space-y-3 text-slate-700 font-medium">
-                                                        <li className="flex items-start">
-                                                            <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mr-3 text-sm mt-0.5">1</span>
-                                                            ให้คำปรึกษาก่อนกลับบ้าน
-                                                        </li>
-                                                        <li className="flex items-start">
-                                                            <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mr-3 text-sm mt-0.5">2</span>
-                                                            เยี่ยมบ้านโดยทีม 3 หมอ และ อปท.
-                                                        </li>
-                                                        <li className="flex items-start">
-                                                            <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mr-3 text-sm mt-0.5">3</span>
-                                                            ประเมินสภาพที่อยู่ซ้ำให้เหมาะสมกับผู้ป่วย
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </section>
+                    
+                        <div class="w-full max-w-6xl bg-slate-50 rounded-2xl p-4 md:p-6 border border-slate-100 shadow-inner flex justify-center">
+                        <div class="relative w-full rounded-lg overflow-hidden shadow-md">
+                            <img 
+                                src="https://i.postimg.cc/R0DP1WxQ/hmx-phr-xm.png" 
+                                alt="ช่องทางการนัดหมายหมอพร้อม" 
+                                class="w-full h-auto object-contain"
+                            />
                         </div>
-
-                    </main>
-
-                    {/* Footer */}
-                    <footer className="bg-slate-800 text-slate-300 py-12 mt-12 print:hidden">
-                        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-                            <h5 className="font-bold text-white text-lg md:text-xl">กลุ่มงานอาชีวเวชกรรม โรงพยาบาลสันทราย</h5>
-                            <div className="pt-6 border-t border-slate-700 mt-6 text-xs text-slate-500">
-                                © 2026 Sansai Hospital PM2.5 Action Plan. All rights reserved.
-                            </div>
-                        </div>
-                    </footer>
+                    </div>
+                    </div>
                 </div>
-            );
-        };
+                </section>
 
-        const root = createRoot(document.getElementById('root'));
-        root.render(<App />);
+                <!-- 3. Health Checks -->
+                <div class="print:break-inside-avoid">
+                    <!-- Volunteer Check -->
+                    <section class="bg-white rounded-2xl shadow-lg border-t-8 border-indigo-500 p-6 md:p-8 flex flex-col h-full hover:shadow-xl transition-shadow relative">
+                        <div class="flex items-center mb-8 border-b border-slate-100 pb-6">
+                            <div class="bg-indigo-100 p-3.5 rounded-xl mr-4">
+                                <i data-lucide="users" class="w-8 h-8 text-indigo-600"></i>
+                            </div>
+                            <h3 class="text-xl md:text-2xl font-bold text-slate-800">สรุปผลการตรวจสุขภาพอาสาสมัครดับไฟป่า</h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div class="flex items-start bg-slate-50 p-5 rounded-xl border border-slate-100">
+                                <i data-lucide="calendar" class="w-6 h-6 text-indigo-400 mr-4 mt-0.5"></i>
+                                <div>
+                                    <span class="block text-sm text-slate-500 font-bold uppercase tracking-wide mb-1">วันที่ตรวจ</span>
+                                    <span class="text-lg font-semibold text-slate-800">2 กุมภาพันธ์ 2569</span>
+                                </div>
+                            </div>
+                            <div class="flex items-start bg-slate-50 p-5 rounded-xl border border-slate-100">
+                                <i data-lucide="activity" class="w-6 h-6 text-indigo-400 mr-4 mt-0.5"></i>
+                                <div>
+                                    <span class="block text-sm text-slate-500 font-bold uppercase tracking-wide mb-1">หน่วยงานและสถานที่</span>
+                                    <span class="text-base font-semibold text-slate-800 block">โดยทีม สสอ.สันทราย และ โรงพยาบาลสันทราย</span>
+                                    <span class="block text-sm text-slate-600 mt-1">ณ ที่ว่าการอำเภอสันทราย</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 md:p-8 rounded-2xl border border-indigo-100">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center text-center">
+                                <div class="bg-white p-6 rounded-xl shadow-sm border border-indigo-50/50 flex flex-col justify-center h-full">
+                                    <span class="block text-base text-slate-600 font-medium mb-3">จำนวนผู้เข้ารับการตรวจรวม</span>
+                                    <div class="flex items-baseline justify-center">
+                                        <span class="text-5xl font-extrabold text-indigo-700">128</span>
+                                        <span class="text-indigo-600 ml-2 font-medium text-lg">คน</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl shadow-sm border border-emerald-50/50 flex flex-col justify-center h-full relative overflow-hidden">
+                                    <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-100 rounded-bl-full -z-10 opacity-50"></div>
+                                    <span class="block text-base text-slate-600 font-medium mb-3">สุขภาพเหมาะสมสำหรับการเป็น<br class="hidden md:block"/>ด่านหน้าผจญเพลิง</span>
+                                    <div class="flex flex-col items-center justify-center">
+                                        <div class="flex items-baseline">
+                                            <span class="text-5xl font-extrabold text-emerald-600">68</span>
+                                            <span class="text-emerald-600 ml-2 font-medium text-lg">คน</span>
+                                        </div>
+                                        <span class="text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full text-sm font-bold mt-2">
+                                            คิดเป็น 53.1%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- ================= TAB: FLOW CHART ================= -->
+            <div id="tab-flow" class="hidden">
+                <section class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+                    
+                    <!-- Flow Header -->
+                    <div class="bg-gradient-to-r from-blue-900 to-indigo-800 text-white p-8 text-center relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-1/3 -translate-y-1/3"></div>
+                        <div class="absolute bottom-0 left-0 w-40 h-40 bg-white opacity-5 rounded-full transform -translate-x-1/2 translate-y-1/2"></div>
+                        
+                        <h2 class="text-3xl md:text-4xl font-extrabold mb-3 relative z-10 tracking-wide">Flow การให้บริการ</h2>
+                        <p class="text-blue-100 text-lg md:text-xl font-medium relative z-10 max-w-2xl mx-auto">
+                            กรณีผู้ป่วยสงสัยตนเอง/ญาติได้รับผลกระทบจาก PM 2.5 จังหวัดเชียงใหม่
+                        </p>
+                    </div>
+
+                    <div class="p-6 md:p-10 bg-slate-50/50">
+                        
+                        <!-- Entry Points Split -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 relative">
+                            
+                            <!-- Path 1: Online -->
+                            <div class="flex flex-col items-center">
+                                <!-- Step Header -->
+                                <div class="w-full text-center mb-6 relative">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="w-full border-t-2 border-blue-200"></div>
+                                    </div>
+                                    <div class="relative inline-flex items-center justify-center bg-blue-100 border-2 border-blue-300 rounded-full px-6 py-2 shadow-sm">
+                                        <span class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mr-3">1</span>
+                                        <h3 class="text-xl font-bold text-blue-900">ปรึกษาออนไลน์</h3>
+                                    </div>
+                                </div>
+
+                                <div class="p-3 rounded-full bg-blue-100 text-blue-600 shadow-sm border border-white/50 z-10 relative">
+                                    <i data-lucide="monitor-smartphone" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flow-line-vertical"></div>
+                                
+                                <div class="w-full max-w-sm">
+                                    <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-slate-200 bg-white shadow-sm transition-all hover:shadow-md text-center h-full">
+                                        <p class="text-sm text-slate-600 leading-snug">ผ่านระบบหมอพร้อม / telemedicine ของโรงพยาบาล</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flow-line-vertical"></div>
+                                
+                                <div class="w-full max-w-sm">
+                                    <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-blue-200 bg-blue-50 shadow-sm transition-all hover:shadow-md text-center h-full">
+                                        <h4 class="font-bold text-lg text-slate-800 mb-1 leading-tight">ทำการคัดกรอง</h4>
+                                    </div>
+                                </div>
+
+                                <div class="flow-line-vertical h-8 relative">
+                                    <div class="absolute bottom-0 left-1/2 w-[90%] -translate-x-1/2 border-t-2 border-slate-300"></div>
+                                </div>
+
+                                <!-- Sub-branches for Online -->
+                                <div class="w-full max-w-md grid grid-cols-2 gap-4 mt-2">
+                                    <!-- Mild -->
+                                    <div class="flex flex-col">
+                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
+                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-green-400 bg-green-50 shadow-sm transition-all hover:shadow-md text-center h-full">
+                                            <div class="mb-2"><i data-lucide="check-circle-2" class="text-green-500 w-5 h-5 mx-auto"></i></div>
+                                            <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">ไม่เข้าข่าย / อาการเล็กน้อย</h4>
+                                        </div>
+                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
+                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-green-200 bg-white shadow-sm transition-all hover:shadow-md text-center h-full">
+                                            <p class="text-sm text-slate-600 leading-snug">ให้คำแนะนำการปฏิบัติตัว และส่งต่อทีม 3 หมอ</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Suspected -->
+                                    <div class="flex flex-col">
+                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
+                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-orange-400 bg-orange-50 shadow-sm transition-all hover:shadow-md text-center h-full">
+                                            <div class="mb-2"><i data-lucide="alert-circle" class="text-orange-500 w-5 h-5 mx-auto"></i></div>
+                                            <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">เข้าข่าย มีอาการที่สงสัย</h4>
+                                        </div>
+                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
+                                        <div class="flex-1 bg-white border-2 border-orange-200 rounded-xl p-3 flex flex-col justify-center text-sm shadow-sm">
+                                            <div class="flex items-start mb-2">
+                                                <span class="bg-orange-100 text-orange-800 font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 mr-2 text-xs mt-0.5">1</span>
+                                                <p class="text-slate-700">ส่งต่อเข้ารับบริการที่ รพ./รพ.สต.</p>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <span class="bg-orange-100 text-orange-800 font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 mr-2 text-xs mt-0.5">2</span>
+                                                <p class="text-slate-700">ถ้าอาการรุนแรง ประสาน <span class="font-bold text-red-600">1669</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Path 2: On-site -->
+                            <div class="flex flex-col items-center mt-12 lg:mt-0">
+                                <!-- Step Header -->
+                                <div class="w-full text-center mb-6 relative">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="w-full border-t-2 border-purple-200"></div>
+                                    </div>
+                                    <div class="relative inline-flex items-center justify-center bg-purple-100 border-2 border-purple-300 rounded-full px-6 py-2 shadow-sm">
+                                        <span class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold mr-3">2</span>
+                                        <h3 class="text-xl font-bold text-purple-900">เข้ารับบริการที่ รพ./รพ.สต.</h3>
+                                    </div>
+                                </div>
+
+                                <div class="p-3 rounded-full bg-purple-100 text-purple-600 shadow-sm border border-white/50 z-10 relative">
+                                    <i data-lucide="hospital" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flow-line-vertical"></div>
+
+                                <div class="w-full max-w-sm">
+                                    <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-purple-200 bg-purple-50 shadow-sm transition-all hover:shadow-md text-center h-full">
+                                        <p class="text-sm text-slate-600 leading-snug">เจ้าหน้าที่ซักประวัติ/อาการเบื้องต้น และลงแบบคัดกรองสอบสวนโรคที่เกิดจาก PM2.5</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flow-line-vertical h-8 relative">
+                                    <div class="absolute bottom-0 left-1/6 right-1/6 w-2/3 mx-auto border-t-2 border-slate-300"></div>
+                                </div>
+
+                                <!-- Sub-branches for On-site -->
+                                <div class="w-full grid grid-cols-3 gap-2 sm:gap-4 mt-2">
+                                    <!-- Safe -->
+                                    <div class="flex flex-col">
+                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
+                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-blue-400 bg-blue-50 shadow-sm transition-all hover:shadow-md text-center h-full">
+                                            <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">กรณีไม่เข้าข่าย</h4>
+                                        </div>
+                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
+                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-slate-200 bg-white shadow-sm transition-all hover:shadow-md text-center h-full">
+                                            <p class="text-sm text-slate-600 leading-snug">ส่งตรวจคลินิกตามอาการของโรค</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Moderate -->
+                                    <div class="flex flex-col relative z-20">
+                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
+                                        <div class="relative h-full flex flex-col">
+                                            <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-orange-400 bg-orange-100 shadow-sm transition-all hover:shadow-md text-center h-full">
+                                                <h4 class="font-bold text-lg text-slate-800 mb-1 leading-tight">เข้าข่าย อาการเล็กน้อย / ปานกลาง</h4>
+                                            </div>
+                                            <!-- This specific branch connects straight down to pollution clinic -->
+                                            <div class="mx-auto w-[4px] h-12 bg-orange-400 my-2 shadow-[0_0_10px_rgba(251,146,60,0.5)]"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Severe -->
+                                    <div class="flex flex-col">
+                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
+                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-red-400 bg-red-50 shadow-sm transition-all hover:shadow-md text-center h-full">
+                                            <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">ผู้ป่วย อาการรุนแรง</h4>
+                                        </div>
+                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
+                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-red-200 bg-red-100 shadow-sm transition-all hover:shadow-md text-center h-full">
+                                            <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">ส่งเข้าห้องฉุกเฉิน</h4>
+                                        </div>
+                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
+                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-red-600 bg-red-500 shadow-sm transition-all hover:shadow-md text-center h-full">
+                                            <h4 class="font-bold text-base text-white mb-1 leading-tight">ส่ง REFER</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Visual connection indication from Online to Onsite -->
+                            <div class="hidden lg:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32">
+                                <div class="flex flex-col items-center opacity-40">
+                                    <i data-lucide="arrow-right-left" class="w-8 h-8 text-slate-400"></i>
+                                    <span class="text-xs text-slate-400 font-medium text-center mt-1">ส่งต่อผู้ป่วย</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Merged Path: Pollution Clinic -->
+                        <div class="max-w-3xl mx-auto mt-6">
+                            
+                            <div class="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-300 rounded-3xl p-6 sm:p-8 shadow-lg relative text-center">
+                                <!-- Top connector arrow -->
+                                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white rounded-full p-1 shadow-md">
+                                    <i data-lucide="arrow-down" class="w-6 h-6"></i>
+                                </div>
+
+                                <div class="flex items-center justify-center mb-4">
+                                    <div class="bg-orange-100 p-3 rounded-full mr-3 text-orange-600">
+                                        <i data-lucide="stethoscope" class="w-8 h-8"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-2xl font-bold text-orange-900 leading-tight">ส่งเข้าคลินิกมลพิษ เฉพาะ รพ.</h3>
+                                        <p class="text-orange-700 font-medium">(กรณี รพ.สต. ให้ส่งต่อ รพ.)</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 mb-4 border border-orange-200 inline-block w-full max-w-lg mx-auto">
+                                    <p class="font-semibold text-slate-800 text-lg">
+                                        ซักประวัติ / ตรวจร่างกาย / ตรวจทางห้องปฏิบัติการ โดยแพทย์/สหวิชาชีพ
+                                    </p>
+                                </div>
+
+                                <div class="flex justify-center my-3">
+                                    <i data-lucide="arrow-down" class="w-6 h-6 text-orange-400"></i>
+                                </div>
+
+                                <div class="bg-white rounded-xl py-3 px-8 inline-block shadow-sm border border-slate-200">
+                                    <p class="font-bold text-lg text-slate-800">วางแผนการรักษา</p>
+                                </div>
+                                
+                                <div class="w-full relative mt-6 pt-4">
+                                    <!-- Horizontal connecting line for outcomes -->
+                                    <div class="absolute top-0 left-1/6 right-1/6 w-2/3 mx-auto border-t-2 border-slate-300"></div>
+                                    
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div class="flex flex-col items-center">
+                                            <div class="w-[2px] h-4 bg-slate-300 -mt-4 mb-2"></div>
+                                            <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-amber-300 bg-amber-100 shadow-sm transition-all hover:shadow-md text-center h-full w-full">
+                                                <div class="mb-2"><i data-lucide="pills" class="w-6 h-6 text-amber-600 mx-auto"></i></div>
+                                                <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">ให้ยากลับบ้าน</h4>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col items-center">
+                                            <div class="w-[2px] h-4 bg-slate-300 -mt-4 mb-2"></div>
+                                            <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-amber-300 bg-amber-100 shadow-sm transition-all hover:shadow-md text-center h-full w-full">
+                                                <div class="mb-2"><i data-lucide="bed-double" class="w-6 h-6 text-amber-600 mx-auto"></i></div>
+                                                <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">Admit ให้การรักษา</h4>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col items-center">
+                                            <div class="w-[2px] h-4 bg-slate-300 -mt-4 mb-2"></div>
+                                            <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-red-600 bg-red-500 shadow-sm transition-all hover:shadow-md text-center h-full w-full">
+                                                <h4 class="font-bold text-base text-white mb-1 leading-tight">ส่ง REFER</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Post Care Section -->
+                            <div class="flex flex-col items-center mt-6">
+                                <!-- Connectors from Admit/Home to Post Care -->
+                                <div class="w-1/2 border-t-2 border-slate-300 h-8 border-l-2 border-r-2 rounded-t-xl relative">
+                                    <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full w-[2px] h-8 bg-slate-300"></div>
+                                </div>
+                                
+                                <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 w-full max-w-xl shadow-md flex items-start mt-8">
+                                    <div class="bg-blue-100 p-4 rounded-xl text-blue-700 mr-5 shrink-0 hidden sm:block">
+                                        <i data-lucide="home" class="w-10 h-10"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-lg text-blue-900 mb-3 flex items-center sm:hidden">
+                                            <i data-lucide="home" class="w-6 h-6 mr-2"></i> การดูแลต่อเนื่อง
+                                        </h4>
+                                        <ul class="space-y-3 text-slate-700 font-medium">
+                                            <li class="flex items-start">
+                                                <span class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mr-3 text-sm mt-0.5">1</span>
+                                                ให้คำปรึกษาก่อนกลับบ้าน
+                                            </li>
+                                            <li class="flex items-start">
+                                                <span class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mr-3 text-sm mt-0.5">2</span>
+                                                เยี่ยมบ้านโดยทีม 3 หมอ และ อปท.
+                                            </li>
+                                            <li class="flex items-start">
+                                                <span class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mr-3 text-sm mt-0.5">3</span>
+                                                ประเมินสภาพที่อยู่ซ้ำให้เหมาะสมกับผู้ป่วย
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-slate-800 text-slate-300 py-12 mt-12 print:hidden">
+            <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+                <h5 class="font-bold text-white text-lg md:text-xl">กลุ่มงานอาชีวเวชกรรม โรงพยาบาลสันทราย</h5>
+                <div class="pt-6 border-t border-slate-700 mt-6 text-xs text-slate-500">
+                    © 2026 Sansai Hospital PM2.5 Action Plan. All rights reserved.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Javascript สำหรับควบคุม UI แบบไม่ต้องพึ่ง React เพื่อแก้ปัญหา Streamlit Iframe Block -->
+    <script>
+        // ฟังก์ชันสลับ Tab
+        function switchTab(tabId) {
+            const btnDashboard = document.getElementById('btn-dashboard');
+            const btnFlow = document.getElementById('btn-flow');
+            const tabDashboard = document.getElementById('tab-dashboard');
+            const tabFlow = document.getElementById('tab-flow');
+
+            const activeDashboardClass = "flex-1 py-3 px-6 rounded-full text-sm md:text-base font-bold transition-all duration-300 flex items-center justify-center gap-2 bg-white text-emerald-600 shadow-md transform scale-100";
+            const activeFlowClass = "flex-1 py-3 px-6 rounded-full text-sm md:text-base font-bold transition-all duration-300 flex items-center justify-center gap-2 bg-white text-blue-600 shadow-md transform scale-100";
+            const inactiveClass = "flex-1 py-3 px-6 rounded-full text-sm md:text-base font-bold transition-all duration-300 flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50";
+
+            if (tabId === 'dashboard') {
+                btnDashboard.className = activeDashboardClass;
+                btnFlow.className = inactiveClass;
+                tabDashboard.style.display = 'block';
+                tabFlow.style.display = 'none';
+            } else {
+                btnDashboard.className = inactiveClass;
+                btnFlow.className = activeFlowClass;
+                tabDashboard.style.display = 'none';
+                tabFlow.style.display = 'block';
+            }
+        }
+
+        // ฟังก์ชันซูมรูปภาพ (Modal)
+        function openZoom(src) {
+            document.getElementById('zoomed-img').src = src;
+            const modal = document.getElementById('zoom-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        // ฟังก์ชันปิดการซูม
+        function closeZoom() {
+            const modal = document.getElementById('zoom-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // สร้างไอคอนจาก data-lucide ทั้งหมดเมื่อโหลดหน้าเสร็จ
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
     </script>
 </body>
 </html>
