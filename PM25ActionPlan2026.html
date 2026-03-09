@@ -31,25 +31,12 @@
         import { 
             Activity, Wind, Thermometer, Calendar, Users, FileText, Smartphone, 
             ExternalLink, ChevronRight, AlertTriangle, HeartPulse, Share2, 
-            Download, X, Maximize2 
+            Download, X, Maximize2, ShieldAlert
         } from 'https://esm.sh/lucide-react@0.292.0';
 
         const App = () => {
             const [activeTab, setActiveTab] = useState('dashboard');
             const [zoomedImage, setZoomedImage] = useState(null);
-
-            // ข้อมูลจำลองสำหรับการแสดงผล
-            const staffHealthStats = {
-                total: 738,
-                period: "1-19 ธันวาคม 2568",
-                status: "อยู่ระหว่างดำเนินการส่งผลสุขภาพตามช่องทางที่ได้แจ้งรับผลการตรวจไว้"
-            };
-
-            const volunteerSchedule = {
-                target: "อาสาสมัครดับไฟป่า",
-                period: "ปลายเดือน มกราคม 2569",
-                status: "เตรียมความพร้อม"
-            };
 
             return (
                 <div className="min-h-screen pb-12">
@@ -109,6 +96,47 @@
                     {/* Main Content */}
                     <main className="w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-8 -mt-12">
                         
+                        {/* 0. PHEOC Section (New) */}
+                        <section className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 print:break-inside-avoid relative">
+                            {/* Decorative element */}
+                            <div className="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+                            
+                            <div className="p-6 md:p-8 lg:p-10">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="bg-blue-100 p-2.5 rounded-xl">
+                                            <ShieldAlert className="text-blue-600 w-7 h-7 md:w-8 md:h-8" />
+                                        </div>
+                                        <h3 className="text-xl md:text-2xl font-bold text-slate-800">การเปิดศูนย์ปฏิบัติการฉุกเฉิน (PHEOC)</h3>
+                                    </div>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Province Level */}
+                                    <div className="bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-200 p-6 rounded-2xl flex items-center space-x-5 hover:shadow-md transition-shadow">
+                                        <div className="bg-blue-600 text-white p-4 rounded-full shadow-sm">
+                                            <Activity className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm md:text-base text-slate-500 font-medium mb-1">ระดับจังหวัดเชียงใหม่</p>
+                                            <p className="text-xl md:text-2xl font-bold text-slate-800">12 มกราคม 2569</p>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Health Region Level */}
+                                    <div className="bg-gradient-to-br from-slate-50 to-sky-50/30 border border-slate-200 p-6 rounded-2xl flex items-center space-x-5 hover:shadow-md transition-shadow">
+                                        <div className="bg-sky-600 text-white p-4 rounded-full shadow-sm">
+                                            <Activity className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm md:text-base text-slate-500 font-medium mb-1">ระดับเขตสุขภาพที่ 1</p>
+                                            <p className="text-xl md:text-2xl font-bold text-slate-800">4 มีนาคม 2569</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
                         {/* 1. Real-time Monitoring Section */}
                         <section className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 print:shadow-none print:border-none">
                         <div className="p-6 md:p-8 lg:p-10">
@@ -253,72 +281,58 @@
                         </div>
                         </section>
 
-                        {/* 3. Health Checks (Split Grid) */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 print:break-inside-avoid">
+                        {/* 3. Health Checks */}
+                        <div className="print:break-inside-avoid">
                             {/* Volunteer Check */}
-                            <section className="bg-white rounded-2xl shadow-lg border-t-8 border-indigo-500 p-6 md:p-8 flex flex-col h-full hover:shadow-xl transition-shadow">
-                                <div className="flex items-center mb-6">
-                                    <div className="bg-indigo-100 p-3 rounded-full mr-4">
+                            <section className="bg-white rounded-2xl shadow-lg border-t-8 border-indigo-500 p-6 md:p-8 flex flex-col h-full hover:shadow-xl transition-shadow relative">
+                                <div className="flex items-center mb-8 border-b border-slate-100 pb-6">
+                                    <div className="bg-indigo-100 p-3.5 rounded-xl mr-4">
                                         <Users className="w-8 h-8 text-indigo-600" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-slate-800">ตรวจสุขภาพอาสาสมัครดับไฟป่า</h3>
+                                    <h3 className="text-xl md:text-2xl font-bold text-slate-800">สรุปผลการตรวจสุขภาพอาสาสมัครดับไฟป่า</h3>
                                 </div>
-                                <div className="flex-grow space-y-6">
-                                    <div className="flex items-start bg-slate-50 p-4 rounded-xl">
-                                        <Calendar className="w-6 h-6 text-indigo-400 mr-3 mt-0.5" />
-                                        <div>
-                                            <span className="block text-sm text-slate-500 font-medium uppercase tracking-wide">กำหนดการ</span>
-                                            <span className="text-lg font-semibold text-slate-800">{volunteerSchedule.period}</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start bg-slate-50 p-4 rounded-xl">
-                                        <Activity className="w-6 h-6 text-indigo-400 mr-3 mt-0.5" />
-                                        <div>
-                                            <span className="block text-sm text-slate-500 font-medium uppercase tracking-wide">สถานะ</span>
-                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 mt-1">
-                                                {volunteerSchedule.status}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <p className="text-slate-600 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 leading-relaxed text-base">
-                                        อยู่ระหว่างประสานไปยัง สสอ.สันทราย เพื่อนัดหมาย วันเวลา และ สถานที่
-                                    </p>
-                                </div>
-                            </section>
 
-                            {/* Staff Check */}
-                            <section className="bg-white rounded-2xl shadow-lg border-t-8 border-teal-500 p-6 md:p-8 flex flex-col h-full hover:shadow-xl transition-shadow">
-                                <div className="flex items-center mb-6">
-                                    <div className="bg-teal-100 p-3 rounded-full mr-4">
-                                        <FileText className="w-8 h-8 text-teal-600" />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                    <div className="flex items-start bg-slate-50 p-5 rounded-xl border border-slate-100">
+                                        <Calendar className="w-6 h-6 text-indigo-400 mr-4 mt-0.5" />
+                                        <div>
+                                            <span className="block text-sm text-slate-500 font-bold uppercase tracking-wide mb-1">วันที่ตรวจ</span>
+                                            <span className="text-lg font-semibold text-slate-800">2 กุมภาพันธ์ 2569</span>
+                                        </div>
                                     </div>
-                                    <h3 className="text-xl font-bold text-slate-800">ผลตรวจสุขภาพเจ้าหน้าที่ รพ.</h3>
+                                    <div className="flex items-start bg-slate-50 p-5 rounded-xl border border-slate-100">
+                                        <Activity className="w-6 h-6 text-indigo-400 mr-4 mt-0.5" />
+                                        <div>
+                                            <span className="block text-sm text-slate-500 font-bold uppercase tracking-wide mb-1">หน่วยงานและสถานที่</span>
+                                            <span className="text-base font-semibold text-slate-800 block">โดยทีม สสอ.สันทราย และ โรงพยาบาลสันทราย</span>
+                                            <span className="block text-sm text-slate-600 mt-1">ณ ที่ว่าการอำเภอสันทราย</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex-grow space-y-6">
-                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-teal-50 p-5 rounded-xl border border-teal-100">
-                                        <div className="mb-2 sm:mb-0">
-                                            <span className="text-sm text-teal-600 font-medium uppercase tracking-wide block mb-1">ผู้เข้ารับการตรวจ</span>
-                                            <div className="flex items-baseline">
-                                                <span className="text-4xl font-bold text-teal-700">{staffHealthStats.total}</span>
-                                                <span className="text-teal-600 ml-2 font-medium">คน</span>
+
+                                <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 md:p-8 rounded-2xl border border-indigo-100">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center text-center">
+                                        <div className="bg-white p-6 rounded-xl shadow-sm border border-indigo-50/50 flex flex-col justify-center h-full">
+                                            <span className="block text-base text-slate-600 font-medium mb-3">จำนวนผู้เข้ารับการตรวจรวม</span>
+                                            <div className="flex items-baseline justify-center">
+                                                <span className="text-5xl font-extrabold text-indigo-700">128</span>
+                                                <span className="text-indigo-600 ml-2 font-medium text-lg">คน</span>
                                             </div>
                                         </div>
-                                        <div className="text-left sm:text-right bg-white/50 px-3 py-2 rounded-lg">
-                                            <span className="text-xs text-slate-500 block uppercase tracking-wide">ดำเนินการแล้ว</span>
-                                            <span className="text-sm font-semibold text-slate-700">{staffHealthStats.period}</span>
+                                        <div className="bg-white p-6 rounded-xl shadow-sm border border-emerald-50/50 flex flex-col justify-center h-full relative overflow-hidden">
+                                            <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-100 rounded-bl-full -z-10 opacity-50"></div>
+                                            <span className="block text-base text-slate-600 font-medium mb-3">สุขภาพเหมาะสมสำหรับการเป็น<br className="hidden md:block"/>ด่านหน้าผจญเพลิง</span>
+                                            <div className="flex flex-col items-center justify-center">
+                                                <div className="flex items-baseline">
+                                                    <span className="text-5xl font-extrabold text-emerald-600">68</span>
+                                                    <span className="text-emerald-600 ml-2 font-medium text-lg">คน</span>
+                                                </div>
+                                                <span className="text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full text-sm font-bold mt-2">
+                                                    คิดเป็น 53.1%
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <ul className="space-y-4 text-slate-600">
-                                        <li className="flex items-center bg-green-50 p-3 rounded-lg text-green-800 border border-green-100 text-base">
-                                            <div className="w-3 h-3 bg-green-500 rounded-full mr-3 shrink-0"></div>
-                                            ผู้ที่มีความเสี่ยง/พบความผิดปกติได้ส่งต่อพบแพทย์แล้ว
-                                        </li>
-                                        <li className="flex items-center bg-orange-50 p-3 rounded-lg text-orange-800 border border-orange-100 text-base">
-                                            <div className="w-3 h-3 bg-orange-400 rounded-full mr-3 shrink-0 animate-pulse"></div>
-                                            รายงานผลฉบับเต็ม: <span className="font-semibold ml-1">{staffHealthStats.status}</span>
-                                        </li>
-                                    </ul>
                                 </div>
                             </section>
                         </div>
