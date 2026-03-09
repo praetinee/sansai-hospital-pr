@@ -10,7 +10,8 @@ def render_pm25_flow():
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://unpkg.com/lucide@latest"></script>
         <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-        <style>
+        <!-- เพิ่ม type="text/tailwindcss" เพื่อให้ @apply ทำงานได้ถูกต้อง -->
+        <style type="text/tailwindcss">
             body {
                 font-family: 'Sarabun', sans-serif;
                 background-color: transparent;
@@ -26,9 +27,12 @@ def render_pm25_flow():
             .inner-box {
                 @apply bg-white rounded-xl p-3 shadow-sm border border-gray-100;
             }
+            
+            /* แก้ไขให้ tag อยู่มุมบนขวาของกรอบอย่างชัดเจน */
             .tag-code {
-                @apply absolute -top-2.5 -right-2 bg-[#1e4b3e] text-white text-[10px] px-2 py-0.5 rounded-full font-bold z-10 shadow-sm;
+                @apply absolute top-2 right-2 bg-[#1e4b3e] text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold z-10 shadow-sm border border-[#123329];
             }
+            
             .arrow-icon {
                 @apply text-gray-400 shrink-0;
             }
@@ -84,8 +88,8 @@ def render_pm25_flow():
                         <div class="flex items-start gap-4">
                             <i data-lucide="truck" class="w-7 h-7 text-[#a16207] shrink-0 mt-1"></i>
                             <div>
-                                <p class="font-bold text-[#854d0e] text-base">สั่งจ่ายยาผ่าน Telemedicine:</p>
-                                <p class="text-sm text-[#a16207] leading-relaxed">ผู้ป่วยอาการคงที่ ติดตามและสั่งจ่ายยาผ่าน telemedicine เพื่อลดความเสี่ยงสัมผัสฝุ่น</p>
+                                <p class="font-bold text-[#854d0e] text-base">จัดส่งยาถึงบ้าน:</p>
+                                <p class="text-sm text-[#a16207] leading-relaxed">สำหรับผู้ป่วยโรคเรื้อรังที่อาการคงที่ ลดความเสี่ยงสัมผัสฝุ่น</p>
                             </div>
                         </div>
                     </div>
@@ -101,7 +105,7 @@ def render_pm25_flow():
                             <i data-lucide="smartphone" class="w-9 h-9 text-orange-600 shrink-0"></i>
                             <div class="flex-grow">
                                 <h3 class="font-bold text-[#9a3412] text-base">ระบบก่อนถึง รพ. และออนไลน์</h3>
-                                <p class="text-xs text-orange-800 leading-tight">คลินิกมลพิษออนไลน์ ผ่าน Line OA หรือ หมอพร้อม</p>
+                                <p class="text-xs text-orange-800 leading-tight">คลินิกมลพิษออนไลน์ ผ่าน Line OA (@PM2.5) หรือ หมอพร้อม</p>
                             </div>
                             <i data-lucide="arrow-right" class="arrow-icon w-6 h-6"></i>
                             <div class="text-center w-28 shrink-0">
@@ -110,8 +114,8 @@ def render_pm25_flow():
                             </div>
                         </div>
 
-                        <!-- Row 2: OPD -->
-                        <div class="inner-box flex flex-wrap items-center gap-2 relative bg-[#fff7ed] border-orange-200">
+                        <!-- Row 2: OPD (เพิ่ม pt-8 เพื่อเว้นที่ให้ Tag ด้านบนขวา) -->
+                        <div class="inner-box pt-8 flex flex-wrap items-center gap-2 relative bg-[#fff7ed] border-orange-200">
                             <div class="tag-code">รหัส Z58.1</div>
                             <div class="flex items-center gap-2 w-full sm:w-auto mb-2 sm:mb-0 shrink-0">
                                 <div class="flex shrink-0">
@@ -140,8 +144,8 @@ def render_pm25_flow():
                             </div>
                         </div>
 
-                        <!-- Row 3: ER -->
-                        <div class="inner-box flex flex-wrap items-center gap-2 relative bg-[#fff7ed] border-orange-200">
+                        <!-- Row 3: ER (เพิ่ม pt-8 เพื่อเว้นที่ให้ Tag ด้านบนขวา) -->
+                        <div class="inner-box pt-8 flex flex-wrap items-center gap-2 relative bg-[#fff7ed] border-orange-200">
                             <div class="tag-code">รหัส Z58.1</div>
                             <div class="flex items-center gap-3 w-full sm:w-auto mb-2 sm:mb-0 shrink-0">
                                 <i data-lucide="ambulance" class="w-8 h-8 text-red-600 shrink-0"></i>
@@ -167,12 +171,14 @@ def render_pm25_flow():
                             </div>
                         </div>
 
-                        <!-- Row 4: IPD -->
-                        <div class="inner-box flex items-center gap-4 relative bg-[#fff7ed] border-orange-200">
+                        <!-- Row 4: IPD (เพิ่ม pt-8 เพื่อเว้นที่ให้ Tag ด้านบนขวา) -->
+                        <div class="inner-box pt-8 flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-4 relative bg-[#fff7ed] border-orange-200">
                             <div class="tag-code">รหัส Z58.1</div>
-                            <i data-lucide="bed" class="w-9 h-9 text-blue-600 shrink-0"></i>
-                            <div class="flex-grow">
-                                <h3 class="font-bold text-[#9a3412] text-base">ผู้ป่วยใน (IPD)</h3>
+                            <i data-lucide="bed" class="w-9 h-9 text-blue-600 shrink-0 hidden sm:block"></i>
+                            <div class="flex-grow w-full sm:w-auto">
+                                <h3 class="font-bold text-[#9a3412] text-base flex items-center gap-2">
+                                    <i data-lucide="bed" class="w-6 h-6 text-blue-600 sm:hidden shrink-0"></i> ผู้ป่วยใน (IPD)
+                                </h3>
                             </div>
                             <div class="text-center text-sm shrink-0">
                                  <p class="font-bold text-[#9a3412]">รับ Admit</p>
