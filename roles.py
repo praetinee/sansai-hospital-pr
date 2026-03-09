@@ -171,7 +171,7 @@ def render_roles():
                                     </div>
                                     <div>
                                         <h4 class="text-lg font-bold bg-main-title leading-tight">จุดรับบริการ / ปฐมภูมิ</h4>
-                                        <p class="text-xs font-medium text-pink-600">OPD/ER/PCU หนองหาร</p>
+                                        <p class="text-xs font-medium text-pink-600">คลินิกมลพิษ / OPD / ER / PCU หนองหาร</p>
                                     </div>
                                 </div>
                                 <div class="pl-2 sm:pl-[3.2rem]">
