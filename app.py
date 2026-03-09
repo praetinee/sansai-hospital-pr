@@ -1,6 +1,7 @@
 import streamlit as st
 from dashboard import render_dashboard
 from flow import render_flow
+from roles import render_roles
 
 # 1. ตั้งค่าหน้าเว็บ Streamlit ให้เป็นแบบกว้างสุด (Wide)
 st.set_page_config(
@@ -60,7 +61,7 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # 3. จัดการแสดงผล Tabs และเรียกใช้โมดูลที่แยกไว้
-tab1, tab2 = st.tabs(["📊 แผนการดำเนินงาน (Dashboard)", "🔄 Flow การให้บริการ"])
+tab1, tab2, tab3 = st.tabs(["📊 แผนการดำเนินงาน (Dashboard)", "🔄 Flow การให้บริการ", "👥 บทบาทหน่วยงาน"])
 
 with tab1:
     # เรียกใช้ฟังก์ชันจากไฟล์ dashboard.py
@@ -69,3 +70,7 @@ with tab1:
 with tab2:
     # เรียกใช้ฟังก์ชันจากไฟล์ flow.py
     render_flow()
+    
+with tab3:
+    # เรียกใช้ฟังก์ชันจากไฟล์ roles.py
+    render_roles()
