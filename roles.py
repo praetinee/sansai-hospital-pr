@@ -3,6 +3,7 @@ import streamlit.components.v1 as components
 def render_roles():
     # โค้ด HTML สำหรับหน้าบทบาทหน่วยงาน ปรับโครงสร้างเป็น Flow 3 คอลัมน์ (รุก-รับ-ส่งต่อ) 
     # รองรับ Responsive และ Theme (Light/Dark) เต็มรูปแบบ
+    # แก้ไข: จัดกล่องในคอลัมน์ให้อยู่กึ่งกลางแนวตั้ง (justify-center)
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -112,7 +113,7 @@ def render_roles():
                         ชุมชนและการดูแลต่อเนื่อง (รุก)
                     </h3>
                     
-                    <div class="space-y-4 flex-grow flex flex-col justify-start">
+                    <div class="space-y-4 flex-grow flex flex-col justify-center">
                         <!-- การดูแลต่อเนื่อง -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm w-full" id="card-postcare">
                             <div class="p-4 sm:p-5">
@@ -149,7 +150,7 @@ def render_roles():
                         การรับผู้ป่วยและดูแลรักษา (รับ)
                     </h3>
                     
-                    <div class="space-y-4 flex-grow">
+                    <div class="space-y-4 flex-grow flex flex-col justify-center">
                         <!-- บริการออนไลน์ -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-online">
                             <div class="p-4">
@@ -250,7 +251,7 @@ def render_roles():
                         ฉุกเฉินและระบบสนับสนุน (ส่งต่อ)
                     </h3>
                     
-                    <div class="space-y-4 flex-grow">
+                    <div class="space-y-4 flex-grow flex flex-col justify-center">
                         <!-- ฉุกเฉิน -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-er">
                             <div class="p-4">
