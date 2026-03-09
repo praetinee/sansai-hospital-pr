@@ -3,7 +3,7 @@ import streamlit.components.v1 as components
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow ที่ออกแบบใหม่ด้วย Flexbox ที่รัดกุม 
     # ปรับให้รองรับการเพิ่มข้อ 3 (การเฝ้าระวัง) และเส้นเชื่อมต่อที่ซับซ้อนขึ้น
-    # อัปเดตล่าสุด: นำขอบของเส้นสีแดงออกตามที่ต้องการ
+    # อัปเดตล่าสุด: เพิ่มข้อ 4 ในส่วนการดูแลต่อเนื่องด้านล่างสุด
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -313,12 +313,14 @@ def render_flow():
                         <div class="line-v h-6 sm:h-8 relative z-0 mx-auto"></div>
                         <div class="arrow-down relative z-0 mx-auto"></div>
                         
+                        <!-- Post Care Box (กรอบสีฟ้ารวมข้อมูล) -->
                         <div class="w-full bg-blue-100 border-2 border-blue-300 rounded-xl p-3 sm:p-4 shadow-md mt-1 relative z-10">
                             <div class="text-left w-full pl-2 sm:pl-6">
                                 <ul class="text-blue-900 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-relaxed space-y-1">
                                     <li class="flex items-start"><span class="mr-1">1.</span> <span class="card-text">ให้คำปรึกษาก่อนกลับบ้าน</span></li>
                                     <li class="flex items-start"><span class="mr-1">2.</span> <span class="card-text">เยี่ยมบ้านโดยทีม 3 หมอ และ อปท.</span></li>
                                     <li class="flex items-start"><span class="mr-1">3.</span> <span class="card-text">ประเมินสภาพที่อยู่ซ้ำให้เหมาะสมกับผู้ป่วย</span></li>
+                                    <li class="flex items-start"><span class="mr-1">4.</span> <span class="card-text">ผู้ป่วยอาการคงที่ติดตามและสั่งยาผ่าน telemedicine เพื่อลดความเสี่ยงสัมผัสฝุ่น</span></li>
                                 </ul>
                             </div>
                         </div>
