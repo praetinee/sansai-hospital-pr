@@ -2,8 +2,8 @@ import streamlit.components.v1 as components
 
 def render_roles():
     # โค้ด HTML สำหรับหน้าบทบาทหน่วยงาน ปรับโครงสร้างเป็น Flow 3 คอลัมน์ (รุก-รับ-ส่งต่อ) 
-    # รองรับ Responsive และ Theme (Light/Dark) เต็มรูปแบบ
-    # แก้ไขล่าสุด: ทำให้เส้นลูกศรข้ามคอลัมน์ใหญ่และชัดเจนยิ่งขึ้น เพิ่มขอบและเงา
+    # แก้ไขล่าสุด: อัปเกรดระบบวาดเส้นลูกศรให้เป็นแบบ "แกนรวม (Bus Routing)" 
+    # เลียนแบบเทมเพลตแผนผังมาตรฐานให้ดูเป็นระเบียบและสวยงามมากยิ่งขึ้น
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -89,32 +89,53 @@ def render_roles():
                 </p>
             </div>
 
-            <!-- SVG Lines Overlay (วาดลูกศรเชื่อมคอลัมน์เฉพาะหน้าจอ Desktop) -->
-            <!-- ปรับให้อยู่ชั้นหน้าสุด z-[100] และเพิ่มความเข้มของเงา -->
-            <svg id="flow-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none hidden xl:block z-[100]" style="filter: drop-shadow(0px 3px 4px rgba(0,0,0,0.3));">
+            <!-- SVG Lines Overlay (ระบบวาดลูกศรแบบแกนรวมวงจร) -->
+            <svg id="flow-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none hidden xl:block z-[100]" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2));">
                 <defs>
-                    <!-- ขยายขนาดหัวลูกศรให้ใหญ่ขึ้น -->
-                    <marker id="arrow-orange" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
+                    </marker>
+                    <marker id="arrow-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c" />
                     </marker>
-                    <marker id="arrow-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#15803d" />
+                    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7" />
                     </marker>
                 </defs>
-                <!-- เส้นพื้นหลัง (Knockout Effect) ให้เส้นหลักดูโดดเด่นตัดกับพื้น -->
-                <path id="bg-m-r-1" fill="none" stroke="var(--bg-knockout)" stroke-width="11" stroke-linejoin="round" stroke-linecap="round" />
-                <path id="bg-m-r-2" fill="none" stroke="var(--bg-knockout)" stroke-width="11" stroke-linejoin="round" stroke-linecap="round" />
-                <path id="bg-return" fill="none" stroke="var(--bg-knockout)" stroke-width="11" stroke-linejoin="round" stroke-linecap="round" />
                 
-                <!-- เส้นส่งต่อ (เส้นจริง): กลาง ไป ขวา (หนา 5px สีเข้ม) -->
-                <path id="path-m-r-1" fill="none" stroke="#ea580c" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow-orange)" />
-                <path id="path-m-r-2" fill="none" stroke="#ea580c" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow-orange)" />
-                <!-- เส้นส่งต่อกลับ (ดูแลต่อเนื่อง): ลากกลับไปซ้าย (หนา 5px สีเขียวเข้ม) -->
-                <path id="path-return" fill="none" stroke="#15803d" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow-green)" />
+                <!-- ชั้นพื้นหลังสำหรับตัดขอบ (Knockout) -->
+                <g stroke="var(--bg-knockout)" stroke-width="10" fill="none" stroke-linejoin="round" stroke-linecap="round">
+                    <path id="bg-lm-1" /> <path id="bg-lm-2" /> <path id="bg-lm-3" />
+                    <path id="bg-mr-1" /> <path id="bg-mr-2" /> <path id="bg-mr-3" />
+                    <path id="bg-return" />
+                </g>
+
+                <!-- เส้นแกนหลักและแขนงต่างๆ -->
+                <!-- Left to Middle (สีเขียว) -->
+                <g stroke="#16a34a" stroke-width="4" fill="none" stroke-linejoin="round" stroke-linecap="round">
+                    <path id="path-lm-1" marker-end="url(#arrow-green)" />
+                    <path id="path-lm-2" marker-end="url(#arrow-green)" />
+                    <path id="path-lm-3" marker-end="url(#arrow-green)" />
+                </g>
+
+                <!-- Middle to Right (สีส้ม) -->
+                <g stroke="#ea580c" stroke-width="4" fill="none" stroke-linejoin="round" stroke-linecap="round">
+                    <path id="path-mr-1" marker-end="url(#arrow-orange)" />
+                    <path id="path-mr-2" marker-end="url(#arrow-orange)" />
+                    <path id="path-mr-3" marker-end="url(#arrow-orange)" />
+                </g>
+
+                <!-- Right to Left Bottom Return (สีฟ้า) -->
+                <path id="path-return" fill="none" stroke="#0284c7" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,5" marker-end="url(#arrow-blue)" />
             </svg>
+            
+            <!-- ป้ายข้อความลูกศรวนกลับด้านล่าง -->
+            <div id="return-text" class="absolute hidden xl:flex items-center justify-center font-bold text-blue-700 bg-blue-50 px-5 py-2 rounded-full border-2 border-blue-400 text-[15px] z-[110] shadow-md">
+                <i data-lucide="refresh-cw" class="w-5 h-5 mr-2 text-blue-600"></i> การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
+            </div>
 
             <!-- 3 Columns Layout -->
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 xl:gap-12 relative z-10">
 
                 <!-- ================= COLUMN 1: รุก (ชุมชนและฟื้นฟู) ================= -->
                 <div class="col-bg-left border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full relative" id="col-left">
@@ -159,7 +180,7 @@ def render_roles():
                         การรับผู้ป่วยและดูแลรักษา (รับ)
                     </h3>
                     
-                    <div class="space-y-4 flex-grow flex flex-col justify-center">
+                    <div class="space-y-6 flex-grow flex flex-col justify-center">
                         <!-- บริการออนไลน์ -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-online">
                             <div class="p-4">
@@ -179,14 +200,6 @@ def render_roles():
                                         <li>ทำการคัดกรองอาการเบื้องต้น</li>
                                     </ul>
                                 </div>
-                            </div>
-                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
-                                <p class="font-bold text-normal text-sm mb-1">ส่งต่อ:</p>
-                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
-                                    <span class="text-orange-500 font-bold">➔</span> <b>ทีม 3 หมอ</b> (อาการเล็กน้อย)<br>
-                                    <span class="text-orange-500 font-bold">➔</span> <b>รพ./รพ.สต.</b> (เข้าข่ายสงสัย)<br>
-                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">1669</b> (รุนแรง)
-                                </p>
                             </div>
                         </div>
 
@@ -211,15 +224,6 @@ def render_roles():
                                     </ul>
                                 </div>
                             </div>
-                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
-                                <p class="font-bold text-normal text-sm mb-1">ส่งต่อ:</p>
-                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
-                                    <span class="text-orange-500 font-bold">➔</span> <b>คลินิกทั่วไป</b> (ไม่เข้าข่าย)<br>
-                                    <span class="text-orange-500 font-bold">➔</span> <b>คลินิกมลพิษ</b> (เล็กน้อย/ปานกลาง)<br>
-                                    <span class="text-orange-500 font-bold">➔</span> <b>ทีมควบคุมโรค</b> (แจ้งข้อมูลสอบสวน)<br>
-                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">ห้องฉุกเฉิน ER</b> (รุนแรง)
-                                </p>
-                            </div>
                         </div>
 
                         <!-- คลินิกมลพิษ -->
@@ -243,13 +247,6 @@ def render_roles():
                                     </ul>
                                 </div>
                             </div>
-                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
-                                <p class="font-bold text-normal text-sm mb-1">ผลการรักษา:</p>
-                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
-                                    <span class="text-orange-500 font-bold">➔</span> <b>ให้ยากลับบ้าน / Admit:</b> เข้าสู่การดูแลต่อเนื่อง<br>
-                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">ส่ง REFER:</b> ส่งรักษา รพ. ระดับสูง
-                                </p>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -260,7 +257,7 @@ def render_roles():
                         ฉุกเฉินและระบบสนับสนุน (ส่งต่อ)
                     </h3>
                     
-                    <div class="space-y-4 flex-grow flex flex-col justify-center">
+                    <div class="space-y-6 flex-grow flex flex-col justify-center">
                         <!-- ฉุกเฉิน -->
                         <div class="card-bg border rounded-xl overflow-hidden role-card shadow-sm" id="card-er">
                             <div class="p-4">
@@ -278,14 +275,9 @@ def render_roles():
                                     <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
                                         <li>รับแจ้งเหตุ 1669 ออกรับผู้ป่วยรุนแรง</li>
                                         <li>ประเมินและให้การรักษาเบื้องต้นในห้องฉุกเฉิน</li>
+                                        <li class="font-semibold text-red-600">ส่ง REFER: ประสานส่งต่อ รพ.ระดับสูง</li>
                                     </ul>
                                 </div>
-                            </div>
-                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
-                                <p class="font-bold text-normal text-sm mb-1">ส่งต่อ:</p>
-                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
-                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">ส่ง REFER:</b> ประสานส่งต่อ รพ.ระดับสูง
-                                </p>
                             </div>
                         </div>
 
@@ -306,14 +298,9 @@ def render_roles():
                                     <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
                                         <li>รับข้อมูลผู้ป่วยเข้าข่าย/รุนแรง</li>
                                         <li>ลงพื้นที่ซักประวัติและสอบสวนโรคเพิ่มเติม</li>
+                                        <li class="font-semibold text-indigo-600">แจ้ง สสจ.เชียงใหม่: รายงานสถานการณ์</li>
                                     </ul>
                                 </div>
-                            </div>
-                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
-                                <p class="font-bold text-normal text-sm mb-1">รายงานผล:</p>
-                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
-                                    <span class="text-indigo-500 font-bold">➔</span> <b>สสจ.เชียงใหม่:</b> รายงานสถานการณ์โรค
-                                </p>
                             </div>
                         </div>
 
@@ -331,7 +318,6 @@ def render_roles():
                                 </div>
                                 <div class="pl-2 sm:pl-[3.2rem]">
                                     <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
-                                    
                                     <div class="text-normal text-[13px] sm:text-[14px] space-y-3 mb-2 ml-1">
                                         <div>
                                             <p class="font-bold text-purple-700 dark:text-purple-400">OPD / ER / PCU หนองหาร:</p>
@@ -347,7 +333,6 @@ def render_roles():
                                             </ul>
                                         </div>
                                     </div>
-                                    
                                 </div>
                             </div>
                         </div>
@@ -364,64 +349,76 @@ def render_roles():
                 lucide.createIcons();
             });
 
-            // ฟังก์ชันวาดเส้นเชื่อมโยง SVG อัตโนมัติ (เฉพาะหน้าจอคอมพิวเตอร์ที่วาง 3 คอลัมน์)
+            // ฟังก์ชันวาดเส้นเชื่อมโยง SVG แบบ "วงจร (Bus Routing)"
             function drawLines() {
                 const svg = document.getElementById('flow-svg');
-                const colL = document.getElementById('col-left');
-                const colM = document.getElementById('col-mid');
-                const colR = document.getElementById('col-right');
                 const container = document.getElementById('main-container');
 
-                const pathMR1 = document.getElementById('path-m-r-1');
-                const pathMR2 = document.getElementById('path-m-r-2');
-                const pathReturn = document.getElementById('path-return');
-                
-                const bgMR1 = document.getElementById('bg-m-r-1');
-                const bgMR2 = document.getElementById('bg-m-r-2');
-                const bgReturn = document.getElementById('bg-return');
-
-                // ทำงานเฉพาะหน้าจอขนาด xl (1280px ขึ้นไปตาม Tailwind) ที่แสดงผลแบบ 3 คอลัมน์
-                if(window.innerWidth >= 1280 && colL && colM && colR && svg && container) {
+                if(window.innerWidth >= 1280 && svg && container) {
                     svg.classList.remove('hidden');
+                    const textRet = document.getElementById('return-text');
+                    if(textRet) textRet.classList.remove('hidden');
 
                     const contRect = container.getBoundingClientRect();
-                    const lRect = colL.getBoundingClientRect();
-                    const mRect = colM.getBoundingClientRect();
-                    const rRect = colR.getBoundingClientRect();
+                    const getR = (id) => {
+                        const el = document.getElementById(id);
+                        if(!el) return null;
+                        const r = el.getBoundingClientRect();
+                        return {
+                            top: r.top - contRect.top, bottom: r.bottom - contRect.top,
+                            left: r.left - contRect.left, right: r.right - contRect.left,
+                            width: r.width, height: r.height,
+                            cy: (r.top - contRect.top) + (r.height / 2),
+                            cx: (r.left - contRect.left) + (r.width / 2)
+                        };
+                    };
 
-                    // เส้นส่งต่อ 1 (บน): กลาง ไป ขวา (หนาและเป็นเส้นทึบ)
-                    const mr1StartX = mRect.right - contRect.left;
-                    const mr1StartY = (mRect.top - contRect.top) + (mRect.height * 0.3);
-                    const mr1EndX = rRect.left - contRect.left;
-                    const dMR1 = `M ${mr1StartX} ${mr1StartY} L ${mr1EndX - 15} ${mr1StartY}`;
-                    pathMR1.setAttribute('d', dMR1);
-                    bgMR1.setAttribute('d', dMR1);
+                    const colL = getR('col-left'); const colM = getR('col-mid'); const colR = getR('col-right');
+                    const cPost = getR('card-postcare');
+                    const cOnline = getR('card-online'); const cOnsite = getR('card-onsite'); const cClinic = getR('card-clinic');
+                    const cEr = getR('card-er'); const cControl = getR('card-control'); const cSurv = getR('card-surv');
 
-                    // เส้นส่งต่อ 2 (กลาง): กลาง ไป ขวา (หนาและเป็นเส้นทึบ)
-                    const mr2StartX = mRect.right - contRect.left;
-                    const mr2StartY = (mRect.top - contRect.top) + (mRect.height * 0.6);
-                    const mr2EndX = rRect.left - contRect.left;
-                    const dMR2 = `M ${mr2StartX} ${mr2StartY} L ${mr2EndX - 15} ${mr2StartY}`;
-                    pathMR2.setAttribute('d', dMR2);
-                    bgMR2.setAttribute('d', dMR2);
+                    const draw = (id, pathString) => {
+                        document.getElementById(id).setAttribute('d', pathString);
+                        document.getElementById(id.replace('path-', 'bg-')).setAttribute('d', pathString);
+                    };
 
-                    // เส้นย้อนกลับด้านล่าง (การดูแลต่อเนื่อง): จากใต้คอลัมน์กลาง โยงกลับไปใต้คอลัมน์ซ้าย
-                    const retStartX = (mRect.left - contRect.left) + (mRect.width / 2);
-                    const retStartY = mRect.bottom - contRect.top;
-                    const retEndX = (lRect.left - contRect.left) + (lRect.width / 2);
-                    const retEndY = lRect.bottom - contRect.top;
+                    // 1. Left to Middle (Branching from Postcare to Middle Cards)
+                    // (ทำหน้าที่เป็นตัวแทนจากชุมชน ส่งต่อให้ รพ.)
+                    const gapLM = colM.left - colL.right;
+                    const midX_LM = colL.right + gapLM * 0.4;
+                    const outL_Y = cPost.cy; 
+
+                    draw('path-lm-1', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cOnline.cy} L ${colM.left - 8} ${cOnline.cy}`);
+                    draw('path-lm-2', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cOnsite.cy} L ${colM.left - 8} ${cOnsite.cy}`);
+                    draw('path-lm-3', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cClinic.cy} L ${colM.left - 8} ${cClinic.cy}`);
+
+                    // 2. Middle to Right (Branching from Middle Cards to Right Cards)
+                    const gapMR = colR.left - colM.right;
+                    const midX_MR = colM.right + gapMR * 0.5;
+
+                    draw('path-mr-1', `M ${colM.right} ${cOnline.cy} L ${midX_MR} ${cOnline.cy} L ${midX_MR} ${cEr.cy} L ${colR.left - 8} ${cEr.cy}`);
+                    draw('path-mr-2', `M ${colM.right} ${cOnsite.cy} L ${midX_MR} ${cOnsite.cy} L ${midX_MR} ${cControl.cy} L ${colR.left - 8} ${cControl.cy}`);
+                    draw('path-mr-3', `M ${colM.right} ${cClinic.cy} L ${midX_MR} ${cClinic.cy} L ${midX_MR} ${cSurv.cy} L ${colR.left - 8} ${cSurv.cy}`);
+
+                    // 3. Right to Left (Return Loop Bottom)
+                    const dropY = Math.max(colL.bottom, colM.bottom, colR.bottom) + 50;
+                    const dRet = `M ${colR.cx} ${colR.bottom} L ${colR.cx} ${dropY} L ${colL.cx} ${dropY} L ${colL.cx} ${colL.bottom + 15}`;
                     
-                    // หากรอบล่างสุดเพื่อเว้นระยะไม่ให้ทับกล่อง (ลงไป 40px)
-                    const dropY = Math.max(retStartY, retEndY) + 40; 
+                    document.getElementById('path-return').setAttribute('d', dRet);
+                    document.getElementById('bg-return').setAttribute('d', dRet);
 
-                    // วาด Path: ลากลง -> ลากซ้ายยาวๆ -> ลากขึ้น -> ชี้เข้าใต้กล่องซ้าย
-                    const dReturn = `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${retEndY + 18}`;
-                    pathReturn.setAttribute('d', dReturn);
-                    bgReturn.setAttribute('d', dReturn);
+                    // Position Return Text Label
+                    if(textRet) {
+                        textRet.style.top = `${dropY}px`;
+                        textRet.style.left = `${colM.cx}px`;
+                        textRet.style.transform = `translate(-50%, -50%)`;
+                    }
 
                 } else {
-                    // ปิดเส้นบนมือถือ/แท็บเล็ต ปล่อยให้การ์ดเรียงต่อกันเป็นแนวตั้งตามธรรมชาติ
                     if(svg) svg.classList.add('hidden');
+                    const textRet = document.getElementById('return-text');
+                    if(textRet) textRet.classList.add('hidden');
                 }
             }
 
