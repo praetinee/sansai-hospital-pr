@@ -101,7 +101,7 @@ def render_pm25_flow():
                             <i data-lucide="smartphone" class="w-9 h-9 text-orange-600 shrink-0"></i>
                             <div class="flex-grow">
                                 <h3 class="font-bold text-[#9a3412] text-base">ระบบก่อนถึง รพ. และออนไลน์</h3>
-                                <p class="text-xs text-orange-800 leading-tight">คลินิกมลพิษออนไลน์ ผ่าน Line OA (@PM2.5) หรือ หมอพร้อม</p>
+                                <p class="text-xs text-orange-800 leading-tight">คลินิกมลพิษออนไลน์ ผ่าน Line OA หรือ หมอพร้อม</p>
                             </div>
                             <i data-lucide="arrow-right" class="arrow-icon w-6 h-6"></i>
                             <div class="text-center w-28 shrink-0">
