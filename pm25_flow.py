@@ -237,12 +237,12 @@ def render_pm25_flow():
                             <path d="M 0 0 L 12 6 L 0 12 z" fill="#4b5563" />
                         </marker>
                     </defs>
-                    <!-- Path from bottom of right column, curving under, to bottom of left column -->
-                    <path d="M 1050 -10 V 40 Q 1050 90 640 90 Q 230 90 230 40 V -10" stroke="#4b5563" stroke-width="5" fill="none" marker-end="url(#arrow-return)"/>
+                    <!-- Path from bottom of right column, curving under, to bottom of left column (Dashed line format added) -->
+                    <path d="M 1050 -10 V 40 Q 1050 90 640 90 Q 230 90 230 40 V -10" stroke="#4b5563" stroke-width="4" stroke-dasharray="10, 8" fill="none" marker-end="url(#arrow-return)"/>
                 </svg>
                 <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white px-6 py-2 rounded-full shadow-md border-2 border-gray-300 z-10">
                     <p class="text-center text-gray-700 font-bold text-base flex items-center gap-2">
-                        <i data-lucide="refresh-ccw" class="w-5 h-5 text-gray-500"></i> การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
+                        การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
                     </p>
                 </div>
             </div>
@@ -251,7 +251,7 @@ def render_pm25_flow():
              <div class="lg:hidden text-center mt-6">
                 <div class="inline-block bg-white px-5 py-3 rounded-full shadow-md border-2 border-gray-300">
                     <p class="text-gray-700 font-bold flex items-center gap-3 text-sm">
-                        <i data-lucide="refresh-ccw" class="w-5 h-5 text-gray-500"></i> การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
+                        การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
                     </p>
                 </div>
             </div>
