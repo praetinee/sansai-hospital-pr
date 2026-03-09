@@ -3,7 +3,7 @@ import streamlit.components.v1 as components
 def render_roles():
     # โค้ด HTML สำหรับหน้าบทบาทหน่วยงาน ปรับโครงสร้างเป็น Flow 3 คอลัมน์ (รุก-รับ-ส่งต่อ) 
     # แก้ไขล่าสุด: อัปเกรดระบบวาดเส้นลูกศรให้เป็นแบบ "แกนรวม (Bus Routing)" 
-    # เลียนแบบเทมเพลตแผนผังมาตรฐานให้ดูเป็นระเบียบและสวยงามมากยิ่งขึ้น
+    # และนำหัวลูกศรออกตามความต้องการ เพื่อให้เป็นเส้นทึบเชื่อมต่อถึงกรอบพอดี
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -42,7 +42,7 @@ def render_roles():
                 --col-border-mid: #fed7aa;
                 --col-bg-right: rgba(239, 246, 255, 0.6);
                 --col-border-right: #bfdbfe;
-                --bg-knockout: #ffffff; /* เส้นขอบตัดสีขาวสำหรับลูกศรใน Light Mode */
+                --bg-knockout: #ffffff; /* เส้นขอบตัดสีขาวสำหรับเส้นเชื่อมใน Light Mode */
             }
 
             @media (prefers-color-scheme: dark) {
@@ -59,7 +59,7 @@ def render_roles():
                     --col-border-mid: rgba(249, 115, 22, 0.3);
                     --col-bg-right: rgba(30, 58, 138, 0.2);
                     --col-border-right: rgba(59, 130, 246, 0.3);
-                    --bg-knockout: #0e1117; /* เส้นขอบตัดสีดำสำหรับลูกศรใน Dark Mode */
+                    --bg-knockout: #0e1117; /* เส้นขอบตัดสีดำสำหรับเส้นเชื่อมใน Dark Mode */
                 }
             }
 
@@ -89,19 +89,8 @@ def render_roles():
                 </p>
             </div>
 
-            <!-- SVG Lines Overlay (ระบบวาดลูกศรแบบแกนรวมวงจร) -->
+            <!-- SVG Lines Overlay (ระบบวาดเส้นแบบแกนรวมวงจร ไม่มีหัวลูกศร) -->
             <svg id="flow-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none hidden xl:block z-[100]" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2));">
-                <defs>
-                    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
-                    </marker>
-                    <marker id="arrow-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c" />
-                    </marker>
-                    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7" />
-                    </marker>
-                </defs>
                 
                 <!-- ชั้นพื้นหลังสำหรับตัดขอบ (Knockout) -->
                 <g stroke="var(--bg-knockout)" stroke-width="10" fill="none" stroke-linejoin="round" stroke-linecap="round">
@@ -110,26 +99,26 @@ def render_roles():
                     <path id="bg-return" />
                 </g>
 
-                <!-- เส้นแกนหลักและแขนงต่างๆ -->
+                <!-- เส้นแกนหลักและแขนงต่างๆ (นำ marker-end ออกทั้งหมด) -->
                 <!-- Left to Middle (สีเขียว) -->
                 <g stroke="#16a34a" stroke-width="4" fill="none" stroke-linejoin="round" stroke-linecap="round">
-                    <path id="path-lm-1" marker-end="url(#arrow-green)" />
-                    <path id="path-lm-2" marker-end="url(#arrow-green)" />
-                    <path id="path-lm-3" marker-end="url(#arrow-green)" />
+                    <path id="path-lm-1" />
+                    <path id="path-lm-2" />
+                    <path id="path-lm-3" />
                 </g>
 
                 <!-- Middle to Right (สีส้ม) -->
                 <g stroke="#ea580c" stroke-width="4" fill="none" stroke-linejoin="round" stroke-linecap="round">
-                    <path id="path-mr-1" marker-end="url(#arrow-orange)" />
-                    <path id="path-mr-2" marker-end="url(#arrow-orange)" />
-                    <path id="path-mr-3" marker-end="url(#arrow-orange)" />
+                    <path id="path-mr-1" />
+                    <path id="path-mr-2" />
+                    <path id="path-mr-3" />
                 </g>
 
                 <!-- Right to Left Bottom Return (สีฟ้า) -->
-                <path id="path-return" fill="none" stroke="#0284c7" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,5" marker-end="url(#arrow-blue)" />
+                <path id="path-return" fill="none" stroke="#0284c7" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,5" />
             </svg>
             
-            <!-- ป้ายข้อความลูกศรวนกลับด้านล่าง -->
+            <!-- ป้ายข้อความเส้นวนกลับด้านล่าง -->
             <div id="return-text" class="absolute hidden xl:flex items-center justify-center font-bold text-blue-700 bg-blue-50 px-5 py-2 rounded-full border-2 border-blue-400 text-[15px] z-[110] shadow-md">
                 <i data-lucide="refresh-cw" class="w-5 h-5 mr-2 text-blue-600"></i> การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
             </div>
@@ -384,26 +373,28 @@ def render_roles():
                     };
 
                     // 1. Left to Middle (Branching from Postcare to Middle Cards)
-                    // (ทำหน้าที่เป็นตัวแทนจากชุมชน ส่งต่อให้ รพ.)
+                    // นำช่องว่างเผื่อหัวลูกศร ( - 8) ออก เพื่อให้เส้นลากชนขอบการ์ดพอดี
                     const gapLM = colM.left - colL.right;
                     const midX_LM = colL.right + gapLM * 0.4;
                     const outL_Y = cPost.cy; 
 
-                    draw('path-lm-1', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cOnline.cy} L ${colM.left - 8} ${cOnline.cy}`);
-                    draw('path-lm-2', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cOnsite.cy} L ${colM.left - 8} ${cOnsite.cy}`);
-                    draw('path-lm-3', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cClinic.cy} L ${colM.left - 8} ${cClinic.cy}`);
+                    draw('path-lm-1', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cOnline.cy} L ${colM.left} ${cOnline.cy}`);
+                    draw('path-lm-2', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cOnsite.cy} L ${colM.left} ${cOnsite.cy}`);
+                    draw('path-lm-3', `M ${colL.right} ${outL_Y} L ${midX_LM} ${outL_Y} L ${midX_LM} ${cClinic.cy} L ${colM.left} ${cClinic.cy}`);
 
                     // 2. Middle to Right (Branching from Middle Cards to Right Cards)
+                    // นำช่องว่างเผื่อหัวลูกศร ( - 8) ออก เพื่อให้เส้นลากชนขอบการ์ดพอดี
                     const gapMR = colR.left - colM.right;
                     const midX_MR = colM.right + gapMR * 0.5;
 
-                    draw('path-mr-1', `M ${colM.right} ${cOnline.cy} L ${midX_MR} ${cOnline.cy} L ${midX_MR} ${cEr.cy} L ${colR.left - 8} ${cEr.cy}`);
-                    draw('path-mr-2', `M ${colM.right} ${cOnsite.cy} L ${midX_MR} ${cOnsite.cy} L ${midX_MR} ${cControl.cy} L ${colR.left - 8} ${cControl.cy}`);
-                    draw('path-mr-3', `M ${colM.right} ${cClinic.cy} L ${midX_MR} ${cClinic.cy} L ${midX_MR} ${cSurv.cy} L ${colR.left - 8} ${cSurv.cy}`);
+                    draw('path-mr-1', `M ${colM.right} ${cOnline.cy} L ${midX_MR} ${cOnline.cy} L ${midX_MR} ${cEr.cy} L ${colR.left} ${cEr.cy}`);
+                    draw('path-mr-2', `M ${colM.right} ${cOnsite.cy} L ${midX_MR} ${cOnsite.cy} L ${midX_MR} ${cControl.cy} L ${colR.left} ${cControl.cy}`);
+                    draw('path-mr-3', `M ${colM.right} ${cClinic.cy} L ${midX_MR} ${cClinic.cy} L ${midX_MR} ${cSurv.cy} L ${colR.left} ${cSurv.cy}`);
 
                     // 3. Right to Left (Return Loop Bottom)
+                    // ปรับปลายเส้นให้ชนกับขอบล่างของกล่องซ้ายพอดี (ลบระยะเผื่อหัวลูกศรออก)
                     const dropY = Math.max(colL.bottom, colM.bottom, colR.bottom) + 50;
-                    const dRet = `M ${colR.cx} ${colR.bottom} L ${colR.cx} ${dropY} L ${colL.cx} ${dropY} L ${colL.cx} ${colL.bottom + 15}`;
+                    const dRet = `M ${colR.cx} ${colR.bottom} L ${colR.cx} ${dropY} L ${colL.cx} ${dropY} L ${colL.cx} ${colL.bottom}`;
                     
                     document.getElementById('path-return').setAttribute('d', dRet);
                     document.getElementById('bg-return').setAttribute('d', dRet);
