@@ -14,58 +14,79 @@ def render_pm25_flow():
         <style type="text/tailwindcss">
             /* =========================================
                THEME VARIABLES (Light Mode & Dark Mode)
+               เพื่อการอ่านที่ง่ายและสีไม่กลืนกัน
                ========================================= */
             :root {
-                --text-main: #334155;
-                --text-muted: #64748b;
+                --text-main: #1e293b;
+                --text-muted: #475569;
                 --bg-card: #ffffff;
                 --border-card: #e2e8f0;
 
                 /* Column 1 (Yellow/Community) */
-                --c1-bg: #fefce8; --c1-border: #fde047; --c1-title-bg: #fef9c3; --c1-text-main: #854d0e; --c1-text-sub: #a16207; --c1-box-bg: rgba(254, 240, 138, 0.4);
+                --c1-bg: #fefce8; --c1-border: #fde047; 
+                --c1-title-bg: #fef9c3; --c1-title-text: #854d0e;
+                --c1-icon: #ca8a04;
 
                 /* Column 2 (Orange/Clinic) */
-                --c2-bg: #fff7ed; --c2-border: #fb923c; --c2-title-bg: #ffedd5; --c2-text-main: #9a3412; --c2-text-sub: #c2410c;
+                --c2-bg: #fff7ed; --c2-border: #fb923c; 
+                --c2-title-bg: #ffedd5; --c2-title-text: #9a3412;
+                --c2-icon: #ea580c;
 
                 /* Column 3 (Green/Refer) */
-                --c3-bg: #f0fdf4; --c3-border: #86efac; --c3-title-bg: #dcfce7; --c3-text-main: #166534;
+                --c3-bg: #f0fdf4; --c3-border: #86efac; 
+                --c3-title-bg: #dcfce7; --c3-title-text: #166534;
+                --c3-icon: #16a34a;
+
+                /* Inner Boxes in Col 3 */
+                --ref-bg: #fef2f2; --ref-border: #fca5a5; 
+                --ref-title-bg: #fee2e2; --ref-title-text: #991b1b;
+                
+                --dis-bg: #f0fdf4; --dis-border: #86efac; 
+                --dis-title-bg: #dcfce7; --dis-title-text: #166534;
 
                 /* Alert & Tags */
-                --alert-bg: #1e4b3e; --alert-border: #123329; --alert-text: #ffffff; --alert-hl: #fde047;
+                --alert-bg: #1e4b3e; --alert-border: #123329; 
+                --alert-text: #ffffff; --alert-hl: #fde047;
                 
                 /* Connecting Lines */
                 --svg-line: #94a3b8; --svg-return: #475569;
-                
-                /* Specfic Boxes in Col 3 */
-                --bg-red: #fee2e2; --border-red: #fca5a5; --title-red: #fecaca; --text-red: #991b1b; --icon-red: #b91c1c;
-                --bg-green: #bbf7d0; --border-green: #4ade80; --title-green: #86efac; --text-green: #166534;
             }
 
             @media (prefers-color-scheme: dark) {
                 :root {
-                    --text-main: #e2e8f0;
-                    --text-muted: #94a3b8;
+                    --text-main: #f1f5f9;
+                    --text-muted: #cbd5e1;
                     --bg-card: #1e293b;
                     --border-card: #334155;
 
-                    /* Column 1 (Yellow/Community) -> Deep Olive */
-                    --c1-bg: rgba(133, 77, 14, 0.15); --c1-border: rgba(253, 224, 71, 0.3); --c1-title-bg: rgba(133, 77, 14, 0.4); --c1-text-main: #fde047; --c1-text-sub: #fef08a; --c1-box-bg: rgba(133, 77, 14, 0.3);
+                    /* Column 1 (Yellow/Community) */
+                    --c1-bg: rgba(66, 32, 6, 0.4); --c1-border: #78350f; 
+                    --c1-title-bg: #78350f; --c1-title-text: #fde68a;
+                    --c1-icon: #facc15;
 
-                    /* Column 2 (Orange/Clinic) -> Deep Rust */
-                    --c2-bg: rgba(154, 52, 18, 0.15); --c2-border: rgba(251, 146, 60, 0.3); --c2-title-bg: rgba(154, 52, 18, 0.4); --c2-text-main: #fdba74; --c2-text-sub: #fed7aa;
+                    /* Column 2 (Orange/Clinic) */
+                    --c2-bg: rgba(67, 20, 7, 0.4); --c2-border: #7c2d12; 
+                    --c2-title-bg: #7c2d12; --c2-title-text: #fed7aa;
+                    --c2-icon: #fb923c;
 
-                    /* Column 3 (Green/Refer) -> Deep Forest */
-                    --c3-bg: rgba(22, 101, 52, 0.15); --c3-border: rgba(134, 239, 172, 0.3); --c3-title-bg: rgba(22, 101, 52, 0.4); --c3-text-main: #86efac;
+                    /* Column 3 (Green/Refer) */
+                    --c3-bg: rgba(6, 78, 59, 0.4); --c3-border: #14532d; 
+                    --c3-title-bg: #14532d; --c3-title-text: #86efac;
+                    --c3-icon: #4ade80;
+
+                    /* Inner Boxes in Col 3 */
+                    --ref-bg: rgba(69, 10, 10, 0.5); --ref-border: #7f1d1d; 
+                    --ref-title-bg: #7f1d1d; --ref-title-text: #fca5a5;
+                    
+                    --dis-bg: rgba(6, 78, 59, 0.5); --dis-border: #14532d; 
+                    --dis-title-bg: #14532d; --dis-title-text: #86efac;
 
                     /* Alert & Tags */
-                    --alert-bg: rgba(15, 23, 42, 0.9); --alert-border: #334155; --alert-text: #e2e8f0; --alert-hl: #fde047;
+                    --alert-bg: rgba(15, 23, 42, 0.95); --alert-border: #334155; 
+                    --alert-text: #e2e8f0; --alert-hl: #fde047;
                     
                     /* Connecting Lines */
-                    --svg-line: #64748b; --svg-return: #cbd5e1;
-                    
-                    /* Specfic Boxes in Col 3 */
-                    --bg-red: rgba(153, 27, 27, 0.2); --border-red: rgba(248, 113, 113, 0.3); --title-red: rgba(153, 27, 27, 0.4); --text-red: #fca5a5; --icon-red: #fca5a5;
-                    --bg-green: rgba(22, 101, 52, 0.2); --border-green: rgba(74, 222, 128, 0.3); --title-green: rgba(22, 101, 52, 0.4); --text-green: #86efac;
+                    --svg-line: #64748b; --svg-return: #94a3b8;
                 }
             }
 
@@ -74,35 +95,35 @@ def render_pm25_flow():
                ========================================= */
             body { font-family: 'Sarabun', sans-serif; background-color: transparent; padding: 1rem; color: var(--text-main); }
             
+            .text-main { color: var(--text-main); }
+            .text-muted { color: var(--text-muted); }
+
             .flow-col { border-width: 3px; border-radius: 2rem; padding: 1.25rem; display: flex; flex-direction: column; gap: 1.25rem; position: relative; height: 100%; transition: all 0.3s; }
-            .inner-box { background-color: var(--bg-card); border: 1px solid var(--border-card); border-radius: 0.75rem; padding: 1rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); transition: all 0.3s; }
+            .inner-box { background-color: var(--bg-card); border: 1px solid var(--border-card); border-radius: 0.75rem; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.3s; }
             
-            .tag-code { position: absolute; top: 0.5rem; right: 0.5rem; background-color: var(--alert-bg); color: var(--alert-text); font-size: 0.65rem; padding: 0.15rem 0.6rem; border-radius: 9999px; font-weight: 700; z-index: 10; border: 1px solid var(--alert-border); letter-spacing: 0.025em; }
+            .tag-code { position: absolute; top: 0.5rem; right: 0.5rem; background-color: var(--alert-bg); color: var(--alert-text); font-size: 0.65rem; padding: 0.15rem 0.6rem; border-radius: 9999px; font-weight: 700; z-index: 10; border: 1px solid var(--alert-border); box-shadow: 0 1px 2px rgba(0,0,0,0.1); letter-spacing: 0.025em; }
             .arrow-icon { color: var(--svg-line); flex-shrink: 0; }
 
-            /* Semantic Theme Mappings */
+            /* Semantic Theme Classes */
             .col-1 { background-color: var(--c1-bg); border-color: var(--c1-border); }
-            .col-1-title { background-color: var(--c1-title-bg); color: var(--c1-text-main); }
-            .col-1-icon { color: var(--c1-text-sub); }
-            .col-1-text { color: var(--c1-text-main); }
-            .col-1-sub { color: var(--c1-text-sub); }
-            .col-1-box { background-color: var(--c1-box-bg); border-color: var(--c1-border); }
+            .c1-title { background-color: var(--c1-title-bg); color: var(--c1-title-text); }
+            .c1-text { color: var(--c1-title-text); }
+            .c1-icon { color: var(--c1-icon); }
 
             .col-2 { background-color: var(--c2-bg); border-color: var(--c2-border); }
-            .col-2-title { background-color: var(--c2-title-bg); color: var(--c2-text-main); }
-            .col-2-icon { color: var(--c2-text-sub); }
-            .col-2-text { color: var(--c2-text-main); }
-            .col-2-sub { color: var(--c2-text-sub); }
+            .c2-title { background-color: var(--c2-title-bg); color: var(--c2-title-text); }
+            .c2-text { color: var(--c2-title-text); }
+            .c2-icon { color: var(--c2-icon); }
 
             .col-3 { background-color: var(--c3-bg); border-color: var(--c3-border); }
-            .col-3-title { background-color: var(--c3-title-bg); color: var(--c3-text-main); }
+            .c3-title { background-color: var(--c3-title-bg); color: var(--c3-title-text); }
             
-            .box-refer { background-color: var(--bg-red); border-color: var(--border-red); color: var(--text-red); border-width: 3px; }
-            .box-refer-title { background-color: var(--title-red); }
-            .box-refer-icon { color: var(--icon-red); }
+            .box-refer { background-color: var(--ref-bg); border-color: var(--ref-border); border-width: 3px; }
+            .box-refer-title { background-color: var(--ref-title-bg); color: var(--ref-title-text); }
+            .box-refer-icon { color: var(--ref-title-text); }
 
-            .box-discharge { background-color: var(--bg-green); border-color: var(--border-green); color: var(--text-green); border-width: 3px; }
-            .box-discharge-title { background-color: var(--title-green); }
+            .box-discharge { background-color: var(--dis-bg); border-color: var(--dis-border); border-width: 3px; }
+            .box-discharge-title { background-color: var(--dis-title-bg); color: var(--dis-title-text); }
         </style>
     </head>
     <body>
@@ -138,8 +159,10 @@ def render_pm25_flow():
             </svg>
 
             <!-- Return Label (Desktop Dynamic) -->
-            <div id="return-label" class="absolute hidden lg:flex items-center justify-center inner-box px-8 py-2.5 rounded-full z-10 font-bold text-base whitespace-nowrap border-2" style="border-color: var(--svg-return); color: var(--text-main);">
-                การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
+            <div id="return-label" class="absolute hidden lg:flex items-center justify-center inner-box px-8 py-2.5 rounded-full z-10 border-2" style="border-color: var(--svg-return);">
+                <p class="font-bold text-base whitespace-nowrap text-main">
+                    การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
+                </p>
             </div>
 
             <!-- 3 Columns Grid -->
@@ -147,33 +170,33 @@ def render_pm25_flow():
 
                 <!-- ================= Column 1: Left (Community) ================= -->
                 <div id="col-left" class="col-1 flow-col">
-                    <h2 class="text-lg sm:text-xl font-extrabold text-center col-1-title py-2 rounded-full mx-2 sm:mx-4">ชุมชนและหน่วยบริการปฐมภูมิ (รุก)</h2>
-                    <div class="flex flex-col items-center text-center py-5 col-1-box border rounded-xl shadow-sm">
+                    <h2 class="text-lg sm:text-xl font-extrabold text-center c1-title py-2 rounded-full mx-2 sm:mx-4">ชุมชนและหน่วยบริการปฐมภูมิ (รุก)</h2>
+                    <div class="flex flex-col items-center text-center py-5 inner-box border-2 shadow-sm" style="border-color: var(--c1-border);">
                         <div class="flex justify-center mb-3">
-                            <i data-lucide="users" class="w-10 h-10 sm:w-12 sm:h-12 col-1-icon"></i>
+                            <i data-lucide="users" class="w-10 h-10 sm:w-12 sm:h-12 c1-icon"></i>
                         </div>
-                        <h3 class="font-bold text-lg sm:text-xl col-1-text">กลไก 3 หมอ</h3>
+                        <h3 class="font-bold text-lg sm:text-xl c1-text">กลไก 3 หมอ</h3>
                     </div>
                     <div class="flex-grow space-y-4 sm:space-y-5 mt-2">
                          <div class="flex items-start gap-3 sm:gap-4">
-                            <i data-lucide="clipboard-list" class="w-6 h-6 sm:w-7 sm:h-7 col-1-icon shrink-0 mt-1"></i>
+                            <i data-lucide="clipboard-list" class="w-6 h-6 sm:w-7 sm:h-7 c1-icon shrink-0 mt-1"></i>
                             <div>
-                                <p class="font-bold col-1-text text-sm sm:text-base">การลงพื้นที่เชิงรุก: อสม. และ รพ.สต.</p>
-                                <p class="text-xs sm:text-sm col-1-sub leading-relaxed mt-0.5">เคาะประตูบ้านคัดกรองสุขภาพ เน้น 4 กลุ่มเปราะบาง (ติดเตียง/ผู้สูงอายุ/ตั้งครรภ์/เด็กเล็ก)</p>
+                                <p class="font-bold text-main text-sm sm:text-base">การลงพื้นที่เชิงรุก: อสม. และ รพ.สต.</p>
+                                <p class="text-xs sm:text-sm text-muted leading-relaxed mt-0.5">เคาะประตูบ้านคัดกรองสุขภาพ เน้น 4 กลุ่มเปราะบาง (ติดเตียง/ผู้สูงอายุ/ตั้งครรภ์/เด็กเล็ก)</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3 sm:gap-4">
-                            <i data-lucide="shield-check" class="w-6 h-6 sm:w-7 sm:h-7 col-1-icon shrink-0 mt-1"></i>
+                            <i data-lucide="shield-check" class="w-6 h-6 sm:w-7 sm:h-7 c1-icon shrink-0 mt-1"></i>
                             <div>
-                                <p class="font-bold col-1-text text-sm sm:text-base">สนับสนุนพื้นที่ปลอดฝุ่น:</p>
-                                <p class="text-xs sm:text-sm col-1-sub leading-relaxed mt-0.5">แจกหน้ากาก N95, จัดทำมุ้งสู้ฝุ่นให้ผู้ป่วยติดเตียง, ห้องปลอดฝุ่นในศูนย์เด็กเล็ก/โรงเรียน</p>
+                                <p class="font-bold text-main text-sm sm:text-base">สนับสนุนพื้นที่ปลอดฝุ่น:</p>
+                                <p class="text-xs sm:text-sm text-muted leading-relaxed mt-0.5">แจกหน้ากาก N95, จัดทำมุ้งสู้ฝุ่นให้ผู้ป่วยติดเตียง, ห้องปลอดฝุ่นในศูนย์เด็กเล็ก/โรงเรียน</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3 sm:gap-4">
-                            <i data-lucide="pill" class="w-6 h-6 sm:w-7 sm:h-7 col-1-icon shrink-0 mt-1"></i>
+                            <i data-lucide="pill" class="w-6 h-6 sm:w-7 sm:h-7 c1-icon shrink-0 mt-1"></i>
                             <div>
-                                <p class="font-bold col-1-text text-sm sm:text-base">สั่งจ่ายยาผ่าน Telemedicine :</p>
-                                <p class="text-xs sm:text-sm col-1-sub leading-relaxed mt-0.5">ติดตามและสั่งจ่ายยาสำหรับผู้ป่วยอาการคงที่ เพื่อลดความเสี่ยงสัมผัสฝุ่น</p>
+                                <p class="font-bold text-main text-sm sm:text-base">สั่งจ่ายยาผ่าน Telemedicine :</p>
+                                <p class="text-xs sm:text-sm text-muted leading-relaxed mt-0.5">ติดตามและสั่งจ่ายยาสำหรับผู้ป่วยอาการคงที่ เพื่อลดความเสี่ยงสัมผัสฝุ่น</p>
                             </div>
                         </div>
                     </div>
@@ -181,23 +204,23 @@ def render_pm25_flow():
 
                 <!-- ================= Column 2: Middle (Clinic & ER) ================= -->
                 <div id="col-mid" class="col-2 flow-col">
-                    <h2 class="text-lg sm:text-xl font-extrabold text-center col-2-title py-2 rounded-full mx-2 sm:mx-4">การรับผู้ป่วยและดูแลรักษา (รับ)</h2>
+                    <h2 class="text-lg sm:text-xl font-extrabold text-center c2-title py-2 rounded-full mx-2 sm:mx-4">การรับผู้ป่วยและดูแลรักษา (รับ)</h2>
                     
                     <div class="space-y-4 h-full flex flex-col justify-between mt-2">
                         <!-- Row 1: Online -->
                         <div class="inner-box flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 relative">
                             <div class="flex items-center gap-3 flex-grow min-w-0">
-                                <i data-lucide="smartphone" class="w-8 h-8 sm:w-9 sm:h-9 col-2-icon shrink-0"></i>
+                                <i data-lucide="smartphone" class="w-8 h-8 sm:w-9 sm:h-9 c2-icon shrink-0"></i>
                                 <div class="min-w-0">
-                                    <h3 class="font-bold col-2-text text-sm sm:text-base">ระบบก่อนถึง รพ. และออนไลน์</h3>
-                                    <p class="text-[11px] sm:text-xs col-2-sub leading-tight mt-0.5 truncate sm:whitespace-normal">คลินิกมลพิษออนไลน์ ผ่าน Line OA หรือ หมอพร้อม</p>
+                                    <h3 class="font-bold text-main text-sm sm:text-base">ระบบก่อนถึง รพ. และออนไลน์</h3>
+                                    <p class="text-[11px] sm:text-xs text-muted leading-tight mt-0.5 truncate sm:whitespace-normal">คลินิกมลพิษออนไลน์ ผ่าน Line OA หรือ หมอพร้อม</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 shrink-0 sm:w-auto w-full justify-end sm:justify-center mt-2 sm:mt-0">
                                 <i data-lucide="arrow-right" class="arrow-icon w-5 h-5 hidden sm:block"></i>
                                 <div class="text-right sm:text-center">
-                                    <p class="font-bold text-[13px] sm:text-sm col-2-text">ประเมินเบื้องต้น</p>
-                                    <p class="text-[11px] sm:text-xs col-2-sub">& Telemedicine</p>
+                                    <p class="font-bold text-[13px] sm:text-sm text-main">ประเมินเบื้องต้น</p>
+                                    <p class="text-[11px] sm:text-xs text-muted">& Telemedicine</p>
                                 </div>
                             </div>
                         </div>
@@ -206,28 +229,28 @@ def render_pm25_flow():
                         <div class="inner-box pt-8 sm:pt-6 flex flex-wrap items-center gap-2 relative">
                             <div class="tag-code">รหัส Z58.1</div>
                             <div class="flex items-center gap-2 w-full lg:w-auto mb-2 lg:mb-0 shrink-0">
-                                <div class="flex shrink-0 col-2-icon">
+                                <div class="flex shrink-0 c2-icon">
                                     <i data-lucide="eye" class="w-6 h-6 sm:w-7 sm:h-7"></i>
                                     <i data-lucide="lungs" class="w-6 h-6 sm:w-7 sm:h-7 -ml-2"></i>
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-[13px] sm:text-sm col-2-text leading-tight">ผู้ป่วยนอก (OPD) <br/>& คลินิกมลพิษ</h3>
+                                    <h3 class="font-bold text-[13px] sm:text-sm text-main leading-tight">ผู้ป่วยนอก (OPD) <br/>& คลินิกมลพิษ</h3>
                                 </div>
                             </div>
                             <div class="flex-grow flex items-center justify-between sm:justify-around gap-1 text-[11px] sm:text-xs">
                                 <div class="text-center shrink-0">
-                                    <p class="font-bold col-2-text">คัดกรองอาการ</p>
-                                    <p class="text-[9px] sm:text-[10px] col-2-sub">(PM2.5 > 37.5)</p>
+                                    <p class="font-bold text-main">คัดกรองอาการ</p>
+                                    <p class="text-[9px] sm:text-[10px] text-muted">(PM2.5 > 37.5)</p>
                                 </div>
                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
                                 <div class="text-center shrink-0">
-                                    <p class="col-2-text">ส่งเข้า</p>
-                                    <p class="font-bold col-2-icon">Pollution Clinic</p>
+                                    <p class="text-muted">ส่งเข้า</p>
+                                    <p class="font-bold c2-text">Pollution Clinic</p>
                                 </div>
                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
                                 <div class="text-center shrink-0 w-16 sm:w-20">
-                                    <p class="font-bold col-2-text">จ่ายยา/แนะนำ</p>
-                                    <p class="text-[9px] sm:text-[10px] col-2-sub">นัดติดตาม 7 วัน</p>
+                                    <p class="font-bold text-main">จ่ายยา/แนะนำ</p>
+                                    <p class="text-[9px] sm:text-[10px] text-muted">นัดติดตาม 7 วัน</p>
                                 </div>
                             </div>
                         </div>
@@ -238,23 +261,23 @@ def render_pm25_flow():
                             <div class="flex items-center gap-2 w-full lg:w-auto mb-2 lg:mb-0 shrink-0">
                                 <i data-lucide="ambulance" class="w-6 h-6 sm:w-7 sm:h-7 text-red-500 shrink-0"></i>
                                 <div>
-                                    <h3 class="font-bold text-[13px] sm:text-sm col-2-text leading-tight">ผู้ป่วยฉุกเฉิน (ER) <br/>และระบบ 1669</h3>
+                                    <h3 class="font-bold text-[13px] sm:text-sm text-main leading-tight">ผู้ป่วยฉุกเฉิน (ER) <br/>และระบบ 1669</h3>
                                 </div>
                             </div>
                             <div class="flex-grow flex items-center justify-between sm:justify-around gap-1 text-[11px] sm:text-xs">
                                 <div class="text-center shrink-0">
-                                    <p class="font-bold col-2-text">อาการรุนแรง</p>
-                                    <p class="text-[9px] sm:text-[10px] col-2-sub">(หอบหืด, COPD..)</p>
+                                    <p class="font-bold text-main">อาการรุนแรง</p>
+                                    <p class="text-[9px] sm:text-[10px] text-muted">(หอบหืด, COPD..)</p>
                                 </div>
                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
                                 <div class="text-center shrink-0">
-                                    <p class="font-bold col-2-text">1669 ติดต่อ EMS</p>
-                                    <p class="col-2-sub">รับเข้า ER</p>
+                                    <p class="font-bold text-main">1669 ติดต่อ EMS</p>
+                                    <p class="text-muted">รับเข้า ER</p>
                                 </div>
                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
                                 <div class="text-center shrink-0 w-16 sm:w-20">
-                                    <p class="font-bold col-2-text">ประเมิน Admit</p>
-                                    <p class="col-2-sub">หรือ กลับบ้าน</p>
+                                    <p class="font-bold text-main">ประเมิน Admit</p>
+                                    <p class="text-muted">หรือ กลับบ้าน</p>
                                 </div>
                             </div>
                         </div>
@@ -264,16 +287,16 @@ def render_pm25_flow():
                             <div class="tag-code">รหัส Z58.1</div>
                             <div class="flex items-center gap-2 shrink-0">
                                 <i data-lucide="bed" class="w-6 h-6 sm:w-8 sm:h-8 text-blue-500"></i>
-                                <h3 class="font-bold col-2-text text-[13px] sm:text-sm">ผู้ป่วยใน (IPD)</h3>
+                                <h3 class="font-bold text-[13px] sm:text-sm text-main">ผู้ป่วยใน (IPD)</h3>
                             </div>
                             <div class="flex items-center gap-2 sm:gap-4 flex-grow justify-end">
                                 <div class="text-right sm:text-center text-[11px] sm:text-sm">
-                                     <p class="font-bold col-2-text">รับ Admit</p>
-                                     <p class="text-[10px] sm:text-xs col-2-sub">เข้าหอผู้ป่วย</p>
+                                     <p class="font-bold text-main">รับ Admit</p>
+                                     <p class="text-[10px] sm:text-xs text-muted">เข้าหอผู้ป่วย</p>
                                 </div>
                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
                                 <div class="text-center text-[11px] sm:text-sm shrink-0">
-                                     <p class="font-bold col-2-text leading-tight">พยาบาล<br/>ซักประวัติเพิ่มเติม</p>
+                                     <p class="font-bold text-main leading-tight">พยาบาล<br/>ซักประวัติเพิ่มเติม</p>
                                 </div>
                             </div>
                          </div>
@@ -282,7 +305,7 @@ def render_pm25_flow():
 
                 <!-- ================= Column 3: Right (Refer & Discharge) ================= -->
                 <div id="col-right" class="col-3 flow-col">
-                    <h2 class="text-lg sm:text-xl font-extrabold text-center col-3-title py-2 rounded-full mx-2 sm:mx-4">ระบบส่งต่อและจำหน่ายผู้ป่วย</h2>
+                    <h2 class="text-lg sm:text-xl font-extrabold text-center c3-title py-2 rounded-full mx-2 sm:mx-4">ระบบส่งต่อและจำหน่ายผู้ป่วย</h2>
                     
                     <div class="flex flex-col gap-5 h-full mt-2">
                         <!-- Referral System -->
@@ -291,17 +314,17 @@ def render_pm25_flow():
                             <div class="flex justify-between items-center text-center">
                                 <div class="flex-1 flex flex-col items-center">
                                     <i data-lucide="hospital" class="w-8 h-8 sm:w-10 sm:h-10 mb-2 box-refer-icon"></i>
-                                    <p class="font-bold text-[13px] sm:text-base leading-tight">รพ.ประเมินการ</p>
-                                    <p class="text-[11px] sm:text-sm leading-tight mt-1 opacity-90">สำรองเตียงพร้อมรับ<br/>และ Ventilator พร้อมใช้</p>
+                                    <p class="font-bold text-[13px] sm:text-base text-main leading-tight">รพ.ประเมินการ</p>
+                                    <p class="text-[11px] sm:text-sm text-muted leading-tight mt-1 opacity-90">สำรองเตียงพร้อมรับ<br/>และ Ventilator พร้อมใช้</p>
                                 </div>
                                 <div class="flex items-center px-1 sm:px-2">
                                     <i data-lucide="arrow-right" class="w-6 h-6 sm:w-8 sm:h-8 box-refer-icon"></i>
                                 </div>
                                 <div class="flex-1 flex flex-col items-center">
                                     <i data-lucide="building-2" class="w-8 h-8 sm:w-10 sm:h-10 mb-2 box-refer-icon"></i>
-                                    <p class="font-bold text-[13px] sm:text-base leading-tight">หาก Overcapacity</p>
-                                    <p class="text-[11px] sm:text-sm mt-1 opacity-90">ส่งต่อโรงพยาบาล</p>
-                                    <p class="font-extrabold text-base sm:text-lg mt-0.5">ลำพูน</p>
+                                    <p class="font-bold text-[13px] sm:text-base text-main leading-tight">หาก Overcapacity</p>
+                                    <p class="text-[11px] sm:text-sm text-muted mt-1 opacity-90">ส่งต่อโรงพยาบาล</p>
+                                    <p class="font-extrabold text-base sm:text-lg mt-0.5" style="color: var(--ref-title-text);">ลำพูน</p>
                                 </div>
                             </div>
                         </div>
@@ -310,9 +333,9 @@ def render_pm25_flow():
                         <div class="rounded-2xl p-4 sm:p-5 box-discharge shadow-sm h-1/2 flex flex-col justify-center relative">
                             <h3 class="font-bold text-center mb-4 sm:mb-5 text-sm sm:text-lg box-discharge-title py-1 rounded-full mx-2 sm:mx-6 leading-tight">การจำหน่ายผู้ป่วย (Discharge)</h3>
                             <div class="text-center space-y-2 sm:space-y-3">
-                                <p class="font-bold text-base sm:text-xl">วางแผนตามหลัก D-METHOD</p>
-                                <div class="w-12 sm:w-16 h-1 bg-current opacity-20 mx-auto rounded-full"></div>
-                                <p class="text-[12px] sm:text-sm font-medium leading-relaxed opacity-90">ประสานทีมเยี่ยมบ้านและอาชีวอนามัย<br/>ประเมินสภาพที่อยู่อาศัยไม่ให้กำเริบซ้ำ</p>
+                                <p class="font-bold text-base sm:text-xl text-main">วางแผนตามหลัก D-METHOD</p>
+                                <div class="w-12 sm:w-16 h-1 bg-current opacity-20 mx-auto rounded-full" style="color: var(--dis-title-text);"></div>
+                                <p class="text-[12px] sm:text-sm font-medium text-muted leading-relaxed opacity-90">ประสานทีมเยี่ยมบ้านและอาชีวอนามัย<br/>ประเมินสภาพที่อยู่อาศัยไม่ให้กำเริบซ้ำ</p>
                             </div>
                         </div>
                     </div>
@@ -322,7 +345,7 @@ def render_pm25_flow():
             <!-- Mobile view for return arrow text (Shown only on small screens) -->
              <div class="lg:hidden text-center mt-8">
                 <div class="inline-flex items-center justify-center inner-box px-6 py-3 rounded-full border-2" style="border-color: var(--svg-return);">
-                    <p class="font-bold text-sm sm:text-base whitespace-nowrap" style="color: var(--text-main);">
+                    <p class="font-bold text-sm sm:text-base whitespace-nowrap text-main">
                         การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
                     </p>
                 </div>
