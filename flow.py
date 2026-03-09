@@ -3,7 +3,7 @@ import streamlit.components.v1 as components
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow ที่ออกแบบใหม่ด้วย Flexbox ที่รัดกุม 
     # ปรับให้รองรับการเพิ่มข้อ 3 (การเฝ้าระวัง) และเส้นเชื่อมต่อที่ซับซ้อนขึ้น
-    # อัปเดตล่าสุด: แก้ไขเส้นเชื่อมผลการรักษามารวมกันตรงกลาง และเพิ่มระยะห่างกรอบคลินิก
+    # อัปเดตล่าสุด: ปรับความชัดของเส้นแดง, ปรับข้อความคลินิกมลพิษ และกรอบส่งตรวจคลินิก
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -68,14 +68,15 @@ def render_flow():
         <!-- Main Flow Container -->
         <div class="w-full max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 relative z-10" id="main-flow-container">
             
-            <!-- SVG Red Line Overlay (วาดเส้นเชื่อมสีแดงอัตโนมัติ) -->
-            <svg id="flow-svg" class="absolute inset-0 w-full h-full pointer-events-none z-0 hidden md:block">
+            <!-- SVG Red Line Overlay (วาดเส้นเชื่อมสีแดงอัตโนมัติ ทำให้ชัดเจนขึ้น) -->
+            <svg id="flow-svg" class="absolute inset-0 w-full h-full pointer-events-none z-0 hidden md:block" style="filter: drop-shadow(0px 3px 3px rgba(220, 38, 38, 0.4));">
                 <defs>
-                    <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                    <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
                     </marker>
                 </defs>
-                <path id="red-line-path" fill="none" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)" />
+                <!-- ปรับ stroke-width ให้หนาเป็น 4 และใช้ stroke-linejoin="round" เพื่อความสวยงาม -->
+                <path id="red-line-path" fill="none" stroke="#dc2626" stroke-width="4" stroke-linejoin="round" marker-end="url(#arrow-red)" />
             </svg>
 
             <!-- ================= LEFT COLUMN (ONLINE) ================= -->
@@ -127,7 +128,7 @@ def render_flow():
                             <div class="bg-emerald-100 border border-emerald-200 rounded-lg p-2 shadow-sm text-left w-full flex-grow relative z-10">
                                 <p class="text-emerald-900 font-bold text-[12px] sm:text-[13px] leading-snug mb-2 card-text">1. ส่งต่อเข้ารับบริการ<br>ที่รพ./รพ.สต./PCU หนองหาร</p>
                                 <!-- กล่องต้นทางของเส้นสีแดง -->
-                                <div id="red-source" class="bg-red-200 text-red-900 border border-red-300 px-2 py-1 rounded text-[12px] sm:text-[13px] font-bold leading-snug inline-block shadow-sm">
+                                <div id="red-source" class="bg-red-200 text-red-900 border border-red-400 px-2 py-1 rounded text-[12px] sm:text-[13px] font-bold leading-snug inline-block shadow-sm">
                                     2. ถ้าอาการรุนแรง<br>ประสาน 1669
                                 </div>
                             </div>
@@ -219,8 +220,9 @@ def render_flow():
                             <p class="text-blue-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">กรณี<br>ไม่เข้าข่าย</p>
                         </div>
                         <div class="line-v h-4 my-1"></div>
-                        <div class="bg-white border-2 border-blue-800 rounded-lg p-1 sm:p-2 shadow-sm text-center w-full h-full z-10">
-                            <p class="text-blue-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-snug card-text">ส่งตรวจคลินิก<br>ตามอาการ<br>ของโรค</p>
+                        <!-- จัดกึ่งกลางกรอบด้วย flex items-center justify-center -->
+                        <div class="bg-white border-2 border-blue-800 rounded-lg p-2 shadow-sm text-center w-full h-full flex flex-col items-center justify-center z-10">
+                            <p class="text-blue-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-snug card-text">ส่งตรวจคลินิก<br>ตามอาการของโรค</p>
                         </div>
                     </div>
                     
@@ -259,8 +261,8 @@ def render_flow():
                 <!-- ================= CLINIC SECTION ================= -->
                 <div class="w-full flex flex-col items-center relative z-20">
                     <div class="bg-orange-300 border-[3px] border-orange-500 rounded-3xl sm:rounded-full px-3 sm:px-6 py-3 shadow-md text-center w-[95%] sm:w-[90%] z-10">
-                        <h3 class="text-orange-900 font-bold text-[14px] sm:text-[16px] md:text-[18px] leading-tight mb-1">ส่งเข้าคลินิกมลพิษ เฉพาะรพ.</h3>
-                        <p class="text-orange-800 font-bold text-[11px] sm:text-[13px] md:text-[14px]">(กรณีรพ.สต.ให้ส่งต่อรพ.)</p>
+                        <h3 class="text-orange-900 font-bold text-[14px] sm:text-[16px] md:text-[18px] leading-tight mb-1">ส่งเข้าคลินิกมลพิษเฉพาะ รพ.</h3>
+                        <p class="text-orange-800 font-bold text-[11px] sm:text-[12px] md:text-[13px]">(กรณี รพ.สต./PCU หนองหาร ให้ส่งต่อ รพ.)</p>
                     </div>
                     
                     <div class="line-v h-6"></div>
@@ -277,7 +279,7 @@ def render_flow():
                     
                     <div class="line-v h-6"></div>
                     
-                    <!-- Clinic 3-Way Split Outcomes (แยก 3 ทางและรวมกันที่ด้านล่าง) -->
+                    <!-- Clinic 3-Way Split Outcomes -->
                     <div class="w-[95%] sm:w-[90%] flex flex-col items-center relative z-10">
                         
                         <!-- สะพานบน แยก 3 ทาง -->
