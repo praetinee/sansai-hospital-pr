@@ -2,8 +2,7 @@ import streamlit.components.v1 as components
 
 def render_roles():
     # โค้ด HTML สำหรับหน้าบทบาทหน่วยงาน ปรับโครงสร้างเป็น Flow 3 คอลัมน์ (รุก-รับ-ส่งต่อ) 
-    # แก้ไขล่าสุด: อัปเกรดระบบวาดเส้นลูกศรให้เป็นแบบ "แกนรวม (Bus Routing)" 
-    # และนำหัวลูกศรออกตามความต้องการ เพื่อให้เป็นเส้นทึบเชื่อมต่อถึงกรอบพอดี
+    # แก้ไขล่าสุด: เปลี่ยนชื่อผู้รับผิดชอบบริการออนไลน์เป็น "ทีมคลินิกมลพิษ"
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -178,8 +177,8 @@ def render_roles():
                                         <i data-lucide="monitor-smartphone" class="w-6 h-6 text-blue-600"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-lg font-bold bg-main-title leading-tight">ทีมให้บริการออนไลน์</h4>
-                                        <p class="text-xs font-medium text-blue-600">ระบบหมอพร้อม / Telemedicine</p>
+                                        <h4 class="text-lg font-bold bg-main-title leading-tight">ทีมคลินิกมลพิษ</h4>
+                                        <p class="text-xs font-medium text-blue-600">ให้บริการออนไลน์ผ่านระบบหมอพร้อม / Telemedicine</p>
                                     </div>
                                 </div>
                                 <div class="pl-2 sm:pl-[3.2rem]">
@@ -189,6 +188,14 @@ def render_roles():
                                         <li>ทำการคัดกรองอาการเบื้องต้น</li>
                                     </ul>
                                 </div>
+                            </div>
+                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
+                                <p class="font-bold text-normal text-sm mb-1">ส่งต่อ:</p>
+                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
+                                    <span class="text-orange-500 font-bold">➔</span> <b>ทีม 3 หมอ</b> (อาการเล็กน้อย)<br>
+                                    <span class="text-orange-500 font-bold">➔</span> <b>รพ./รพ.สต.</b> (เข้าข่ายสงสัย)<br>
+                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">1669</b> (รุนแรง)
+                                </p>
                             </div>
                         </div>
 
@@ -213,6 +220,15 @@ def render_roles():
                                     </ul>
                                 </div>
                             </div>
+                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
+                                <p class="font-bold text-normal text-sm mb-1">ส่งต่อ:</p>
+                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
+                                    <span class="text-orange-500 font-bold">➔</span> <b>คลินิกทั่วไป</b> (ไม่เข้าข่าย)<br>
+                                    <span class="text-orange-500 font-bold">➔</span> <b>คลินิกมลพิษ</b> (เล็กน้อย/ปานกลาง)<br>
+                                    <span class="text-orange-500 font-bold">➔</span> <b>ทีมควบคุมโรค</b> (แจ้งข้อมูลสอบสวน)<br>
+                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">ห้องฉุกเฉิน ER</b> (รุนแรง)
+                                </p>
+                            </div>
                         </div>
 
                         <!-- คลินิกมลพิษ -->
@@ -235,6 +251,13 @@ def render_roles():
                                         <li>วางแผนการรักษาให้แก่ผู้ป่วย</li>
                                     </ul>
                                 </div>
+                            </div>
+                            <div class="card-forward border-t px-4 py-3 pl-4 sm:pl-[4.2rem]">
+                                <p class="font-bold text-normal text-sm mb-1">ผลการรักษา:</p>
+                                <p class="text-[12px] sm:text-[13px] text-normal leading-tight">
+                                    <span class="text-orange-500 font-bold">➔</span> <b>ให้ยากลับบ้าน / Admit:</b> เข้าสู่การดูแลต่อเนื่อง<br>
+                                    <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">ส่ง REFER:</b> ส่งรักษา รพ. ระดับสูง
+                                </p>
                             </div>
                         </div>
                     </div>
