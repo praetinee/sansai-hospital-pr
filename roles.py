@@ -178,7 +178,7 @@ def render_roles():
                                     <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
                                     <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
                                         <li>รับผู้ป่วย Walk-in / รับผู้ป่วยส่งต่อ</li>
-                                        <li>เจ้าหน้าที่ซักประวัติ / อาการเบื้องต้น/บันทึกข้อมูลผู้ป่วยลง GG sheets</li>
+                                        <li>เจ้าหน้าที่ซักประวัติ / อาการเบื้องต้น</li>
                                         <li>บันทึกข้อมูลผู้ป่วยลง GG sheets</li>
                                         <li>ลงแบบคัดกรองสอบสวนโรคจาก PM 2.5</li>
                                     </ul>
