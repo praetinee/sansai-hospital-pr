@@ -3,7 +3,7 @@ import streamlit.components.v1 as components
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow ที่ออกแบบใหม่ด้วย Flexbox ที่รัดกุม 
     # ปรับให้รองรับการเพิ่มข้อ 3 (การเฝ้าระวัง) และเส้นเชื่อมต่อที่ซับซ้อนขึ้น
-    # อัปเดตล่าสุด: เส้นสีแดงอัจฉริยะ หลบสิ่งกีดขวาง ตัดเส้นทับซ้อน และอยู่หน้าสุดเสมอ
+    # อัปเดตล่าสุด: นำขอบของเส้นสีแดงออกตามที่ต้องการ
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -19,7 +19,6 @@ def render_flow():
                 --text-desc: #334155;
                 --line-color: #1e293b; /* สีเส้นดำ/เทาเข้ม */
                 --bg-card-shadow: rgba(0,0,0,0.1);
-                --bg-knockout: #ffffff; /* สีตัดขอบเส้น (Light Mode) */
             }
             
             @media (prefers-color-scheme: dark) {
@@ -28,7 +27,6 @@ def render_flow():
                     --text-desc: #e2e8f0;
                     --line-color: #cbd5e1; /* สีเส้นเทาอ่อน/ขาว */
                     --bg-card-shadow: rgba(255,255,255,0.05);
-                    --bg-knockout: #0e1117; /* สีตัดขอบเส้น (Dark Mode Streamlit) */
                 }
             }
 
@@ -70,15 +68,13 @@ def render_flow():
         <!-- Main Flow Container -->
         <div class="w-full max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 relative z-10" id="main-flow-container">
             
-            <!-- SVG Red Line Overlay (อัปเกรดให้ชั้นอยู่บนสุด z-[100] และมีเอฟเฟกต์ Knockout ตัดเส้นดำ) -->
+            <!-- SVG Red Line Overlay -->
             <svg id="flow-svg" class="absolute inset-0 w-full h-full pointer-events-none z-[100] hidden md:block" style="filter: drop-shadow(0px 3px 5px rgba(220, 38, 38, 0.4));">
                 <defs>
                     <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
                     </marker>
                 </defs>
-                <!-- เส้นพื้นหลัง (Knockout) เพื่อตัดเส้นสีดำอื่นๆ ทิ้งเมื่อพาดผ่าน ทำให้เส้นแดงลอยเด่นขึ้นมา -->
-                <path id="red-line-bg" fill="none" stroke="var(--bg-knockout)" stroke-width="10" stroke-linejoin="round" />
                 <!-- เส้นสีแดงตัวจริง -->
                 <path id="red-line-path" fill="none" stroke="#dc2626" stroke-width="4" stroke-linejoin="round" marker-end="url(#arrow-red)" />
             </svg>
@@ -206,7 +202,6 @@ def render_flow():
                     <p class="text-pink-900 font-bold text-[13px] sm:text-[14px] md:text-[15px] leading-snug card-text">เจ้าหน้าที่ซักประวัติ/อาการเบื้องต้น<br>และลงแบบคัดกรองสอบสวนโรค<br>ที่เกิดจาก PM2.5</p>
                 </div>
                 <div class="line-v h-8 relative">
-                    <!-- ลบลูกศรหลอกสีแดงที่ค้างทิ้ง เพื่อไม่ให้แย่งซีน SVG ของจริง -->
                 </div>
                 
                 <!-- 3-way Split -->
@@ -339,7 +334,6 @@ def render_flow():
                 const source = document.getElementById('red-source');
                 const target = document.getElementById('red-target');
                 const linePath = document.getElementById('red-line-path');
-                const lineBg = document.getElementById('red-line-bg');
                 const svg = document.getElementById('flow-svg');
                 const container = document.getElementById('main-flow-container');
                 
@@ -369,7 +363,6 @@ def render_flow():
                     const d = `M ${startX} ${startY} L ${gutterX} ${startY} L ${gutterX} ${safeY} L ${endX} ${safeY} L ${endX} ${endY}`;
                     
                     linePath.setAttribute('d', d);
-                    if(lineBg) lineBg.setAttribute('d', d);
                 } else if (svg) {
                     svg.classList.add('hidden'); // ซ่อนในมือถือ หรือตอนที่เรียงเป็นคอลัมน์เดียว
                 }
