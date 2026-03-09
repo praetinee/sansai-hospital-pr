@@ -210,7 +210,7 @@ def render_roles():
                                     <p class="font-bold text-normal text-sm mb-1">หน้าที่รับผิดชอบ:</p>
                                     <ul class="list-disc list-outside ml-4 text-normal text-[13px] sm:text-[14px] space-y-1 mb-2">
                                         <li>ให้บริการปรึกษาและคัดกรองผ่านออนไลน์ (หมอพร้อม / Telemedicine)</li>
-                                        <li>รับดูแลผู้ป่วยที่ส่งต่อมาจาก รพ.สต./OPD/PCU หนองหาร</li>
+                                        <li>รับดูแลผู้ป่วยที่ส่งต่อมาจาก รพ.สต./ OPD / PCU หนองหาร</li>
                                         <li>แพทย์/สหวิชาชีพ ซักประวัติ ตรวจร่างกาย/Lab</li>
                                         <li>ลงแบบคัดกรองสอบสวนโรคจาก PM 2.5</li>
                                         <li>วางแผนการรักษาให้แก่ผู้ป่วย</li>
@@ -291,7 +291,7 @@ def render_roles():
                                     </div>
                                     <div>
                                         <h4 class="text-lg font-bold bg-main-title leading-tight">ทีมเฝ้าระวัง</h4>
-                                        <p class="text-xs font-medium text-purple-600 leading-tight">คลินิกมลพิษ / OPD / ER / PCU หนองหาร</p>
+                                        <p class="text-xs font-medium text-purple-600 leading-tight">OPD / ER / PCU หนองหาร</p>
                                     </div>
                                 </div>
                                 <div class="pl-2 sm:pl-[3.2rem]">
