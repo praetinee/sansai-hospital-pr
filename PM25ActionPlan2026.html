@@ -22,7 +22,6 @@
             width: 2px;
             background-color: #cbd5e1; /* slate-300 */
             margin: 0 auto;
-            height: 1.5rem;
         }
         /* ปรับแต่งเพื่อให้เข้ากับ Iframe ของ Streamlit มากขึ้น */
         html, body {
@@ -79,12 +78,12 @@
         <!-- TAB NAVIGATION -->
         <div class="w-full max-w-4xl mx-auto px-4 mb-8 print:hidden">
             <div class="flex justify-center p-1 bg-slate-200/60 backdrop-blur-sm rounded-full shadow-inner overflow-hidden">
-                <button id="btn-dashboard" onclick="switchTab('dashboard')" class="flex-1 py-3 px-6 rounded-full text-sm md:text-base font-bold transition-all duration-300 flex items-center justify-center gap-2 bg-white text-emerald-600 shadow-md transform scale-100">
+                <button id="btn-dashboard" onclick="switchTab('dashboard')" class="flex-1 py-3 px-6 rounded-full text-sm md:text-base font-bold transition-all duration-300 flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50">
                     <i data-lucide="activity" class="w-5 h-5"></i>
                     <span class="hidden sm:inline">แผนการดำเนินงาน (Dashboard)</span>
                     <span class="sm:hidden">Dashboard</span>
                 </button>
-                <button id="btn-flow" onclick="switchTab('flow')" class="flex-1 py-3 px-6 rounded-full text-sm md:text-base font-bold transition-all duration-300 flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50">
+                <button id="btn-flow" onclick="switchTab('flow')" class="flex-1 py-3 px-6 rounded-full text-sm md:text-base font-bold transition-all duration-300 flex items-center justify-center gap-2 bg-white text-blue-600 shadow-md transform scale-100">
                     <i data-lucide="share-2" class="w-5 h-5"></i>
                     <span class="hidden sm:inline">Flow การให้บริการ</span>
                     <span class="sm:hidden">Flow</span>
@@ -96,7 +95,7 @@
         <main class="w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             
             <!-- ================= TAB: DASHBOARD ================= -->
-            <div id="tab-dashboard" class="block space-y-8">
+            <div id="tab-dashboard" class="hidden space-y-8">
                 <!-- 0. PHEOC Section -->
                 <section class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 print:break-inside-avoid relative">
                     <!-- Decorative element -->
@@ -170,7 +169,9 @@
                             หน้าเว็บไซต์ (Dashboard)
                         </h4>
                         <!-- Iframe Wrapper -->
-                        <div class="w-full h-[700px] max-w-full mx-auto rounded-xl overflow-hidden shadow-2xl border-4 border-slate-100 bg-white">
+                        <div class="w-full h-[700px] max-w-full mx-auto rounded-xl overflow-hidden shadow-2xl border-4 border-slate-100 bg-white relative">
+                            <!-- Overlay preventing internal scrolling to force using page scroll -->
+                            <div class="absolute inset-0 z-10 hidden sm:block pointer-events-none"></div>
                             <iframe 
                                 src="https://pm25-sansai-dashboard-tuc6yczy4hhl8vbmxdyxcp.streamlit.app/?embed=true&embed_options=light_theme" 
                                 title="PM2.5 Dashboard"
@@ -340,276 +341,255 @@
             </div>
 
             <!-- ================= TAB: FLOW CHART ================= -->
-            <div id="tab-flow" class="hidden">
+            <div id="tab-flow" class="block">
                 <section class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
                     
                     <!-- Flow Header -->
-                    <div class="bg-gradient-to-r from-blue-900 to-indigo-800 text-white p-8 text-center relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-1/3 -translate-y-1/3"></div>
-                        <div class="absolute bottom-0 left-0 w-40 h-40 bg-white opacity-5 rounded-full transform -translate-x-1/2 translate-y-1/2"></div>
-                        
-                        <h2 class="text-3xl md:text-4xl font-extrabold mb-3 relative z-10 tracking-wide">Flow การให้บริการ</h2>
-                        <p class="text-blue-100 text-lg md:text-xl font-medium relative z-10 max-w-2xl mx-auto">
+                    <div class="bg-[#eef3fd] border-b-2 border-slate-200 text-slate-800 p-8 text-center relative overflow-hidden">
+                        <h2 class="text-3xl font-extrabold mb-2 relative z-10 text-blue-900">Flow การให้บริการ</h2>
+                        <p class="text-blue-800 text-lg md:text-xl font-bold relative z-10 max-w-2xl mx-auto">
                             กรณีผู้ป่วยสงสัยตนเอง/ญาติได้รับผลกระทบจาก PM 2.5 จังหวัดเชียงใหม่
                         </p>
                     </div>
 
-                    <div class="p-6 md:p-10 bg-slate-50/50">
+                    <div class="p-6 md:p-10 bg-[#fef7e9]">
                         
-                        <!-- Entry Points Split -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 relative">
+                        <!-- Entry Points Split (2 Columns) -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 relative w-full max-w-6xl mx-auto">
                             
-                            <!-- Path 1: Online -->
+                            <!-- ================= PATH 1: ONLINE ================= -->
                             <div class="flex flex-col items-center">
                                 <!-- Step Header -->
-                                <div class="w-full text-center mb-6 relative">
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <div class="w-full border-t-2 border-blue-200"></div>
+                                <div class="relative inline-flex items-center justify-center bg-blue-100 border-[3px] border-blue-300 rounded-full px-6 py-2 shadow-sm mb-4">
+                                    <span class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mr-3 text-lg">1</span>
+                                    <h3 class="text-xl font-bold text-blue-900">ปรึกษาออนไลน์</h3>
+                                </div>
+
+                                <div class="flow-line-vertical h-6"></div>
+                                
+                                <div class="w-full max-w-xs relative">
+                                    <div class="relative flex flex-col items-center p-4 rounded-[2rem] border-[3px] border-blue-200 bg-blue-100 shadow-sm text-center">
+                                        <p class="text-sm font-bold text-blue-900 leading-snug">ผ่านระบบหมอพร้อม /<br/>telemedicine ของโรงพยาบาล</p>
                                     </div>
-                                    <div class="relative inline-flex items-center justify-center bg-blue-100 border-2 border-blue-300 rounded-full px-6 py-2 shadow-sm">
-                                        <span class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mr-3">1</span>
-                                        <h3 class="text-xl font-bold text-blue-900">ปรึกษาออนไลน์</h3>
+                                </div>
+                                
+                                <div class="flow-line-vertical h-6"></div>
+                                
+                                <div class="w-full max-w-[200px] relative">
+                                    <div class="relative flex flex-col items-center p-3 rounded-full border-[3px] border-blue-300 bg-blue-200 shadow-sm text-center">
+                                        <h4 class="font-bold text-base text-blue-900 leading-tight">ทำการคัดกรอง</h4>
                                     </div>
                                 </div>
 
-                                <div class="p-3 rounded-full bg-blue-100 text-blue-600 shadow-sm border border-white/50 z-10 relative">
-                                    <i data-lucide="monitor-smartphone" class="w-6 h-6"></i>
-                                </div>
-                                <div class="flow-line-vertical"></div>
-                                
-                                <div class="w-full max-w-sm">
-                                    <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-slate-200 bg-white shadow-sm transition-all hover:shadow-md text-center h-full">
-                                        <p class="text-sm text-slate-600 leading-snug">ผ่านระบบหมอพร้อม / telemedicine ของโรงพยาบาล</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="flow-line-vertical"></div>
-                                
-                                <div class="w-full max-w-sm">
-                                    <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-blue-200 bg-blue-50 shadow-sm transition-all hover:shadow-md text-center h-full">
-                                        <h4 class="font-bold text-lg text-slate-800 mb-1 leading-tight">ทำการคัดกรอง</h4>
-                                    </div>
-                                </div>
-
-                                <div class="flow-line-vertical h-8 relative">
-                                    <div class="absolute bottom-0 left-1/2 w-[90%] -translate-x-1/2 border-t-2 border-slate-300"></div>
-                                </div>
+                                <div class="flow-line-vertical h-6"></div>
 
                                 <!-- Sub-branches for Online -->
-                                <div class="w-full max-w-md grid grid-cols-2 gap-4 mt-2">
-                                    <!-- Mild -->
-                                    <div class="flex flex-col">
-                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-green-400 bg-green-50 shadow-sm transition-all hover:shadow-md text-center h-full">
-                                            <div class="mb-2"><i data-lucide="check-circle-2" class="text-green-500 w-5 h-5 mx-auto"></i></div>
-                                            <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">ไม่เข้าข่าย / อาการเล็กน้อย</h4>
-                                        </div>
-                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-green-200 bg-white shadow-sm transition-all hover:shadow-md text-center h-full">
-                                            <p class="text-sm text-slate-600 leading-snug">ให้คำแนะนำการปฏิบัติตัว และส่งต่อทีม 3 หมอ</p>
-                                        </div>
-                                    </div>
+                                <div class="w-full max-w-sm relative">
+                                    <!-- Horizontal connecting line for 2 branches -->
+                                    <div class="absolute top-0 left-[25%] right-[25%] h-[3px] bg-slate-400"></div>
                                     
-                                    <!-- Suspected -->
-                                    <div class="flex flex-col">
-                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-orange-400 bg-orange-50 shadow-sm transition-all hover:shadow-md text-center h-full">
-                                            <div class="mb-2"><i data-lucide="alert-circle" class="text-orange-500 w-5 h-5 mx-auto"></i></div>
-                                            <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">เข้าข่าย มีอาการที่สงสัย</h4>
-                                        </div>
-                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                        <div class="flex-1 bg-white border-2 border-orange-200 rounded-xl p-3 flex flex-col justify-center text-sm shadow-sm">
-                                            <div class="flex items-start mb-2">
-                                                <span class="bg-orange-100 text-orange-800 font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 mr-2 text-xs mt-0.5">1</span>
-                                                <p class="text-slate-700">ส่งต่อเข้ารับบริการที่ รพ./รพ.สต.</p>
+                                    <div class="grid grid-cols-2 gap-4 pt-4">
+                                        <!-- Mild -->
+                                        <div class="flex flex-col relative items-center">
+                                            <div class="absolute top-[-1rem] left-1/2 w-[3px] h-4 bg-slate-400 -translate-x-1/2"></div>
+                                            <div class="relative flex flex-col items-center p-3 rounded-[1.5rem] border-[3px] border-green-600 bg-green-100 shadow-sm text-center w-full h-full">
+                                                <h4 class="font-bold text-[13px] text-green-900 leading-tight">ไม่เข้าข่าย /<br/>อาการเล็กน้อย</h4>
                                             </div>
-                                            <div class="flex items-start">
-                                                <span class="bg-orange-100 text-orange-800 font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0 mr-2 text-xs mt-0.5">2</span>
-                                                <p class="text-slate-700">ถ้าอาการรุนแรง ประสาน <span class="font-bold text-red-600">1669</span></p>
+                                            <div class="w-[3px] h-4 bg-slate-400 my-1"></div>
+                                            <div class="relative flex flex-col items-center justify-center p-3 rounded-md border-[2px] border-green-600 bg-white shadow-sm text-center w-full h-full">
+                                                <p class="text-sm font-bold text-green-700 leading-snug">ให้คำแนะนำ<br/>การปฏิบัติตัว<br/>และส่งต่อ<br/>ทีม 3 หมอ</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Suspected -->
+                                        <div class="flex flex-col relative items-center z-10">
+                                            <div class="absolute top-[-1rem] left-1/2 w-[3px] h-4 bg-slate-400 -translate-x-1/2"></div>
+                                            <div class="relative flex flex-col items-center p-3 rounded-[1.5rem] border-[3px] border-teal-600 bg-teal-100 shadow-sm text-center w-full h-full z-10">
+                                                <h4 class="font-bold text-[13px] text-teal-900 leading-tight">เข้าข่าย<br/>มีอาการที่สงสัย</h4>
+                                            </div>
+                                            
+                                            <!-- Indicator to go Right (Desktop only visual cue) -->
+                                            <div class="hidden lg:block absolute top-[20%] -right-[30px] w-8 h-[3px] bg-red-600 z-0">
+                                                <div class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/2 w-0 h-0 border-y-[6px] border-l-[8px] border-y-transparent border-l-red-600"></div>
+                                            </div>
+
+                                            <div class="w-[3px] h-4 bg-slate-400 my-1"></div>
+                                            <div class="relative flex flex-col items-start p-3 rounded-md border-[2px] border-teal-600 bg-teal-50 shadow-sm text-left w-full h-full">
+                                                <div class="flex items-start mb-2">
+                                                    <p class="text-[13px] font-bold text-teal-900 leading-tight">1. ส่งต่อเข้ารับบริการ ที่ รพ./รพ.สต.</p>
+                                                </div>
+                                                <div class="flex items-start">
+                                                    <p class="text-[13px] font-bold text-teal-900 leading-tight">2. ถ้าอาการรุนแรง ประสาน <span class="bg-red-200 px-1 rounded">1669</span></p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Path 2: On-site -->
-                            <div class="flex flex-col items-center mt-12 lg:mt-0">
+                            <!-- ================= PATH 2: ON-SITE & CLINIC ================= -->
+                            <div class="flex flex-col items-center relative lg:mt-0">
                                 <!-- Step Header -->
-                                <div class="w-full text-center mb-6 relative">
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <div class="w-full border-t-2 border-purple-200"></div>
-                                    </div>
-                                    <div class="relative inline-flex items-center justify-center bg-purple-100 border-2 border-purple-300 rounded-full px-6 py-2 shadow-sm">
-                                        <span class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold mr-3">2</span>
-                                        <h3 class="text-xl font-bold text-purple-900">เข้ารับบริการที่ รพ./รพ.สต.</h3>
-                                    </div>
+                                <div class="relative inline-flex items-center justify-center bg-pink-100 border-[3px] border-pink-300 rounded-full px-6 py-2 shadow-sm mb-4">
+                                    <span class="w-8 h-8 rounded-full bg-pink-500 text-white flex items-center justify-center font-bold mr-3 text-lg">2</span>
+                                    <h3 class="text-xl font-bold text-pink-900">เข้ารับบริการ<br/>ที่ รพ./รพ.สต.</h3>
                                 </div>
 
-                                <div class="p-3 rounded-full bg-purple-100 text-purple-600 shadow-sm border border-white/50 z-10 relative">
-                                    <i data-lucide="hospital" class="w-6 h-6"></i>
+                                <div class="flow-line-vertical h-6 relative">
+                                     <!-- Arrow incoming from left side (visible on Desktop) -->
+                                     <div class="hidden lg:block absolute top-1/2 -left-8 w-8 h-[3px] bg-red-600 transform -translate-y-1/2">
+                                        <div class="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-[2px] w-0 h-0 border-y-[6px] border-l-[8px] border-y-transparent border-l-red-600"></div>
+                                     </div>
                                 </div>
-                                <div class="flow-line-vertical"></div>
 
-                                <div class="w-full max-w-sm">
-                                    <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-purple-200 bg-purple-50 shadow-sm transition-all hover:shadow-md text-center h-full">
-                                        <p class="text-sm text-slate-600 leading-snug">เจ้าหน้าที่ซักประวัติ/อาการเบื้องต้น และลงแบบคัดกรองสอบสวนโรคที่เกิดจาก PM2.5</p>
+                                <div class="w-full max-w-sm relative">
+                                    <div class="relative flex flex-col items-center p-4 rounded-[2rem] border-[3px] border-pink-300 bg-pink-200 shadow-sm text-center h-full">
+                                        <p class="text-sm font-bold text-pink-900 leading-snug">เจ้าหน้าที่ซักประวัติ/อาการเบื้องต้น<br/>และลงแบบคัดกรองสอบสวนโรค<br/>ที่เกิดจาก PM2.5</p>
                                     </div>
                                 </div>
                                 
-                                <div class="flow-line-vertical h-8 relative">
-                                    <div class="absolute bottom-0 left-1/6 right-1/6 w-2/3 mx-auto border-t-2 border-slate-300"></div>
+                                <div class="flow-line-vertical h-8"></div>
+
+                                <!-- Sub-branches for On-site (3-way split) -->
+                                <div class="w-full relative z-10">
+                                    <!-- Horizontal connecting line -->
+                                    <div class="absolute top-0 left-[16.66%] right-[16.66%] h-[3px] bg-slate-800"></div>
+                                    
+                                    <div class="grid grid-cols-3 gap-2 sm:gap-4 pt-4 relative">
+                                        <!-- Safe -->
+                                        <div class="flex flex-col relative items-center">
+                                            <div class="absolute top-[-1rem] left-1/2 w-[3px] h-4 bg-slate-800 -translate-x-1/2"></div>
+                                            <div class="relative flex justify-center items-center p-2 sm:p-3 rounded-[1.5rem] border-[3px] border-blue-800 bg-white shadow-sm text-center w-full h-full">
+                                                <h4 class="font-bold text-[13px] sm:text-sm text-blue-900 leading-tight">กรณี<br/>ไม่เข้าข่าย</h4>
+                                            </div>
+                                            <div class="w-[3px] h-4 bg-slate-800 my-1"></div>
+                                            <div class="relative flex justify-center items-center p-2 rounded-md border-[2px] border-blue-800 bg-white shadow-sm text-center w-full h-full">
+                                                <p class="text-xs sm:text-sm font-bold text-blue-900 leading-snug">ส่งตรวจคลินิก<br/>ตามอาการของโรค</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Moderate (Connects to Pollution Clinic) -->
+                                        <div class="flex flex-col relative items-center z-20">
+                                            <div class="absolute top-[-1rem] left-1/2 w-[3px] h-4 bg-slate-800 -translate-x-1/2"></div>
+                                            <div class="relative flex justify-center items-center p-2 sm:p-3 rounded-[1.5rem] border-[3px] border-amber-600 bg-[#fde6b3] shadow-sm text-center w-full z-10">
+                                                <h4 class="font-bold text-[13px] sm:text-sm text-amber-900 leading-tight">เข้าข่าย<br/>อาการเล็กน้อย<br/>/ปานกลาง</h4>
+                                            </div>
+                                            <!-- Continuous Thick Black Line straight down to the clinic box -->
+                                            <div class="w-[3px] h-[30px] bg-slate-800 z-0"></div>
+                                        </div>
+
+                                        <!-- Severe -->
+                                        <div class="flex flex-col relative items-center">
+                                            <div class="absolute top-[-1rem] left-1/2 w-[3px] h-4 bg-slate-800 -translate-x-1/2"></div>
+                                            <!-- Also an arrow coming from the top horizontal line to this box? The image has a red arrow head here. -->
+                                            <div class="absolute top-[-1rem] left-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-red-600 -translate-x-1/2 -translate-y-[2px]"></div>
+
+                                            <div class="relative flex justify-center items-center p-2 sm:p-3 rounded-full border-[3px] border-red-600 bg-red-200 shadow-sm text-center w-full h-full">
+                                                <h4 class="font-bold text-[13px] sm:text-sm text-red-900 leading-tight">ผู้ป่วย<br/>อาการรุนแรง</h4>
+                                            </div>
+                                            <div class="w-[3px] h-4 bg-slate-800 my-1"></div>
+                                            <div class="relative flex justify-center items-center p-2 rounded-md border-[2px] border-red-400 bg-red-300 shadow-sm text-center w-[80%] h-full">
+                                                <h4 class="font-bold text-sm text-red-900 leading-tight">ส่งเข้า<br/>ห้องฉุกเฉิน</h4>
+                                            </div>
+                                            <div class="w-[3px] h-4 bg-slate-800 my-1"></div>
+                                            <div class="relative flex justify-center items-center p-2 rounded-md border-[2px] border-red-500 bg-red-400 shadow-sm text-center w-[80%] h-full">
+                                                <h4 class="font-bold text-sm text-white leading-tight">ส่ง REFER</h4>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Sub-branches for On-site -->
-                                <div class="w-full grid grid-cols-3 gap-2 sm:gap-4 mt-2">
-                                    <!-- Safe -->
-                                    <div class="flex flex-col">
-                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-blue-400 bg-blue-50 shadow-sm transition-all hover:shadow-md text-center h-full">
-                                            <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">กรณีไม่เข้าข่าย</h4>
-                                        </div>
-                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-slate-200 bg-white shadow-sm transition-all hover:shadow-md text-center h-full">
-                                            <p class="text-sm text-slate-600 leading-snug">ส่งตรวจคลินิกตามอาการของโรค</p>
-                                        </div>
+                                <!-- Pollution Clinic Box (Centered across the Right Column width) -->
+                                <div class="w-full relative z-10 flex flex-col items-center">
+                                    <div class="w-[90%] sm:w-[80%] bg-[#facba1] border-[3px] border-amber-500 rounded-full px-4 py-3 shadow-md text-center relative z-10 -mt-1">
+                                        <h3 class="text-lg font-bold text-amber-900 leading-tight">ส่งเข้าคลินิกมลพิษ เฉพาะรพ.</h3>
+                                        <p class="text-sm font-bold text-amber-800">(กรณี รพ.สต. ให้ส่งต่อ รพ.)</p>
                                     </div>
                                     
-                                    <!-- Moderate -->
-                                    <div class="flex flex-col relative z-20">
-                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                        <div class="relative h-full flex flex-col">
-                                            <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-orange-400 bg-orange-100 shadow-sm transition-all hover:shadow-md text-center h-full">
-                                                <h4 class="font-bold text-lg text-slate-800 mb-1 leading-tight">เข้าข่าย อาการเล็กน้อย / ปานกลาง</h4>
-                                            </div>
-                                            <!-- This specific branch connects straight down to pollution clinic -->
-                                            <div class="mx-auto w-[4px] h-12 bg-orange-400 my-2 shadow-[0_0_10px_rgba(251,146,60,0.5)]"></div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Severe -->
-                                    <div class="flex flex-col">
-                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-red-400 bg-red-50 shadow-sm transition-all hover:shadow-md text-center h-full">
-                                            <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">ผู้ป่วย อาการรุนแรง</h4>
-                                        </div>
-                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-red-200 bg-red-100 shadow-sm transition-all hover:shadow-md text-center h-full">
-                                            <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">ส่งเข้าห้องฉุกเฉิน</h4>
-                                        </div>
-                                        <div class="mx-auto w-[2px] h-4 bg-slate-300"></div>
-                                        <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-red-600 bg-red-500 shadow-sm transition-all hover:shadow-md text-center h-full">
-                                            <h4 class="font-bold text-base text-white mb-1 leading-tight">ส่ง REFER</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Visual connection indication from Online to Onsite -->
-                            <div class="hidden lg:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32">
-                                <div class="flex flex-col items-center opacity-40">
-                                    <i data-lucide="arrow-right-left" class="w-8 h-8 text-slate-400"></i>
-                                    <span class="text-xs text-slate-400 font-medium text-center mt-1">ส่งต่อผู้ป่วย</span>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- Merged Path: Pollution Clinic -->
-                        <div class="max-w-3xl mx-auto mt-6">
-                            
-                            <div class="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-300 rounded-3xl p-6 sm:p-8 shadow-lg relative text-center">
-                                <!-- Top connector arrow -->
-                                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white rounded-full p-1 shadow-md">
-                                    <i data-lucide="arrow-down" class="w-6 h-6"></i>
-                                </div>
-
-                                <div class="flex items-center justify-center mb-4">
-                                    <div class="bg-orange-100 p-3 rounded-full mr-3 text-orange-600">
-                                        <i data-lucide="stethoscope" class="w-8 h-8"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-2xl font-bold text-orange-900 leading-tight">ส่งเข้าคลินิกมลพิษ เฉพาะ รพ.</h3>
-                                        <p class="text-orange-700 font-medium">(กรณี รพ.สต. ให้ส่งต่อ รพ.)</p>
-                                    </div>
-                                </div>
-
-                                <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 mb-4 border border-orange-200 inline-block w-full max-w-lg mx-auto">
-                                    <p class="font-semibold text-slate-800 text-lg">
-                                        ซักประวัติ / ตรวจร่างกาย / ตรวจทางห้องปฏิบัติการ โดยแพทย์/สหวิชาชีพ
-                                    </p>
-                                </div>
-
-                                <div class="flex justify-center my-3">
-                                    <i data-lucide="arrow-down" class="w-6 h-6 text-orange-400"></i>
-                                </div>
-
-                                <div class="bg-white rounded-xl py-3 px-8 inline-block shadow-sm border border-slate-200">
-                                    <p class="font-bold text-lg text-slate-800">วางแผนการรักษา</p>
-                                </div>
-                                
-                                <div class="w-full relative mt-6 pt-4">
-                                    <!-- Horizontal connecting line for outcomes -->
-                                    <div class="absolute top-0 left-1/6 right-1/6 w-2/3 mx-auto border-t-2 border-slate-300"></div>
+                                    <div class="w-[3px] h-6 bg-slate-800"></div>
                                     
-                                    <div class="grid grid-cols-3 gap-4">
-                                        <div class="flex flex-col items-center">
-                                            <div class="w-[2px] h-4 bg-slate-300 -mt-4 mb-2"></div>
-                                            <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-amber-300 bg-amber-100 shadow-sm transition-all hover:shadow-md text-center h-full w-full">
-                                                <div class="mb-2"><i data-lucide="pills" class="w-6 h-6 text-amber-600 mx-auto"></i></div>
-                                                <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">ให้ยากลับบ้าน</h4>
+                                    <div class="w-[90%] sm:w-[80%] bg-[#fdf2df] border-[2px] border-amber-300 rounded-lg p-3 shadow-sm text-center">
+                                        <p class="font-bold text-sm sm:text-base text-amber-900 leading-snug">
+                                            ซักประวัติ / ตรวจร่างกาย /<br/>ตรวจทางห้องปฏิบัติการ<br/>โดยแพทย์ / สหวิชาชีพ
+                                        </p>
+                                    </div>
+
+                                    <div class="w-[3px] h-6 bg-slate-800"></div>
+
+                                    <div class="bg-[#fad3a3] border-[2px] border-amber-400 rounded-lg py-2 px-8 shadow-sm text-center">
+                                        <p class="font-bold text-base text-amber-900">วางแผนการรักษา</p>
+                                    </div>
+                                    
+                                    <div class="w-[3px] h-6 bg-slate-800"></div>
+
+                                    <!-- 3 Outcomes of Treatment -->
+                                    <div class="w-full relative">
+                                        <!-- Horizontal connecting line -->
+                                        <div class="absolute top-0 left-[16.66%] right-[16.66%] h-[3px] bg-slate-800"></div>
+                                        
+                                        <div class="grid grid-cols-3 gap-2 sm:gap-4 pt-4">
+                                            <!-- Home -->
+                                            <div class="flex flex-col relative items-center">
+                                                <div class="absolute top-[-1rem] left-1/2 w-[3px] h-4 bg-slate-800 -translate-x-1/2"></div>
+                                                <div class="relative flex items-center justify-center p-2 rounded-md border-[2px] border-amber-400 bg-[#fad3a3] shadow-sm text-center w-full h-full">
+                                                    <h4 class="font-bold text-[13px] sm:text-sm text-amber-900 leading-tight">ให้ยากลับบ้าน</h4>
+                                                </div>
+                                                <!-- Drop line for Post Care -->
+                                                <div class="w-[3px] h-6 bg-slate-800"></div>
                                             </div>
-                                        </div>
-                                        <div class="flex flex-col items-center">
-                                            <div class="w-[2px] h-4 bg-slate-300 -mt-4 mb-2"></div>
-                                            <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-amber-300 bg-amber-100 shadow-sm transition-all hover:shadow-md text-center h-full w-full">
-                                                <div class="mb-2"><i data-lucide="bed-double" class="w-6 h-6 text-amber-600 mx-auto"></i></div>
-                                                <h4 class="font-bold text-base text-slate-800 mb-1 leading-tight">Admit ให้การรักษา</h4>
+                                            <!-- Admit -->
+                                            <div class="flex flex-col relative items-center">
+                                                <div class="absolute top-[-1rem] left-1/2 w-[3px] h-4 bg-slate-800 -translate-x-1/2"></div>
+                                                <div class="relative flex items-center justify-center p-2 rounded-md border-[2px] border-amber-400 bg-[#fad3a3] shadow-sm text-center w-full h-full">
+                                                    <h4 class="font-bold text-[13px] sm:text-sm text-amber-900 leading-tight">Admit<br/>ให้การรักษา</h4>
+                                                </div>
+                                                <!-- Drop line for Post Care -->
+                                                <div class="w-[3px] h-6 bg-slate-800"></div>
                                             </div>
-                                        </div>
-                                        <div class="flex flex-col items-center">
-                                            <div class="w-[2px] h-4 bg-slate-300 -mt-4 mb-2"></div>
-                                            <div class="relative flex flex-col items-center p-4 rounded-xl border-2 border-red-600 bg-red-500 shadow-sm transition-all hover:shadow-md text-center h-full w-full">
-                                                <h4 class="font-bold text-base text-white mb-1 leading-tight">ส่ง REFER</h4>
+                                            <!-- Refer -->
+                                            <div class="flex flex-col relative items-center">
+                                                <div class="absolute top-[-1rem] left-1/2 w-[3px] h-4 bg-slate-800 -translate-x-1/2"></div>
+                                                <div class="relative flex items-center justify-center p-2 rounded-md border-[2px] border-amber-400 bg-[#fad3a3] shadow-sm text-center w-full h-12 mt-0">
+                                                    <h4 class="font-bold text-sm text-amber-900 leading-tight">ส่ง REFER</h4>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Post Care (Merges Home and Admit branches ONLY) -->
+                                    <!-- Use a Grid layout to position the connector exactly under columns 1 and 2 -->
+                                    <div class="w-full grid grid-cols-3 gap-2 sm:gap-4 -mt-1">
+                                        <div class="col-span-2 relative flex flex-col items-center">
+                                            <!-- Horizontal bridge connecting the two vertical lines from Home and Admit -->
+                                            <div class="absolute top-0 left-[25%] right-[25%] h-[3px] bg-slate-800"></div>
+                                            <!-- Vertical line dropping from the center of the bridge down to the box -->
+                                            <div class="absolute top-0 left-1/2 w-[3px] h-6 bg-slate-800 -translate-x-1/2">
+                                                <!-- Arrow head pointing down into the post care box -->
+                                                <div class="absolute bottom-[-2px] left-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-slate-800 transform -translate-x-1/2"></div>
+                                            </div>
+                                            
+                                            <!-- Post Care Info Box -->
+                                            <div class="mt-8 bg-[#cddafd] border-[2px] border-blue-300 rounded-lg p-3 sm:p-4 w-[110%] ml-[10%] shadow-md text-left flex items-center z-10 relative">
+                                                <!-- Decorative Home Icon -->
+                                                <div class="absolute -left-12 -bottom-2 w-20 h-20 bg-white rounded-full border border-slate-200 hidden sm:flex items-center justify-center shadow-lg overflow-hidden">
+                                                    <i data-lucide="home" class="w-10 h-10 text-amber-700"></i>
+                                                </div>
+
+                                                <div class="pl-2 sm:pl-10">
+                                                    <ul class="space-y-1 text-blue-900 font-bold text-xs sm:text-sm">
+                                                        <li>1. ให้คำปรึกษาก่อนกลับบ้าน</li>
+                                                        <li>2. เยี่ยมบ้านโดยทีม 3 หมอ และ อปท.</li>
+                                                        <li>3. ประเมินสภาพที่อยู่ซ้ำให้เหมาะสมกับผู้ป่วย</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
-
-                            <!-- Post Care Section -->
-                            <div class="flex flex-col items-center mt-6">
-                                <!-- Connectors from Admit/Home to Post Care -->
-                                <div class="w-1/2 border-t-2 border-slate-300 h-8 border-l-2 border-r-2 rounded-t-xl relative">
-                                    <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full w-[2px] h-8 bg-slate-300"></div>
-                                </div>
-                                
-                                <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 w-full max-w-xl shadow-md flex items-start mt-8">
-                                    <div class="bg-blue-100 p-4 rounded-xl text-blue-700 mr-5 shrink-0 hidden sm:block">
-                                        <i data-lucide="home" class="w-10 h-10"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-lg text-blue-900 mb-3 flex items-center sm:hidden">
-                                            <i data-lucide="home" class="w-6 h-6 mr-2"></i> การดูแลต่อเนื่อง
-                                        </h4>
-                                        <ul class="space-y-3 text-slate-700 font-medium">
-                                            <li class="flex items-start">
-                                                <span class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mr-3 text-sm mt-0.5">1</span>
-                                                ให้คำปรึกษาก่อนกลับบ้าน
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mr-3 text-sm mt-0.5">2</span>
-                                                เยี่ยมบ้านโดยทีม 3 หมอ และ อปท.
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mr-3 text-sm mt-0.5">3</span>
-                                                ประเมินสภาพที่อยู่ซ้ำให้เหมาะสมกับผู้ป่วย
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
+
                     </div>
                 </section>
             </div>
@@ -629,7 +609,7 @@
 
     <!-- Javascript สำหรับควบคุม UI แบบไม่ต้องพึ่ง React เพื่อแก้ปัญหา Streamlit Iframe Block -->
     <script>
-        // ฟังก์ชันสลับ Tab
+        // ฟังก์ชันสลับ Tab (บังคับเปิด Flow ทิ้งไว้ตอนทดสอบ หรือสลับตามปุ่ม)
         function switchTab(tabId) {
             const btnDashboard = document.getElementById('btn-dashboard');
             const btnFlow = document.getElementById('btn-flow');
@@ -671,6 +651,8 @@
         // สร้างไอคอนจาก data-lucide ทั้งหมดเมื่อโหลดหน้าเสร็จ
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
+            // Default เปิดหน้าแดชบอร์ด
+            switchTab('dashboard');
         });
     </script>
 </body>
