@@ -1,6 +1,6 @@
 import streamlit as st
-import streamlit.components.v1 as components
-import os
+from dashboard import render_dashboard
+from flow import render_flow
 
 # 1. ตั้งค่าหน้าเว็บ Streamlit ให้เป็นแบบกว้างสุด (Wide)
 st.set_page_config(
@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. ปรับแต่ง CSS แบบขั้นสุด เพื่อเปลี่ยน Streamlit ให้เป็นโครงสร้างรองรับ Web App ของเรา
+# 2. ปรับแต่ง CSS แบบขั้นสุด
 hide_streamlit_style = """
 <style>
     /* ซ่อนแถบเมนู, Header, Footer ของ Streamlit ให้หมดจด */
@@ -18,48 +18,52 @@ hide_streamlit_style = """
     header {visibility: hidden !important;}
     footer {visibility: hidden !important;}
 
-    /* ลบระยะขอบของ Streamlit Container ให้ชิดขอบจอ 100% */
+    /* ปรับระยะขอบของ Streamlit Container ให้เต็มจอ */
     .block-container {
-        padding: 0px !important;
-        margin: 0px !important;
+        padding: 1rem 0rem 0rem 0rem !important;
         max-width: 100% !important;
     }
 
-    /* ล็อกหน้าจอหลักไม่ให้เลื่อน (ป้องกันปัญหา Scrollbar ซ้อนกัน 2 ชั้น) */
-    .stApp {
-        overflow: hidden !important;
-        background-color: #f8fafc;
+    /* ตกแต่ง Tabs ของ Streamlit ให้ดูทันสมัยและเข้ากับธีม */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 1rem;
+        padding: 0 2rem;
+        background-color: transparent;
     }
-
-    /* บังคับให้ iframe เต็มหน้าจอ 100% ทั้งความกว้างและความสูง */
+    .stTabs [data-baseweb="tab"] {
+        height: 3.5rem;
+        padding: 0 1.5rem;
+        border-radius: 12px 12px 0 0;
+        background-color: #f1f5f9;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+        border-bottom: none;
+        transition: all 0.3s ease;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #059669 !important;
+        color: white !important;
+        border-color: #059669 !important;
+    }
+    
+    /* ลบขอบ iframe ที่จะดึงโมดูลมาแสดง */
     iframe {
-        width: 100vw !important;
-        height: 100vh !important;
         border: none !important;
-        display: block;
+        width: 100% !important;
     }
 </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-# 3. ค้นหาไฟล์ HTML อย่างรัดกุม (รองรับทั้งการรันบนคอมพิวเตอร์และบน Streamlit Cloud)
-file_name = "PM25ActionPlan2026.html"
-if os.path.exists(file_name):
-    html_file_path = file_name
-else:
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    html_file_path = os.path.join(current_dir, file_name)
+# 3. จัดการแสดงผล Tabs และเรียกใช้โมดูลที่แยกไว้
+tab1, tab2 = st.tabs(["📊 แผนการดำเนินงาน (Dashboard)", "🔄 Flow การให้บริการ"])
 
-# 4. โหลดและแสดงผลไฟล์ HTML
-try:
-    with open(html_file_path, "r", encoding="utf-8") as f:
-        html_code = f.read()
-        
-    # ให้ Streamlit นำโค้ด HTML มาโชว์ 
-    # ข้อสำคัญ: ต้องใส่ scrolling=True เพื่อให้สามารถเลื่อนหน้าเว็บภายใน Iframe ได้
-    components.html(html_code, scrolling=True)
+with tab1:
+    # เรียกใช้ฟังก์ชันจากไฟล์ dashboard.py
+    render_dashboard()
     
-except FileNotFoundError:
-    st.error(f"❌ ไม่พบไฟล์ HTML: '{file_name}' กรุณาตรวจสอบว่าไฟล์ถูกอัปโหลดไว้ในโฟลเดอร์เดียวกับ app.py หรือไม่")
-except Exception as e:
-    st.error(f"❌ เกิดข้อผิดพลาดในการโหลดระบบ: {e}")
+with tab2:
+    # เรียกใช้ฟังก์ชันจากไฟล์ flow.py
+    render_flow()
