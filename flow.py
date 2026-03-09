@@ -2,7 +2,7 @@ import streamlit.components.v1 as components
 
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow ที่ออกแบบใหม่ด้วย Flexbox ที่รัดกุม 
-    # ปรับให้รองรับ Light/Dark Mode อัตโนมัติ และ Responsive บนทุกหน้าจอ
+    # ปรับให้รองรับการเพิ่มข้อ 3 (การเฝ้าระวัง) และเส้นเชื่อมต่อที่ซับซ้อนขึ้น
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -42,6 +42,7 @@ def render_flow():
             .line-h { height: 3px; background-color: var(--line-color); margin: 0 auto; width: 100%; }
             .border-line { border-color: var(--line-color) !important; }
             .border-t-line { border-top-color: var(--line-color) !important; border-top-width: 3px; }
+            .border-r-line { border-right-color: var(--line-color) !important; border-right-width: 3px; }
             
             .arrow-down { 
                 width: 0; height: 0; 
@@ -77,7 +78,7 @@ def render_flow():
             </svg>
 
             <!-- ================= LEFT COLUMN (ONLINE) ================= -->
-            <div class="w-full md:w-[45%] flex flex-col items-center">
+            <div class="w-full md:w-[40%] flex flex-col items-center">
                 <!-- 1. ปรึกษาออนไลน์ -->
                 <div class="flex items-center gap-3 bg-blue-50 border-2 border-blue-300 rounded-full px-4 py-2 shadow-sm relative z-10">
                     <div class="bg-blue-600 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-lg sm:text-xl shadow-inner">1</div>
@@ -134,14 +135,66 @@ def render_flow():
                 </div>
             </div>
 
-            <!-- ================= RIGHT COLUMN (ONSITE + CLINIC) ================= -->
-            <div class="w-full md:w-[55%] flex flex-col items-center mt-10 md:mt-0 relative">
-                <!-- 2. เข้ารับบริการ -->
-                <div class="flex items-center gap-3 bg-pink-50 border-2 border-pink-200 rounded-full px-4 py-2 shadow-sm z-10">
-                    <div class="bg-pink-500 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-lg sm:text-xl shadow-inner">2</div>
-                    <h3 class="text-pink-900 font-bold text-lg sm:text-xl pr-2 leading-tight text-center">เข้ารับบริการ<br><span class="text-sm sm:text-lg">ที่รพ./รพ.สต.</span></h3>
+            <!-- ================= RIGHT COLUMN (ONSITE + SURVEILLANCE + CLINIC) ================= -->
+            <div class="w-full md:w-[60%] flex flex-col items-center mt-10 md:mt-0 relative">
+                
+                <!-- ROW: Entry 2 & 3 -->
+                <div class="w-[98%] sm:w-[95%] flex items-stretch gap-2 sm:gap-4 relative z-10">
+                    
+                    <!-- ====== Col 2: Onsite ====== -->
+                    <div class="flex-[0.8] flex flex-col items-center h-full">
+                        <!-- 2. เข้ารับบริการ -->
+                        <div class="flex items-center justify-center gap-1 sm:gap-2 bg-pink-50 border-2 border-pink-200 rounded-full px-1 sm:px-2 py-2 shadow-sm z-10 w-[95%] sm:w-full h-[55px] sm:h-[65px]">
+                            <div class="bg-pink-500 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center font-bold text-sm sm:text-lg shadow-inner shrink-0">2</div>
+                            <h3 class="text-pink-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center">เข้ารับบริการ<br>ที่รพ./รพ.สต.</h3>
+                        </div>
+                        <div class="line-v flex-grow min-h-[30px] sm:min-h-[40px]"></div>
+                    </div>
+
+                    <!-- ====== Col 3: Surveillance ====== -->
+                    <div class="flex-[1.2] flex flex-col items-center h-full">
+                        <!-- 3. การเฝ้าระวัง -->
+                        <div class="flex items-center justify-center gap-1 sm:gap-2 bg-purple-50 border-2 border-purple-300 rounded-full px-2 py-2 shadow-sm z-10 w-[80%] sm:w-[75%] h-[55px] sm:h-[65px]">
+                            <div class="bg-purple-600 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center font-bold text-sm sm:text-lg shadow-inner shrink-0">3</div>
+                            <h3 class="text-purple-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center">การเฝ้าระวัง</h3>
+                        </div>
+                        <div class="line-v h-4 sm:h-6"></div>
+                        
+                        <!-- Split 2-ways for 3 -->
+                        <div class="w-[85%] border-t-line flex justify-between relative z-0">
+                            <div class="line-v h-4 mx-0"></div>
+                            <div class="line-v h-4 mx-0"></div>
+                        </div>
+                        
+                        <!-- ICD-10 & GG Sheets -->
+                        <div class="w-full flex gap-1 sm:gap-2 md:gap-3 items-stretch relative z-10">
+                            <div class="flex-1 flex flex-col items-center h-full">
+                                <div class="bg-purple-100 border-2 border-purple-300 rounded-xl p-1 sm:p-2 shadow-sm text-center w-full h-full flex justify-center items-center">
+                                    <p class="text-purple-900 font-bold text-[10px] sm:text-[11px] md:text-[12px] leading-snug card-text">ดึง ICD-10 โรค<br>ที่เกี่ยวข้องกับการ<br>สัมผัส PM2.5</p>
+                                </div>
+                                <div class="line-v h-4 sm:h-6"></div>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center h-full">
+                                <div class="bg-purple-100 border-2 border-purple-300 rounded-xl p-1 sm:p-2 shadow-sm text-center w-full h-full flex justify-center items-center">
+                                    <p class="text-purple-900 font-bold text-[10px] sm:text-[11px] md:text-[12px] leading-snug card-text">หน่วยงานที่เกี่ยวข้อง<br>(OPD, ER และ<br>PCU หนองหาร)<br>แจ้งข้อมูลผู้ป่วย<br>ผ่าน GG sheets</p>
+                                </div>
+                                <div class="line-v h-4 sm:h-6"></div>
+                            </div>
+                            <!-- Merge bottom horizontal line for 3 -->
+                            <div class="absolute bottom-0 left-[25%] right-[25%] h-[3px]" style="background-color: var(--line-color);"></div>
+                        </div>
+                        <!-- Main trunk for 3 -->
+                        <div class="line-v flex-grow min-h-[20px] sm:min-h-[30px]"></div>
+                    </div>
+
+                    <!-- Main Bridge connecting Col 2 and Col 3 -->
+                    <!-- Flex ratio (0.8 vs 1.2) creates centers at approx 20% and 70% -->
+                    <div class="absolute bottom-0 left-[20%] right-[30%] h-[3px]" style="background-color: var(--line-color);"></div>
                 </div>
-                <div class="line-v h-6"></div><div class="arrow-down"></div>
+                
+                <!-- Drop down to ซักประวัติ -->
+                <div class="line-v h-4 sm:h-6"></div>
+                <div class="arrow-down"></div>
                 
                 <!-- ซักประวัติ -->
                 <div class="bg-pink-100 border border-pink-300 rounded-[2rem] px-4 sm:px-5 py-3 shadow-sm text-center w-[95%] sm:w-[85%] z-10">
@@ -149,7 +202,7 @@ def render_flow():
                 </div>
                 <div class="line-v h-8 relative">
                     <!-- ลูกศรเส้นสีแดงรับจากฝั่งซ้าย (เฉพาะหน้าจอใหญ่) -->
-                    <div class="hidden md:block absolute top-1/2 left-[-15px] transform -translate-y-1/2 w-0 h-0 border-y-[6px] border-l-[8px] border-y-transparent border-l-red-500"></div>
+                    <div class="hidden md:block absolute top-[60%] left-[-15px] transform -translate-y-1/2 w-0 h-0 border-y-[6px] border-l-[8px] border-y-transparent border-l-red-500"></div>
                 </div>
                 
                 <!-- 3-way Split -->
@@ -301,7 +354,7 @@ def render_flow():
                     // คำนวณจุดหักเลี้ยว: กึ่งกลางระหว่างกล่องซ้ายกับเส้นแกนหลักขวา
                     const gutterX = startX + Math.max(15, (tgtRect.left - srcRect.right) / 2); 
                     
-                    // วาด Path ของ SVG
+                    // วาด Path ของ SVG ให้ลากยืดหยุ่นตามความสูงที่เพิ่มขึ้นได้
                     const d = `M ${startX} ${startY} L ${gutterX} ${startY} L ${gutterX} ${endY - 20} L ${endX} ${endY - 20} L ${endX} ${endY}`;
                     
                     line.setAttribute('d', d);
@@ -323,5 +376,5 @@ def render_flow():
     </html>
     """
     
-    # ความสูงเผื่อไว้ให้เลื่อนได้อิสระ ไม่โดนตัดขอบ
-    components.html(html_code, height=2100, scrolling=True)
+    # เพิ่มความสูงขึ้นเล็กน้อยเพื่อรองรับข้อ 3 ที่เพิ่มเข้ามา
+    components.html(html_code, height=2300, scrolling=True)
