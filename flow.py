@@ -1,415 +1,280 @@
 import streamlit.components.v1 as components
 
-def render_flow():
-    # โค้ด HTML สำหรับหน้า Flow ที่ออกแบบใหม่ด้วย Grid & Flexbox ที่รัดกุม 
-    # ปรับให้รองรับการเพิ่มข้อ 3 (การเฝ้าระวัง) และเส้นเชื่อมต่อที่ซับซ้อนขึ้น
-    # อัปเดตล่าสุด: เปลี่ยนโครงสร้างเป็น CSS Grid เพื่อให้เส้นแกนกลางตรงกันเป๊ะแบบ 100% ไร้รอยเหลื่อม
+def render_dashboard():
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700;800&display=swap" rel="stylesheet">
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         <style>
-            /* ตั้งค่า Theme แบบยืดหยุ่นรองรับ Light/Dark Mode */
-            :root {
-                --text-main: #1e3a8a; /* สีน้ำเงินเข้มสำหรับ Light Mode */
-                --text-desc: #334155;
-                --line-color: #1e293b; /* สีเส้นดำ/เทาเข้ม */
-                --bg-card-shadow: rgba(0,0,0,0.1);
-            }
-            
-            @media (prefers-color-scheme: dark) {
-                :root {
-                    --text-main: #60a5fa; /* สีฟ้าอ่อนสำหรับ Dark Mode */
-                    --text-desc: #e2e8f0;
-                    --line-color: #cbd5e1; /* สีเส้นเทาอ่อน/ขาว */
-                    --bg-card-shadow: rgba(255,255,255,0.05);
-                }
-            }
-
-            body { 
-                font-family: 'Sarabun', sans-serif; 
-                background-color: transparent; /* โปร่งใสเพื่อให้กลืนกับ Streamlit */
-                margin: 0; 
-                padding: 2rem 1rem; 
-                color: var(--text-desc);
-            }
-            
-            /* คลาสสำหรับวาดเส้นที่เปลี่ยนสีตามธีม */
-            .line-v { width: 3px; background-color: var(--line-color); margin: 0 auto; }
-            .line-h { height: 3px; background-color: var(--line-color); margin: 0 auto; width: 100%; }
-            .border-line { border-color: var(--line-color) !important; }
-            .border-t-line { border-top-color: var(--line-color) !important; border-top-width: 3px; }
-            .border-r-line { border-right-color: var(--line-color) !important; border-right-width: 3px; }
-            
-            .arrow-down { 
-                width: 0; height: 0; 
-                border-left: 6px solid transparent; 
-                border-right: 6px solid transparent; 
-                border-top: 8px solid var(--line-color); 
-                margin: 0 auto; 
-            }
-            
-            /* ป้องกันข้อความล้นในมือถือ */
-            .card-text { word-wrap: break-word; hyphens: auto; }
+            body { font-family: 'Sarabun', sans-serif !important; background-color: #f8fafc; margin: 0; padding: 1rem 2rem; }
+            ::-webkit-scrollbar { width: 8px; }
+            ::-webkit-scrollbar-track { background: #f1f1f1; rounded: 8px; }
+            ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+            ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         </style>
     </head>
-    <body>
+    <body class="text-slate-800">
         
-        <!-- Header -->
-        <div class="text-center mb-8 sm:mb-12">
-            <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 tracking-wide" style="color: var(--text-main);">Flow การให้บริการ</h2>
-            <p class="text-sm sm:text-base md:text-[1.15rem] font-bold" style="color: var(--text-main);">กรณีผู้ป่วยสงสัยตนเอง/ญาติได้รับผลกระทบจาก PM 2.5 จังหวัดเชียงใหม่</p>
+        <!-- Image Zoom Modal -->
+        <div id="zoom-modal" class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm items-center justify-center p-4 transition-opacity duration-300" onclick="closeZoom()">
+            <div class="relative max-w-4xl w-full flex flex-col items-center">
+                <button onclick="closeZoom()" class="absolute -top-12 right-0 text-white/80 hover:text-white transition-colors p-2 bg-white/10 rounded-full">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+                <img id="zoomed-img" src="" alt="Zoomed View" class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl bg-white p-2" onclick="event.stopPropagation()" />
+                <p class="text-white/70 text-sm mt-4 font-medium bg-black/50 px-4 py-2 rounded-full backdrop-blur-md">แตะบริเวณว่างเพื่อปิด</p>
+            </div>
         </div>
 
-        <!-- Main Flow Container -->
-        <div class="w-full max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 relative z-10" id="main-flow-container">
+        <!-- Hero Section -->
+        <div class="bg-gradient-to-b from-emerald-600 to-emerald-500 text-white pb-16 pt-10 px-4 rounded-[2.5rem] shadow-md mb-8">
+            <div class="max-w-4xl mx-auto text-center space-y-4">
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">แผนรองรับวิกฤตฝุ่นละอองขนาดเล็ก PM2.5</h2>
+                <p class="text-emerald-100 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+                    เตรียมความพร้อม เฝ้าระวัง และดูแลสุขภาพประชาชนในเขตอำเภอสันทราย 
+                    ด้วยนวัตกรรมและการบริการทางการแพทย์
+                </p>
+            </div>
+        </div>
+
+        <main class="w-full max-w-7xl mx-auto space-y-8">
             
-            <!-- SVG Red Line Overlay -->
-            <svg id="flow-svg" class="absolute inset-0 w-full h-full pointer-events-none z-[100] hidden md:block" style="filter: drop-shadow(0px 3px 5px rgba(220, 38, 38, 0.4));">
-                <defs>
-                    <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
-                    </marker>
-                </defs>
-                <!-- เส้นสีแดงตัวจริง -->
-                <path id="red-line-path" fill="none" stroke="#dc2626" stroke-width="4" stroke-linejoin="round" marker-end="url(#arrow-red)" />
-            </svg>
-
-            <!-- ================= LEFT COLUMN (ONLINE) ================= -->
-            <div class="w-full md:w-[40%] flex flex-col items-center">
-                <!-- 1. ปรึกษาออนไลน์ -->
-                <div class="flex items-center gap-3 bg-blue-50 border-2 border-blue-300 rounded-full px-4 py-2 shadow-sm relative z-10">
-                    <div class="bg-blue-600 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-lg sm:text-xl shadow-inner">1</div>
-                    <span class="text-blue-900 font-bold text-lg sm:text-xl pr-2">ปรึกษาออนไลน์</span>
-                </div>
-                <div class="line-v h-6"></div><div class="arrow-down"></div>
-                
-                <!-- หมอพร้อม -->
-                <div class="bg-blue-50 border border-blue-200 rounded-2xl sm:rounded-full px-6 sm:px-8 py-3 shadow-sm text-center w-[90%] sm:w-auto z-10">
-                    <p class="text-blue-900 font-bold text-[14px] sm:text-[15px] md:text-[16px] leading-snug card-text">ผ่านระบบหมอพร้อม/<br class="hidden sm:block">telemedicine ของโรงพยาบาล</p>
-                </div>
-                <div class="line-v h-6"></div><div class="arrow-down"></div>
-                
-                <!-- คัดกรอง -->
-                <div class="bg-blue-200 border border-blue-300 rounded-full px-8 py-2 shadow-sm text-center z-10">
-                    <p class="text-blue-900 font-bold text-[14px] sm:text-[15px] md:text-[16px]">ทำการคัดกรอง</p>
-                </div>
-                <div class="line-v h-6"></div>
-                
-                <!-- 2-way Split -->
-                <div class="w-full flex flex-col items-center">
-                    <div class="w-[60%] sm:w-[70%] border-t-line flex justify-between">
-                        <div class="line-v h-6 mx-0"></div>
-                        <div class="line-v h-6 mx-0"></div>
+            <!-- 0. PHEOC Section -->
+            <section class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 relative">
+                <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+                <div class="p-6 md:p-8 lg:p-10">
+                    <div class="flex items-center space-x-3 mb-8">
+                        <div class="bg-blue-100 p-2.5 rounded-xl">
+                            <i data-lucide="shield-alert" class="text-blue-600 w-7 h-7 md:w-8 md:h-8"></i>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-bold text-slate-800">การเปิดศูนย์ปฏิบัติการฉุกเฉิน (PHEOC)</h3>
                     </div>
                     
-                    <div class="w-[95%] sm:w-[90%] flex gap-2 sm:gap-4 items-stretch">
-                        <!-- Left: ไม่เข้าข่าย -->
-                        <div class="flex-1 flex flex-col items-center">
-                            <div class="bg-green-50 border-[3px] border-green-600 rounded-2xl sm:rounded-[1.5rem] py-2 px-1 shadow-sm text-center w-full z-10">
-                                <p class="text-green-800 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-tight card-text">ไม่เข้าข่าย/<br>อาการเล็กน้อย</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-200 p-6 rounded-2xl flex items-center space-x-5 hover:shadow-md transition-shadow">
+                            <div class="bg-blue-600 text-white p-4 rounded-full shadow-sm">
+                                <i data-lucide="activity" class="w-6 h-6"></i>
                             </div>
-                            <div class="line-v h-4 my-1"></div>
-                            <div class="bg-white border-2 border-green-500 rounded-lg p-2 shadow-sm text-center w-full flex-grow z-10">
-                                <p class="text-green-700 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-snug card-text">ให้คำแนะนำ<br>การปฏิบัติตัว<br>และส่งต่อ<br>ทีม 3 หมอ</p>
+                            <div>
+                                <p class="text-sm md:text-base text-slate-500 font-medium mb-1">ระดับจังหวัดเชียงใหม่</p>
+                                <p class="text-xl md:text-2xl font-bold text-slate-800">12 มกราคม 2569</p>
                             </div>
                         </div>
-                        
-                        <!-- Right: เข้าข่าย -->
-                        <div class="flex-1 flex flex-col items-center">
-                            <div class="bg-emerald-200 border border-emerald-500 rounded-2xl sm:rounded-[1.5rem] py-2 px-1 shadow-sm text-center w-full z-10">
-                                <p class="text-emerald-900 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-tight card-text">เข้าข่าย<br>มีอาการที่สงสัย</p>
+                        <div class="bg-gradient-to-br from-slate-50 to-sky-50/30 border border-slate-200 p-6 rounded-2xl flex items-center space-x-5 hover:shadow-md transition-shadow">
+                            <div class="bg-sky-600 text-white p-4 rounded-full shadow-sm">
+                                <i data-lucide="activity" class="w-6 h-6"></i>
                             </div>
-                            <div class="line-v h-4 my-1"></div>
-                            <div class="bg-emerald-100 border border-emerald-200 rounded-lg p-2 shadow-sm text-left w-full flex-grow relative z-10">
-                                <p class="text-emerald-900 font-bold text-[12px] sm:text-[13px] leading-snug mb-2 card-text">1. ส่งต่อเข้ารับบริการ<br>ที่รพ./รพ.สต./PCU หนองหาร</p>
-                                <!-- กล่องต้นทางของเส้นสีแดง -->
-                                <div id="red-source" class="bg-red-200 text-red-900 border border-red-400 px-2 py-1 rounded text-[12px] sm:text-[13px] font-bold leading-snug inline-block shadow-sm relative z-[110]">
-                                    2. ถ้าอาการรุนแรง<br>ประสาน 1669
+                            <div>
+                                <p class="text-sm md:text-base text-slate-500 font-medium mb-1">ระดับเขตสุขภาพที่ 1</p>
+                                <p class="text-xl md:text-2xl font-bold text-slate-800">4 มีนาคม 2569</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 1. Real-time Monitoring Section -->
+            <section class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+                <div class="p-6 md:p-8 lg:p-10">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="bg-orange-100 p-2 rounded-lg">
+                            <i data-lucide="wind" class="text-orange-600 w-6 h-6 md:w-8 md:h-8"></i>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-bold text-slate-800">การเฝ้าระวังค่าฝุ่น PM2.5 (Real-time)</h3>
+                    </div>
+                    
+                    <div class="mb-8 border-b border-slate-100 pb-6 text-center lg:text-left">
+                        <p class="text-slate-700 text-lg md:text-xl font-medium">จุดตรวจวัด: <span class="font-bold text-emerald-700">โรงพยาบาลสันทราย</span></p>
+                        <p class="text-slate-500 mt-2 text-base md:text-lg">สนับสนุนเครื่อง DustBoy โดย คณะวิศวกรรมศาสตร์ มหาวิทยาลัยเชียงใหม่</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start mb-8">
+                        <div class="flex flex-col items-center w-full space-y-4 lg:col-span-2">
+                            <h4 class="font-bold text-slate-700 text-lg flex items-center bg-slate-50 px-4 py-2 rounded-full">
+                                <i data-lucide="smartphone" class="w-5 h-5 mr-2 text-emerald-600"></i> หน้าเว็บไซต์ (Dashboard)
+                            </h4>
+                            <div class="w-full h-[700px] max-w-full mx-auto rounded-xl overflow-hidden shadow-2xl border-4 border-slate-100 bg-white relative">
+                                <iframe src="https://pm25-sansai-dashboard-tuc6yczy4hhl8vbmxdyxcp.streamlit.app/?embed=true&embed_options=light_theme" class="w-full h-full" style="border: none;" allowfullscreen></iframe>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col items-center w-full space-y-6 lg:pt-4">
+                            <h4 class="font-bold text-slate-700 text-lg flex items-center mb-4 bg-slate-50 px-4 py-2 rounded-full">
+                                <i data-lucide="download" class="w-5 h-5 mr-2 text-emerald-600"></i> รูปรายงานผล (ดาวน์โหลดได้จากเวป)
+                            </h4>
+                            <div class="relative w-full max-w-xs mx-auto shadow-xl rounded-xl overflow-hidden border border-slate-200">
+                                <img src="https://i.postimg.cc/qMTCvMHp/pm25-report-20260114-0413.png" alt="รายงาน" class="w-full h-auto object-cover" />
+                            </div>
+                            <p class="text-base text-slate-500 mt-3 text-center px-4">*ท่านสามารถกดรับรูปรายงานผลแบบนี้ได้ที่หน้า Dashboard</p>
+                        </div>
+                    </div>
+
+                    <div class="w-full bg-slate-50/80 p-6 md:p-8 rounded-2xl border border-slate-200 flex flex-col md:flex-row items-center justify-center gap-8 backdrop-blur-sm">
+                        <div class="flex flex-col md:flex-row items-center gap-6">
+                            <div class="text-center md:text-right flex flex-col items-center md:items-end">
+                                <p class="font-bold text-slate-800 text-lg md:text-xl mb-1">เข้าใช้งานระบบ</p>
+                                <p class="text-slate-600 font-medium text-base">สแกนเพื่อดูค่าฝุ่น Real-time</p>
+                                <button onclick="openZoom('https://i.postimg.cc/9fnJ6wS3/rad-b-PM2-5-rph-s-nth-ray.png')" class="text-emerald-600 text-sm mt-2 flex items-center hover:underline">
+                                    <i data-lucide="maximize-2" class="w-4 h-4 mr-1"></i> (คลิกรูปเพื่อขยาย)
+                                </button>
+                            </div>
+                            <div class="bg-white p-3 border border-slate-200 rounded-xl shadow-sm w-40 h-40 flex items-center justify-center cursor-zoom-in hover:scale-105 transition-all" onclick="openZoom('https://i.postimg.cc/9fnJ6wS3/rad-b-PM2-5-rph-s-nth-ray.png')">
+                                <img src="https://i.postimg.cc/9fnJ6wS3/rad-b-PM2-5-rph-s-nth-ray.png" alt="QR Code" class="w-full h-full object-contain" />
+                            </div>
+                        </div>
+                        <div class="hidden md:block w-px h-24 bg-slate-300"></div>
+                        <div class="w-full max-w-xs text-center md:text-left">
+                            <a href="https://pm25-sansai-dashboard-tuc6yczy4hhl8vbmxdyxcp.streamlit.app/" target="_blank" class="flex items-center justify-center w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg">
+                                เปิด Dashboard <i data-lucide="external-link" class="ml-2 w-5 h-5"></i>
+                            </a>
+                            <p class="text-sm text-slate-400 mt-3 font-mono break-all px-2">pm25-sansai-dashboard.streamlit.app</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Service Section -->
+            <section class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+                <div class="p-6 md:p-8 lg:p-10">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="bg-red-100 p-2 rounded-lg">
+                            <i data-lucide="heart-pulse" class="text-red-600 w-6 h-6 md:w-8 md:h-8"></i>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-bold text-slate-800">คลินิกมลพิษ (บริการเชิงรับ)</h3>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <p class="text-lg md:text-xl leading-relaxed font-medium text-slate-600 mb-8 text-center max-w-4xl mx-auto">
+                            คลินิกมลพิษ ซึ่งประชาชนทั่วไปสามารถนัดหมายได้ง่ายผ่านหมอพร้อม เปิดให้บริการนัดหมาย จันทร์-ศุกร์ 8.00-14.00 น. ไม่ว่าจะเป็นทางแอพพลิเคชั่น หมอพร้อม หรือทางไลน์ หมอพร้อม ดังรูป
+                        </p>
+                        <div class="w-full max-w-6xl bg-slate-50 rounded-2xl p-4 md:p-6 border border-slate-100 shadow-inner flex justify-center">
+                            <img src="https://i.postimg.cc/R0DP1WxQ/hmx-phr-xm.png" alt="หมอพร้อม" class="w-full h-auto object-contain rounded-lg shadow-md" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Health Checks -->
+            <section class="bg-white rounded-2xl shadow-lg border-t-8 border-indigo-500 p-6 md:p-8 flex flex-col hover:shadow-xl transition-shadow">
+                <div class="flex items-center mb-6 border-b border-slate-100 pb-6">
+                    <div class="bg-red-100 p-3.5 rounded-xl mr-4">
+                        <i data-lucide="flame" class="w-8 h-8 text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-800">สรุปผลการตรวจสุขภาพอาสาสมัครดับไฟป่า</h3>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="text-lg font-bold text-slate-700">รวมอาสาดับไฟป่าที่ได้รับการตรวจสุขภาพก่อนภารกิจดับไฟป่า</h4>
+                </div>
+
+                <div class="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 md:p-8 rounded-2xl border border-indigo-100 mb-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center text-center">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-indigo-50/50 flex flex-col justify-center h-full">
+                            <span class="block text-base text-slate-600 font-medium mb-3">จำนวนทั้งหมด</span>
+                            <div class="flex items-baseline justify-center">
+                                <span class="text-5xl font-extrabold text-indigo-700">153</span>
+                                <span class="text-indigo-600 ml-2 font-medium text-lg">คน</span>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-emerald-50/50 flex flex-col justify-center h-full relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-100 rounded-bl-full opacity-50"></div>
+                            <span class="block text-base text-slate-600 font-medium mb-3">คนที่เหมาะเป็นด่านหน้า</span>
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="flex items-baseline">
+                                    <span class="text-5xl font-extrabold text-emerald-600">84</span>
+                                    <span class="text-emerald-600 ml-2 font-medium text-lg">คน</span>
+                                </div>
+                                <span class="text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full text-sm font-bold mt-2">คิดเป็น 54.9%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="text-md font-bold text-slate-700 border-l-4 border-indigo-500 pl-3">รายละเอียดแยกตามสถานที่ตรวจ</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Location 1 -->
+                    <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-5 flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div class="flex items-start mb-4">
+                            <div class="bg-indigo-50 p-2 rounded-lg mr-3">
+                                <i data-lucide="map-pin" class="w-5 h-5 text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-base">ที่ว่าการอำเภอสันทราย</p>
+                                <p class="text-sm text-slate-500">โดย สสอ.สันทราย และ รพ.</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-4 rounded-lg border border-slate-100">
+                            <div class="text-center w-1/2 border-r border-slate-200">
+                                <p class="text-xs text-slate-500 font-medium mb-1 uppercase tracking-wide">ตรวจทั้งหมด</p>
+                                <div class="flex items-baseline justify-center">
+                                    <p class="font-bold text-2xl text-indigo-700">128</p>
+                                    <span class="text-sm font-medium text-slate-500 ml-1">คน</span>
+                                </div>
+                            </div>
+                            <div class="text-center w-1/2">
+                                <p class="text-xs text-slate-500 font-medium mb-1 uppercase tracking-wide">เหมาะเป็นหน้าด่าน</p>
+                                <div class="flex items-baseline justify-center">
+                                    <p class="font-bold text-2xl text-emerald-600">68</p>
+                                    <span class="text-sm font-medium text-slate-500 ml-1">คน</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location 2 -->
+                    <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-5 flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div class="flex items-start mb-4">
+                            <div class="bg-indigo-50 p-2 rounded-lg mr-3">
+                                <i data-lucide="hospital" class="w-5 h-5 text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-base">รพ.สต.</p>
+                                <p class="text-sm text-slate-500">ในเขตอำเภอสันทราย</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-50 p-4 rounded-lg border border-slate-100">
+                            <div class="text-center w-1/2 border-r border-slate-200">
+                                <p class="text-xs text-slate-500 font-medium mb-1 uppercase tracking-wide">ตรวจทั้งหมด</p>
+                                <div class="flex items-baseline justify-center">
+                                    <p class="font-bold text-2xl text-indigo-700">25</p>
+                                    <span class="text-sm font-medium text-slate-500 ml-1">คน</span>
+                                </div>
+                            </div>
+                            <div class="text-center w-1/2">
+                                <p class="text-xs text-slate-500 font-medium mb-1 uppercase tracking-wide">เหมาะเป็นด่านหน้า</p>
+                                <div class="flex items-baseline justify-center">
+                                    <p class="font-bold text-2xl text-emerald-600">16</p>
+                                    <span class="text-sm font-medium text-slate-500 ml-1">คน</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- ================= RIGHT COLUMN (ONSITE + SURVEILLANCE + CLINIC) ================= -->
-            <div class="w-full md:w-[60%] flex flex-col items-center mt-10 md:mt-0 relative">
-                
-                <!-- ROW: Entry 2 & 3 -->
-                <div class="w-[98%] sm:w-[95%] flex items-stretch gap-2 sm:gap-4 relative z-10">
-                    
-                    <!-- ====== Col 2: Onsite ====== -->
-                    <div class="flex-[0.8] flex flex-col items-center h-full">
-                        <!-- 2. เข้ารับบริการ -->
-                        <div class="flex items-center justify-center gap-1 sm:gap-2 bg-pink-50 border-2 border-pink-200 rounded-full px-1 sm:px-2 py-2 shadow-sm z-10 w-[95%] sm:w-full h-[55px] sm:h-[65px]">
-                            <div class="bg-pink-500 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center font-bold text-sm sm:text-lg shadow-inner shrink-0">2</div>
-                            <h3 class="text-pink-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center">เข้ารับบริการ<br>ที่รพ./รพ.สต./PCU หนองหาร</h3>
-                        </div>
-                        <div class="line-v flex-grow min-h-[30px] sm:min-h-[40px]"></div>
-                    </div>
-
-                    <!-- ====== Col 3: Surveillance ====== -->
-                    <div class="flex-[1.2] flex flex-col items-center h-full">
-                        <!-- 3. การเฝ้าระวัง -->
-                        <div class="flex items-center justify-center gap-1 sm:gap-2 bg-purple-50 border-2 border-purple-300 rounded-full px-2 py-2 shadow-sm z-10 w-[80%] sm:w-[75%] h-[55px] sm:h-[65px]">
-                            <div class="bg-purple-600 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center font-bold text-sm sm:text-lg shadow-inner shrink-0">3</div>
-                            <h3 class="text-purple-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center">การเฝ้าระวัง</h3>
-                        </div>
-                        <div class="line-v h-4 sm:h-6"></div>
-                        
-                        <!-- Split 2-ways for 3 -->
-                        <div class="w-[85%] border-t-line flex justify-between relative z-0">
-                            <div class="line-v h-4 mx-0"></div>
-                            <div class="line-v h-4 mx-0"></div>
-                        </div>
-                        
-                        <!-- ICD-10 & GG Sheets -->
-                        <div class="w-full flex gap-1 sm:gap-2 md:gap-3 items-stretch relative z-10">
-                            <div class="flex-1 flex flex-col items-center h-full">
-                                <div class="bg-purple-100 border-2 border-purple-300 rounded-xl p-1 sm:p-2 shadow-sm text-center w-full h-full flex justify-center items-center">
-                                    <p class="text-purple-900 font-bold text-[10px] sm:text-[11px] md:text-[12px] leading-snug card-text">ดึง ICD-10 โรค<br>ที่เกี่ยวข้องกับการ<br>สัมผัส PM2.5</p>
-                                </div>
-                                <div class="line-v h-4 sm:h-6"></div>
-                            </div>
-                            <div class="flex-1 flex flex-col items-center h-full">
-                                <div class="bg-purple-100 border-2 border-purple-300 rounded-xl p-1 sm:p-2 shadow-sm text-center w-full h-full flex justify-center items-center">
-                                    <p class="text-purple-900 font-bold text-[10px] sm:text-[11px] md:text-[12px] leading-snug card-text">หน่วยงานที่เกี่ยวข้อง<br>(OPD, ER และ<br>PCU หนองหาร)<br>แจ้งข้อมูลผู้ป่วย<br>ผ่าน GG sheets</p>
-                                </div>
-                                <div class="line-v h-4 sm:h-6"></div>
-                            </div>
-                            <!-- Merge bottom horizontal line for 3 -->
-                            <div class="absolute bottom-0 left-[25%] right-[25%] h-[3px]" style="background-color: var(--line-color);"></div>
-                        </div>
-                        <!-- Main trunk for 3 -->
-                        <div class="line-v flex-grow min-h-[20px] sm:min-h-[30px]"></div>
-                    </div>
-
-                    <!-- Main Bridge connecting Col 2 and Col 3 -->
-                    <div class="absolute bottom-0 left-[20%] right-[30%] h-[3px]" style="background-color: var(--line-color);"></div>
-                </div>
-                
-                <!-- Drop down to ซักประวัติ -->
-                <div class="line-v h-4 sm:h-6 relative"></div>
-                <div class="arrow-down relative"></div>
-                
-                <!-- ซักประวัติ -->
-                <div class="bg-pink-100 border border-pink-300 rounded-[2rem] px-4 sm:px-5 py-3 shadow-sm text-center w-[95%] sm:w-[85%] z-10">
-                    <p class="text-pink-900 font-bold text-[13px] sm:text-[14px] md:text-[15px] leading-snug card-text">เจ้าหน้าที่ซักประวัติ/อาการเบื้องต้น<br>และลงแบบคัดกรองสอบสวนโรค<br>ที่เกิดจาก PM2.5</p>
-                </div>
-                <div class="line-v h-8 relative">
-                </div>
-                
-                <!-- 3-way Split Header line -->
-                <div class="w-[90%] sm:w-[85%] border-t-line flex justify-between relative z-0">
-                    <div class="line-v h-6 mx-0"></div>
-                    <div class="line-v h-6 mx-0"></div>
-                    <div class="line-v h-6 mx-0"></div>
-                </div>
-                
-                <!-- NEW GRID STRUCTURE: บังคับคอลัมน์และแนวเส้นให้ตรงกันด้วย CSS Grid ป้องกันการเหลื่อม -->
-                <div class="w-[98%] sm:w-[95%] grid grid-cols-[1fr_1.2fr_1fr] gap-x-1 sm:gap-x-2 md:gap-x-3 relative z-10">
-                    
-                    <!-- Left: กรณีไม่เข้าข่าย (กินพื้นที่ยาวลงไปด้านล่าง) -->
-                    <div class="row-span-5 flex flex-col items-center h-full">
-                        <div class="bg-white border-[3px] border-blue-800 rounded-2xl sm:rounded-[1.5rem] py-2 px-1 shadow-sm text-center w-full z-10 h-[50px] sm:h-[60px] flex items-center justify-center">
-                            <p class="text-blue-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">กรณี<br>ไม่เข้าข่าย</p>
-                        </div>
-                        <div class="line-v h-3 sm:h-4 my-1"></div>
-                        <div class="bg-white border-2 border-blue-800 rounded-lg p-2 shadow-sm text-center w-full h-full flex flex-col items-center justify-center z-10 min-h-[50px]">
-                            <p class="text-blue-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-snug card-text">ส่งตรวจคลินิก<br>ตามอาการของโรค</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Middle: เข้าข่าย อาการเล็กน้อย -->
-                    <div class="flex flex-col items-center h-[50px] sm:h-[60px]">
-                        <div class="bg-orange-200 border-[3px] border-orange-400 rounded-2xl sm:rounded-[1.5rem] py-2 px-1 shadow-sm text-center w-full z-10 h-full flex items-center justify-center">
-                            <p class="text-orange-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">เข้าข่าย<br>อาการเล็กน้อย<br>/ปานกลาง</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Right: ผู้ป่วยอาการรุนแรง -->
-                    <div class="flex flex-col items-center h-[50px] sm:h-[60px] relative">
-                        <!-- เป้าหมายรับเส้นสีแดง -->
-                        <div id="red-target" class="w-full relative z-[110] h-full">
-                            <div class="absolute -top-3 w-full h-[1px]"></div>
-                            <div class="bg-red-200 border-[3px] border-red-500 rounded-full py-2 px-1 shadow-sm text-center w-full h-full flex items-center justify-center">
-                                <p class="text-red-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">ผู้ป่วย<br>อาการรุนแรง</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Connectors down from Headers -->
-                    <div class="flex justify-center"><div class="line-v h-3 sm:h-4 my-1"></div></div>
-                    <div class="flex justify-center"><div class="line-v h-3 sm:h-4 my-1"></div></div>
-                    
-                    <!-- Shared Box: ส่งข้อมูลควบคุมโรค (ควบ 2 คอลัมน์ขวา) -->
-                    <div class="col-span-2 flex justify-center relative z-10 my-1">
-                        <!-- เส้นขวางเชื่อม 2 คอลัมน์แบบคำนวณตำแหน่ง -->
-                        <div class="absolute top-[50%] left-[27.27%] right-[22.72%] h-[3px] z-0 transform -translate-y-1/2" style="background-color: var(--line-color);"></div>
-                        <div class="bg-purple-100 border-[2px] border-purple-400 rounded-lg p-2 shadow-sm text-center w-[95%] sm:w-[90%] z-10">
-                            <p class="text-purple-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">
-                                ส่งข้อมูลให้ควบคุมโรคเพื่อลงพื้นที่ซักประวัติ<br class="hidden sm:block">และแจ้ง สสจ.เชียงใหม่
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <!-- Connectors down from Shared Box -->
-                    <div class="flex justify-center h-full"><div class="line-v h-3 sm:h-4 my-1"></div></div>
-                    <div class="flex justify-center h-full"><div class="line-v h-3 sm:h-4 my-1"></div></div>
-                    
-                    <!-- Outcomes Row -->
-                    <!-- เส้นแกนกลางลากยาวลงไปรอเชื่อมต่อกับคลินิกมลพิษ -->
-                    <div class="flex flex-col items-center h-full w-full">
-                        <div class="line-v flex-grow min-h-[30px] sm:min-h-[40px]"></div>
-                    </div>
-                    <!-- ฝั่งขวา ห้องฉุกเฉิน -->
-                    <div class="flex flex-col items-center h-full w-full">
-                        <div class="bg-red-500 rounded-md p-1 sm:p-2 shadow-sm text-center w-[95%] sm:w-[90%] z-10">
-                            <p class="text-white font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">ส่งเข้า<br>ห้องฉุกเฉิน</p>
-                        </div>
-                        <div class="line-v h-3 sm:h-4 my-1"></div>
-                        <div class="bg-red-500 rounded-md p-1 sm:p-2 shadow-sm text-center w-[95%] sm:w-[90%] h-full flex items-center justify-center z-10 min-h-[30px]">
-                            <p class="text-white font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight">ส่ง REFER</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- เส้นที่เชื่อมตรงเข้าสู่กล่องคลินิกมลพิษ (ดึงขอบบนขึ้นไป 1px เพื่อลบรอยต่อให้เนียนสนิทเป็นเส้นเดียว) -->
-                <div class="line-v h-10 sm:h-14 relative z-0" style="margin-top: -1px;"></div>
-
-                <!-- ================= CLINIC SECTION ================= -->
-                <div class="w-full flex flex-col items-center relative z-20">
-                    <div class="bg-orange-300 border-[3px] border-orange-500 rounded-3xl sm:rounded-full px-3 sm:px-6 py-3 shadow-md text-center w-[95%] sm:w-[90%] z-10">
-                        <h3 class="text-orange-900 font-bold text-[14px] sm:text-[16px] md:text-[18px] leading-tight mb-1">ส่งเข้าคลินิกมลพิษเฉพาะ รพ.</h3>
-                        <p class="text-orange-800 font-bold text-[11px] sm:text-[12px] md:text-[13px]">(กรณี รพ.สต./PCU หนองหาร ให้ส่งต่อ รพ.)</p>
-                    </div>
-                    
-                    <div class="line-v h-6"></div>
-                    
-                    <div class="bg-orange-50 border-[2px] border-orange-200 rounded-lg px-4 sm:px-6 py-3 shadow-sm text-center w-[95%] sm:w-[85%] z-10">
-                        <p class="text-orange-900 font-bold text-[13px] sm:text-[14px] md:text-[15px] leading-snug card-text">ซักประวัติ / ตรวจร่างกาย /<br>ตรวจทางห้องปฏิบัติการ<br>โดยแพทย์ / สหวิชาชีพ</p>
-                    </div>
-                    
-                    <div class="line-v h-6"></div>
-                    
-                    <div class="bg-orange-200 border-[2px] border-orange-300 rounded-lg px-6 sm:px-10 py-2 shadow-sm text-center w-fit z-10">
-                        <p class="text-orange-900 font-bold text-[14px] sm:text-[15px] md:text-[16px]">วางแผนการรักษา</p>
-                    </div>
-                    
-                    <div class="line-v h-6"></div>
-                    
-                    <!-- Clinic 3-Way Split Outcomes -->
-                    <div class="w-[95%] sm:w-[90%] flex flex-col items-center relative z-10">
-                        
-                        <div class="w-[66.66%] border-t-[3px] flex justify-between relative z-0 mx-auto" style="border-color: var(--line-color);">
-                            <div class="w-[3px] h-6 sm:h-8 mx-0" style="background-color: var(--line-color);"></div>
-                            <div class="w-[3px] h-6 sm:h-8 mx-0" style="background-color: var(--line-color);"></div>
-                            <div class="w-[3px] h-6 sm:h-8 mx-0" style="background-color: var(--line-color);"></div>
-                        </div>
-                        
-                        <div class="w-full flex items-stretch">
-                            <!-- Home -->
-                            <div class="flex-1 flex flex-col items-center px-1 sm:px-2">
-                                <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full flex-grow flex items-center justify-center relative z-10">
-                                    <p class="text-orange-900 font-bold text-[12px] sm:text-[13px] md:text-[14px]">ให้ยากลับบ้าน</p>
-                                </div>
-                            </div>
-                            <!-- Admit -->
-                            <div class="flex-1 flex flex-col items-center px-1 sm:px-2">
-                                <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full flex-grow flex items-center justify-center relative z-10">
-                                    <p class="text-orange-900 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-tight">Admit<br>ให้การรักษา</p>
-                                </div>
-                            </div>
-                            <!-- Refer -->
-                            <div class="flex-1 flex flex-col items-center px-1 sm:px-2">
-                                <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full flex-grow flex items-center justify-center relative z-10">
-                                    <p class="text-orange-900 font-bold text-[12px] sm:text-[13px] md:text-[14px]">ส่ง REFER</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="w-[66.66%] border-b-[3px] flex justify-between relative z-0 mx-auto" style="border-color: var(--line-color);">
-                            <div class="w-[3px] h-6 sm:h-8 mx-0" style="background-color: var(--line-color);"></div>
-                            <div class="w-[3px] h-6 sm:h-8 mx-0" style="background-color: var(--line-color);"></div>
-                            <div class="w-[3px] h-6 sm:h-8 mx-0" style="background-color: var(--line-color);"></div>
-                        </div>
-                        
-                        <div class="line-v h-6 sm:h-8 relative z-0 mx-auto"></div>
-                        <div class="arrow-down relative z-0 mx-auto"></div>
-                        
-                        <!-- Post Care Box (กรอบสีฟ้ารวมข้อมูล) -->
-                        <div class="w-full bg-blue-100 border-2 border-blue-300 rounded-xl p-3 sm:p-4 shadow-md mt-1 relative z-10">
-                            <div class="text-left w-full pl-2 sm:pl-6">
-                                <ul class="text-blue-900 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-relaxed space-y-1">
-                                    <li class="flex items-start"><span class="mr-1">1.</span> <span class="card-text">ให้คำปรึกษาก่อนกลับบ้าน</span></li>
-                                    <li class="flex items-start"><span class="mr-1">2.</span> <span class="card-text">เยี่ยมบ้านโดยทีม 3 หมอ และ อปท.</span></li>
-                                    <li class="flex items-start"><span class="mr-1">3.</span> <span class="card-text">ประเมินสภาพที่อยู่ซ้ำให้เหมาะสมกับผู้ป่วย</span></li>
-                                    <li class="flex items-start"><span class="mr-1">4.</span> <span class="card-text">ผู้ป่วยอาการคงที่ติดตามและสั่งยาผ่าน telemedicine เพื่อลดความเสี่ยงสัมผัสฝุ่น</span></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Script สำหรับวาดเส้นโยงสีแดงอัจฉริยะ -->
+            </section>
+        </main>
+        
         <script>
-            function drawRedLine() {
-                const source = document.getElementById('red-source');
-                const target = document.getElementById('red-target');
-                const linePath = document.getElementById('red-line-path');
-                const svg = document.getElementById('flow-svg');
-                const container = document.getElementById('main-flow-container');
-                
-                // ตรวจสอบว่าหน้าจอใหญ่พอที่จะแสดงผลเป็น 2 คอลัมน์
-                if(source && target && linePath && svg && container.offsetWidth >= 768) {
-                    svg.classList.remove('hidden');
-                    const svgRect = svg.getBoundingClientRect();
-                    const srcRect = source.getBoundingClientRect();
-                    const tgtRect = target.getBoundingClientRect();
-                    
-                    // จุดเริ่มต้น: ขอบขวาของกล่อง "ประสาน 1669"
-                    const startX = srcRect.right - svgRect.left;
-                    const startY = srcRect.top + (srcRect.height / 2) - svgRect.top;
-                    
-                    // จุดเป้าหมาย: กึ่งกลางขอบบนของกล่อง "ผู้ป่วยอาการรุนแรง"
-                    const endX = tgtRect.left + (tgtRect.width / 2) - svgRect.left;
-                    const endY = tgtRect.top - svgRect.top - 8; // เผื่อระยะหัวลูกศร
-                    
-                    // คำนวณจุดหักเลี้ยว: ขยับออกมาตรงช่องว่างระหว่าง 2 คอลัมน์ (ประมาณ 25px จากขอบกล่อง)
-                    const gutterX = startX + 25; 
-                    
-                    // ลากขึ้นไปที่ระดับเหนือเส้นแยก 3 ทาง (ประมาณ 40px เหนือกล่องเป้าหมาย)
-                    // เพื่อข้ามเส้นสีดำอย่างชัดเจน ไม่ทับซ้อนกับกล่องข้อความ
-                    const safeY = endY - 40;
-                    
-                    // วาด Path เดินทาง: ขวา -> ขึ้น -> ขวา -> ลง
-                    const d = `M ${startX} ${startY} L ${gutterX} ${startY} L ${gutterX} ${safeY} L ${endX} ${safeY} L ${endX} ${endY}`;
-                    
-                    linePath.setAttribute('d', d);
-                } else if (svg) {
-                    svg.classList.add('hidden'); // ซ่อนในมือถือ หรือตอนที่เรียงเป็นคอลัมน์เดียว
-                }
+            function openZoom(src) {
+                document.getElementById('zoomed-img').src = src;
+                const modal = document.getElementById('zoom-modal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
             }
-            
-            // วาดเส้นทันทีเมื่อโหลดเสร็จ
-            window.onload = function() {
-                setTimeout(drawRedLine, 100); 
-                setTimeout(drawRedLine, 500);
-            };
-            
-            // วาดเส้นใหม่ทุกครั้งที่มีการเปลี่ยนขนาดหน้าจอ
-            window.addEventListener('resize', drawRedLine);
+            function closeZoom() {
+                const modal = document.getElementById('zoom-modal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+            document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); });
         </script>
     </body>
     </html>
     """
     
-    components.html(html_code, height=2550, scrolling=True)
+    components.html(html_code, height=3600, scrolling=True)
