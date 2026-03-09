@@ -223,7 +223,7 @@ def render_roles():
                                     <span class="text-orange-500 font-bold">➔</span> <b>ทีม 3 หมอ / รพ.สต.:</b> กรณีคัดกรองออนไลน์พบอาการเล็กน้อย<br>
                                     <span class="text-orange-500 font-bold">➔</span> <b>ให้ยากลับบ้าน / Admit:</b> เข้าสู่การดูแลต่อเนื่อง<br>
                                     <span class="text-red-500 font-bold">➔</span> <b class="text-red-600 dark:text-red-400">ส่ง REFER / 1669:</b> กรณีอาการรุนแรง<br>
-                                    <span class="text-orange-500 font-bold">➔</span> <b>แจ้งควบคุมโรค:</b> กรณีคัดกรองออนไลน์พบความเกี่ยวข้องกับ PM2.5<br>
+                                    <span class="text-orange-500 font-bold">➔</span> <b>แจ้งควบคุมโรค:</b> กรณีการสอบสวนโรคพบความเกี่ยวข้องกับ PM2.5<br>
                                 </p>
                             </div>
                         </div>
