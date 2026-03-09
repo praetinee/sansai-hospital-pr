@@ -3,7 +3,7 @@ import streamlit.components.v1 as components
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow ที่ออกแบบใหม่ด้วย Flexbox ที่รัดกุม 
     # ปรับให้รองรับการเพิ่มข้อ 3 (การเฝ้าระวัง) และเส้นเชื่อมต่อที่ซับซ้อนขึ้น
-    # อัปเดตล่าสุด: เพิ่มข้อ 4 ในส่วนการดูแลต่อเนื่องด้านล่างสุด
+    # อัปเดตล่าสุด: เพิ่มกล่อง "ส่งข้อมูลให้ควบคุมโรคและแจ้ง สสจ.เชียงใหม่" ขวางกลางระหว่างเข้าข่ายและอาการรุนแรง
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -204,7 +204,7 @@ def render_flow():
                 <div class="line-v h-8 relative">
                 </div>
                 
-                <!-- 3-way Split -->
+                <!-- 3-way Split Header line -->
                 <div class="w-[90%] sm:w-[85%] border-t-line flex justify-between relative z-0">
                     <div class="line-v h-6 mx-0"></div>
                     <div class="line-v h-6 mx-0"></div>
@@ -214,40 +214,80 @@ def render_flow():
                 <div class="w-[98%] sm:w-[95%] flex gap-1 sm:gap-2 md:gap-3 items-stretch relative z-10">
                     <!-- Left: กรณีไม่เข้าข่าย -->
                     <div class="flex-1 flex flex-col items-center h-full">
-                        <div class="bg-white border-[3px] border-blue-800 rounded-2xl sm:rounded-[1.5rem] py-2 px-1 shadow-sm text-center w-full z-10">
+                        <div class="bg-white border-[3px] border-blue-800 rounded-2xl sm:rounded-[1.5rem] py-2 px-1 shadow-sm text-center w-full z-10 h-[50px] sm:h-[60px] flex items-center justify-center">
                             <p class="text-blue-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">กรณี<br>ไม่เข้าข่าย</p>
                         </div>
-                        <div class="line-v h-4 my-1"></div>
-                        <div class="bg-white border-2 border-blue-800 rounded-lg p-2 shadow-sm text-center w-full h-full flex flex-col items-center justify-center z-10">
+                        <div class="line-v h-3 sm:h-4 my-1"></div>
+                        <div class="bg-white border-2 border-blue-800 rounded-lg p-2 shadow-sm text-center w-full h-full flex flex-col items-center justify-center z-10 min-h-[50px]">
                             <p class="text-blue-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-snug card-text">ส่งตรวจคลินิก<br>ตามอาการของโรค</p>
                         </div>
                     </div>
                     
-                    <!-- Middle: เข้าข่าย อาการเล็กน้อย -->
-                    <div class="flex-[1.2] flex flex-col items-center h-full">
-                        <div class="bg-orange-200 border-[3px] border-orange-400 rounded-2xl sm:rounded-[1.5rem] py-2 px-1 shadow-sm text-center w-full z-10">
-                            <p class="text-orange-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">เข้าข่าย<br>อาการเล็กน้อย<br>/ปานกลาง</p>
-                        </div>
-                        <div class="line-v flex-grow min-h-[30px] sm:min-h-[40px]"></div>
-                    </div>
-                    
-                    <!-- Right: ผู้ป่วยอาการรุนแรง -->
-                    <div class="flex-1 flex flex-col items-center h-full relative">
-                        <!-- เป้าหมายรับเส้นสีแดง -->
-                        <div id="red-target" class="w-full relative z-[110]">
-                            <div class="absolute -top-3 w-full h-[1px]"></div>
-                            <div class="bg-red-200 border-[3px] border-red-500 rounded-full py-2 px-1 shadow-sm text-center w-full">
-                                <p class="text-red-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">ผู้ป่วย<br>อาการรุนแรง</p>
+                    <!-- Wrapper for Middle & Right to incorporate shared disease control box -->
+                    <div class="flex-[2.2] flex flex-col w-full h-full relative z-10">
+                        
+                        <!-- Top Row: Headers -->
+                        <div class="flex gap-1 sm:gap-2 md:gap-3 w-full h-[50px] sm:h-[60px]">
+                            <!-- Middle: เข้าข่าย อาการเล็กน้อย -->
+                            <div class="flex-[1.2] flex flex-col items-center h-full">
+                                <div class="bg-orange-200 border-[3px] border-orange-400 rounded-2xl sm:rounded-[1.5rem] py-2 px-1 shadow-sm text-center w-full z-10 h-full flex items-center justify-center">
+                                    <p class="text-orange-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">เข้าข่าย<br>อาการเล็กน้อย<br>/ปานกลาง</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Right: ผู้ป่วยอาการรุนแรง -->
+                            <div class="flex-1 flex flex-col items-center h-full relative">
+                                <!-- เป้าหมายรับเส้นสีแดง -->
+                                <div id="red-target" class="w-full relative z-[110] h-full">
+                                    <div class="absolute -top-3 w-full h-[1px]"></div>
+                                    <div class="bg-red-200 border-[3px] border-red-500 rounded-full py-2 px-1 shadow-sm text-center w-full h-full flex items-center justify-center">
+                                        <p class="text-red-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">ผู้ป่วย<br>อาการรุนแรง</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="line-v h-4 my-1"></div>
-                        <div class="bg-red-500 rounded-md p-1 sm:p-2 shadow-sm text-center w-[95%] sm:w-[90%] z-10">
-                            <p class="text-white font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">ส่งเข้า<br>ห้องฉุกเฉิน</p>
+                        
+                        <!-- Connectors down from Headers -->
+                        <div class="flex gap-1 sm:gap-2 md:gap-3 w-full my-1">
+                            <div class="flex-[1.2] flex justify-center"><div class="line-v h-3 sm:h-4"></div></div>
+                            <div class="flex-1 flex justify-center"><div class="line-v h-3 sm:h-4"></div></div>
                         </div>
-                        <div class="line-v h-4 my-1"></div>
-                        <div class="bg-red-500 rounded-md p-1 sm:p-2 shadow-sm text-center w-[95%] sm:w-[90%] h-full flex items-center justify-center z-10">
-                            <p class="text-white font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight">ส่ง REFER</p>
+                        
+                        <!-- Shared Box: ส่งข้อมูลควบคุมโรค -->
+                        <div class="w-full flex justify-center relative z-10 my-1">
+                            <!-- เส้นขวางเชื่อม 2 คอลัมน์ (คำนวณตำแหน่ง 27.27% และ 22.72% เพื่อให้อยู่กึ่งกลางกล่องบนพอดี) -->
+                            <div class="absolute top-[50%] left-[27.27%] right-[22.72%] h-[3px] z-0 transform -translate-y-1/2" style="background-color: var(--line-color);"></div>
+                            <div class="bg-purple-100 border-[2px] border-purple-400 rounded-lg p-2 shadow-sm text-center w-[95%] sm:w-[90%] z-10">
+                                <p class="text-purple-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">
+                                    ส่งข้อมูลให้ควบคุมโรคเพื่อลงพื้นที่ซักประวัติ<br class="hidden sm:block">และแจ้ง สสจ.เชียงใหม่
+                                </p>
+                            </div>
                         </div>
+                        
+                        <!-- Connectors down from Shared Box -->
+                        <div class="flex gap-1 sm:gap-2 md:gap-3 w-full my-1">
+                            <div class="flex-[1.2] flex justify-center"><div class="line-v h-3 sm:h-4"></div></div>
+                            <div class="flex-1 flex justify-center"><div class="line-v h-3 sm:h-4"></div></div>
+                        </div>
+                        
+                        <!-- Outcomes Row -->
+                        <div class="flex gap-1 sm:gap-2 md:gap-3 w-full flex-grow items-stretch">
+                            <!-- Middle Outcome -->
+                            <div class="flex-[1.2] flex flex-col items-center h-full">
+                                <div class="line-v flex-grow min-h-[30px] sm:min-h-[40px]"></div>
+                            </div>
+                            <!-- Right Outcome -->
+                            <div class="flex-1 flex flex-col items-center h-full">
+                                <div class="bg-red-500 rounded-md p-1 sm:p-2 shadow-sm text-center w-[95%] sm:w-[90%] z-10">
+                                    <p class="text-white font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">ส่งเข้า<br>ห้องฉุกเฉิน</p>
+                                </div>
+                                <div class="line-v h-3 sm:h-4 my-1"></div>
+                                <div class="bg-red-500 rounded-md p-1 sm:p-2 shadow-sm text-center w-[95%] sm:w-[90%] h-full flex items-center justify-center z-10 min-h-[30px]">
+                                    <p class="text-white font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight">ส่ง REFER</p>
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
 
@@ -383,4 +423,4 @@ def render_flow():
     </html>
     """
     
-    components.html(html_code, height=2400, scrolling=True)
+    components.html(html_code, height=2550, scrolling=True)
