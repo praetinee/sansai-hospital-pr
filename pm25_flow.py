@@ -84,8 +84,8 @@ def render_pm25_flow():
                         <div class="flex items-start gap-4">
                             <i data-lucide="truck" class="w-7 h-7 text-[#a16207] shrink-0 mt-1"></i>
                             <div>
-                                <p class="font-bold text-[#854d0e] text-base">จัดส่งยาถึงบ้าน:</p>
-                                <p class="text-sm text-[#a16207] leading-relaxed">สำหรับผู้ป่วยโรคเรื้อรังที่อาการคงที่ ลดความเสี่ยงสัมผัสฝุ่น</p>
+                                <p class="font-bold text-[#854d0e] text-base">สั่งจ่ายยาผ่าน Telemedicine:</p>
+                                <p class="text-sm text-[#a16207] leading-relaxed">ผู้ป่วยอาการคงที่ ติดตามและสั่งจ่ายยาผ่าน telemedicine เพื่อลดความเสี่ยงสัมผัสฝุ่น</p>
                             </div>
                         </div>
                     </div>
