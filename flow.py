@@ -349,7 +349,7 @@ def render_flow():
                         
                         <div id="disease-control-box" class="w-full bg-purple-100 border-[2px] border-purple-400 rounded-xl p-3 sm:p-4 shadow-md mt-1 relative z-10 text-center">
                             <p class="text-purple-900 font-bold text-[13px] sm:text-[14px] md:text-[15px] leading-snug card-text">
-                                ส่งข้อมูลให้ควบคุมโรคเพื่อลงพื้นที่ซักประวัติ<br class="hidden sm:block">และแจ้ง สสจ.เชียงใหม่
+                                ทีมคลินิกมลพิษ แจ้งข้อมูลแก่ ควบคุมโรค เพื่อซักประวัติ+รายงาน สสจ. ทราบ)<br class="hidden sm:block">
                             </p>
                         </div>
 
