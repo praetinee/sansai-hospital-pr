@@ -3,7 +3,7 @@ import streamlit.components.v1 as components
 def render_roles():
     # โค้ด HTML สำหรับหน้าบทบาทหน่วยงาน ปรับโครงสร้างเป็น Flow 3 คอลัมน์ (รุก-รับ-ส่งต่อ) 
     # รองรับ Responsive และ Theme (Light/Dark) เต็มรูปแบบ
-    # แก้ไข: จัดกล่องในคอลัมน์ให้อยู่กึ่งกลางแนวตั้ง (justify-center)
+    # แก้ไขล่าสุด: ทำให้เส้นลูกศรข้ามคอลัมน์ใหญ่และชัดเจนยิ่งขึ้น เพิ่มขอบและเงา
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -42,6 +42,7 @@ def render_roles():
                 --col-border-mid: #fed7aa;
                 --col-bg-right: rgba(239, 246, 255, 0.6);
                 --col-border-right: #bfdbfe;
+                --bg-knockout: #ffffff; /* เส้นขอบตัดสีขาวสำหรับลูกศรใน Light Mode */
             }
 
             @media (prefers-color-scheme: dark) {
@@ -58,6 +59,7 @@ def render_roles():
                     --col-border-mid: rgba(249, 115, 22, 0.3);
                     --col-bg-right: rgba(30, 58, 138, 0.2);
                     --col-border-right: rgba(59, 130, 246, 0.3);
+                    --bg-knockout: #0e1117; /* เส้นขอบตัดสีดำสำหรับลูกศรใน Dark Mode */
                 }
             }
 
@@ -88,27 +90,34 @@ def render_roles():
             </div>
 
             <!-- SVG Lines Overlay (วาดลูกศรเชื่อมคอลัมน์เฉพาะหน้าจอ Desktop) -->
-            <svg id="flow-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none hidden xl:block z-0" style="filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.15));">
+            <!-- ปรับให้อยู่ชั้นหน้าสุด z-[100] และเพิ่มความเข้มของเงา -->
+            <svg id="flow-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none hidden xl:block z-[100]" style="filter: drop-shadow(0px 3px 4px rgba(0,0,0,0.3));">
                 <defs>
-                    <marker id="arrow-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#f97316" />
+                    <!-- ขยายขนาดหัวลูกศรให้ใหญ่ขึ้น -->
+                    <marker id="arrow-orange" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c" />
                     </marker>
-                    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
+                    <marker id="arrow-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#15803d" />
                     </marker>
                 </defs>
-                <!-- เส้นส่งต่อ: กลาง ไป ขวา -->
-                <path id="path-m-r-1" fill="none" stroke="#f97316" stroke-width="3" stroke-dasharray="4,4" marker-end="url(#arrow-orange)" />
-                <path id="path-m-r-2" fill="none" stroke="#f97316" stroke-width="3" stroke-dasharray="4,4" marker-end="url(#arrow-orange)" />
-                <!-- เส้นส่งต่อกลับ: กลาง/ขวา กลับไป ซ้าย (ดูแลต่อเนื่อง) -->
-                <path id="path-return" fill="none" stroke="#16a34a" stroke-width="4" marker-end="url(#arrow-green)" />
+                <!-- เส้นพื้นหลัง (Knockout Effect) ให้เส้นหลักดูโดดเด่นตัดกับพื้น -->
+                <path id="bg-m-r-1" fill="none" stroke="var(--bg-knockout)" stroke-width="11" stroke-linejoin="round" stroke-linecap="round" />
+                <path id="bg-m-r-2" fill="none" stroke="var(--bg-knockout)" stroke-width="11" stroke-linejoin="round" stroke-linecap="round" />
+                <path id="bg-return" fill="none" stroke="var(--bg-knockout)" stroke-width="11" stroke-linejoin="round" stroke-linecap="round" />
+                
+                <!-- เส้นส่งต่อ (เส้นจริง): กลาง ไป ขวา (หนา 5px สีเข้ม) -->
+                <path id="path-m-r-1" fill="none" stroke="#ea580c" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow-orange)" />
+                <path id="path-m-r-2" fill="none" stroke="#ea580c" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow-orange)" />
+                <!-- เส้นส่งต่อกลับ (ดูแลต่อเนื่อง): ลากกลับไปซ้าย (หนา 5px สีเขียวเข้ม) -->
+                <path id="path-return" fill="none" stroke="#15803d" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrow-green)" />
             </svg>
 
             <!-- 3 Columns Layout -->
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 relative z-10">
 
                 <!-- ================= COLUMN 1: รุก (ชุมชนและฟื้นฟู) ================= -->
-                <div class="col-bg-left border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full" id="col-left">
+                <div class="col-bg-left border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full relative" id="col-left">
                     <h3 class="text-center font-bold text-green-800 dark:text-green-400 text-lg mb-4 border-b-2 border-green-200 dark:border-green-800 pb-2">
                         ชุมชนและการดูแลต่อเนื่อง (รุก)
                     </h3>
@@ -145,7 +154,7 @@ def render_roles():
                 </div>
 
                 <!-- ================= COLUMN 2: รับ (คัดกรองและรักษา) ================= -->
-                <div class="col-bg-mid border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full" id="col-mid">
+                <div class="col-bg-mid border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full relative" id="col-mid">
                     <h3 class="text-center font-bold text-orange-800 dark:text-orange-400 text-lg mb-4 border-b-2 border-orange-200 dark:border-orange-800 pb-2">
                         การรับผู้ป่วยและดูแลรักษา (รับ)
                     </h3>
@@ -246,7 +255,7 @@ def render_roles():
                 </div>
 
                 <!-- ================= COLUMN 3: ส่งต่อ (ฉุกเฉินและสนับสนุน) ================= -->
-                <div class="col-bg-right border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full" id="col-right">
+                <div class="col-bg-right border-2 rounded-[2rem] p-4 sm:p-5 flex flex-col h-full w-full relative" id="col-right">
                     <h3 class="text-center font-bold text-blue-800 dark:text-blue-400 text-lg mb-4 border-b-2 border-blue-200 dark:border-blue-800 pb-2">
                         ฉุกเฉินและระบบสนับสนุน (ส่งต่อ)
                     </h3>
@@ -366,6 +375,10 @@ def render_roles():
                 const pathMR1 = document.getElementById('path-m-r-1');
                 const pathMR2 = document.getElementById('path-m-r-2');
                 const pathReturn = document.getElementById('path-return');
+                
+                const bgMR1 = document.getElementById('bg-m-r-1');
+                const bgMR2 = document.getElementById('bg-m-r-2');
+                const bgReturn = document.getElementById('bg-return');
 
                 // ทำงานเฉพาะหน้าจอขนาด xl (1280px ขึ้นไปตาม Tailwind) ที่แสดงผลแบบ 3 คอลัมน์
                 if(window.innerWidth >= 1280 && colL && colM && colR && svg && container) {
@@ -376,17 +389,21 @@ def render_roles():
                     const mRect = colM.getBoundingClientRect();
                     const rRect = colR.getBoundingClientRect();
 
-                    // เส้นส่งต่อ 1 (บน): กลาง ไป ขวา (แทนการส่งฉุกเฉิน)
+                    // เส้นส่งต่อ 1 (บน): กลาง ไป ขวา (หนาและเป็นเส้นทึบ)
                     const mr1StartX = mRect.right - contRect.left;
                     const mr1StartY = (mRect.top - contRect.top) + (mRect.height * 0.3);
                     const mr1EndX = rRect.left - contRect.left;
-                    pathMR1.setAttribute('d', `M ${mr1StartX} ${mr1StartY} L ${mr1EndX - 10} ${mr1StartY}`);
+                    const dMR1 = `M ${mr1StartX} ${mr1StartY} L ${mr1EndX - 15} ${mr1StartY}`;
+                    pathMR1.setAttribute('d', dMR1);
+                    bgMR1.setAttribute('d', dMR1);
 
-                    // เส้นส่งต่อ 2 (กลาง): กลาง ไป ขวา (แทนการส่งทีมควบคุมโรค)
+                    // เส้นส่งต่อ 2 (กลาง): กลาง ไป ขวา (หนาและเป็นเส้นทึบ)
                     const mr2StartX = mRect.right - contRect.left;
                     const mr2StartY = (mRect.top - contRect.top) + (mRect.height * 0.6);
                     const mr2EndX = rRect.left - contRect.left;
-                    pathMR2.setAttribute('d', `M ${mr2StartX} ${mr2StartY} L ${mr2EndX - 10} ${mr2StartY}`);
+                    const dMR2 = `M ${mr2StartX} ${mr2StartY} L ${mr2EndX - 15} ${mr2StartY}`;
+                    pathMR2.setAttribute('d', dMR2);
+                    bgMR2.setAttribute('d', dMR2);
 
                     // เส้นย้อนกลับด้านล่าง (การดูแลต่อเนื่อง): จากใต้คอลัมน์กลาง โยงกลับไปใต้คอลัมน์ซ้าย
                     const retStartX = (mRect.left - contRect.left) + (mRect.width / 2);
@@ -394,11 +411,13 @@ def render_roles():
                     const retEndX = (lRect.left - contRect.left) + (lRect.width / 2);
                     const retEndY = lRect.bottom - contRect.top;
                     
-                    // หากรอบล่างสุดเพื่อเว้นระยะไม่ให้ทับกล่อง (ลงไป 30px)
-                    const dropY = Math.max(retStartY, retEndY) + 30; 
+                    // หากรอบล่างสุดเพื่อเว้นระยะไม่ให้ทับกล่อง (ลงไป 40px)
+                    const dropY = Math.max(retStartY, retEndY) + 40; 
 
                     // วาด Path: ลากลง -> ลากซ้ายยาวๆ -> ลากขึ้น -> ชี้เข้าใต้กล่องซ้าย
-                    pathReturn.setAttribute('d', `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${retEndY + 12}`);
+                    const dReturn = `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${retEndY + 18}`;
+                    pathReturn.setAttribute('d', dReturn);
+                    bgReturn.setAttribute('d', dReturn);
 
                 } else {
                     // ปิดเส้นบนมือถือ/แท็บเล็ต ปล่อยให้การ์ดเรียงต่อกันเป็นแนวตั้งตามธรรมชาติ
