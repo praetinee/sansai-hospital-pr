@@ -3,6 +3,7 @@ import streamlit.components.v1 as components
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow ที่ออกแบบใหม่ด้วย Flexbox ที่รัดกุม 
     # ปรับให้รองรับการเพิ่มข้อ 3 (การเฝ้าระวัง) และเส้นเชื่อมต่อที่ซับซ้อนขึ้น
+    # อัปเดตล่าสุด: แก้ไขเส้นเชื่อมผลการรักษามารวมกันตรงกลาง และเพิ่มระยะห่างกรอบคลินิก
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -188,13 +189,12 @@ def render_flow():
                     </div>
 
                     <!-- Main Bridge connecting Col 2 and Col 3 -->
-                    <!-- Flex ratio (0.8 vs 1.2) creates centers at approx 20% and 70% -->
                     <div class="absolute bottom-0 left-[20%] right-[30%] h-[3px]" style="background-color: var(--line-color);"></div>
                 </div>
                 
                 <!-- Drop down to ซักประวัติ -->
-                <div class="line-v h-4 sm:h-6"></div>
-                <div class="arrow-down"></div>
+                <div class="line-v h-4 sm:h-6 relative"></div>
+                <div class="arrow-down relative"></div>
                 
                 <!-- ซักประวัติ -->
                 <div class="bg-pink-100 border border-pink-300 rounded-[2rem] px-4 sm:px-5 py-3 shadow-sm text-center w-[95%] sm:w-[85%] z-10">
@@ -229,7 +229,7 @@ def render_flow():
                         <div class="bg-orange-200 border-[3px] border-orange-400 rounded-2xl sm:rounded-[1.5rem] py-2 px-1 shadow-sm text-center w-full z-10">
                             <p class="text-orange-900 font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">เข้าข่าย<br>อาการเล็กน้อย<br>/ปานกลาง</p>
                         </div>
-                        <!-- เส้นเชื่อมต่อยาวลงไปที่คลินิกมลพิษ -->
+                        <!-- เส้นเชื่อมต่อลงไปถึงระยะเส้นแนวนอน -->
                         <div class="line-v flex-grow min-h-[30px] sm:min-h-[40px]"></div>
                     </div>
                     
@@ -253,8 +253,11 @@ def render_flow():
                     </div>
                 </div>
 
+                <!-- เส้นขยายจากตรงกลางเพื่อสร้างช่องว่าง ป้องกันการทับซ้อน -->
+                <div class="line-v h-6 sm:h-8 relative z-0"></div>
+
                 <!-- ================= CLINIC SECTION ================= -->
-                <div class="w-full flex flex-col items-center relative z-20 mt-[-2px]">
+                <div class="w-full flex flex-col items-center relative z-20">
                     <div class="bg-orange-300 border-[3px] border-orange-500 rounded-3xl sm:rounded-full px-3 sm:px-6 py-3 shadow-md text-center w-[95%] sm:w-[90%] z-10">
                         <h3 class="text-orange-900 font-bold text-[14px] sm:text-[16px] md:text-[18px] leading-tight mb-1">ส่งเข้าคลินิกมลพิษ เฉพาะรพ.</h3>
                         <p class="text-orange-800 font-bold text-[11px] sm:text-[13px] md:text-[14px]">(กรณีรพ.สต.ให้ส่งต่อรพ.)</p>
@@ -274,7 +277,7 @@ def render_flow():
                     
                     <div class="line-v h-6"></div>
                     
-                    <!-- Clinic 3-Way Split Outcomes -->
+                    <!-- Clinic 3-Way Split Outcomes (แก้ไขใหม่ทั้งหมดตามรูป) -->
                     <div class="w-[95%] sm:w-[90%] relative flex flex-col items-center z-10">
                         <div class="absolute top-0 left-[16.66%] right-[16.66%] h-[3px]" style="background-color: var(--line-color);"></div>
                         
@@ -282,38 +285,39 @@ def render_flow():
                             <!-- Home -->
                             <div class="flex-1 flex flex-col items-center">
                                 <div class="absolute top-[-1rem] left-[16.66%] w-[3px] h-4 transform -translate-x-1/2" style="background-color: var(--line-color);"></div>
-                                <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full h-full flex items-center justify-center">
+                                <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full flex-grow flex items-center justify-center">
                                     <p class="text-orange-900 font-bold text-[12px] sm:text-[13px] md:text-[14px]">ให้ยากลับบ้าน</p>
                                 </div>
-                                <div class="line-v h-8"></div>
+                                <div class="line-v h-6 sm:h-8 flex-shrink-0"></div>
                             </div>
                             <!-- Admit -->
                             <div class="flex-1 flex flex-col items-center">
                                 <div class="absolute top-[-1rem] left-1/2 w-[3px] h-4 transform -translate-x-1/2" style="background-color: var(--line-color);"></div>
-                                <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full h-full flex items-center justify-center">
+                                <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full flex-grow flex items-center justify-center">
                                     <p class="text-orange-900 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-tight">Admit<br>ให้การรักษา</p>
                                 </div>
-                                <div class="line-v h-8"></div>
+                                <div class="line-v h-6 sm:h-8 flex-shrink-0"></div>
                             </div>
                             <!-- Refer -->
                             <div class="flex-1 flex flex-col items-center">
                                 <div class="absolute top-[-1rem] left-[83.33%] w-[3px] h-4 transform -translate-x-1/2" style="background-color: var(--line-color);"></div>
-                                <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full h-[75%] sm:h-[80%] flex items-center justify-center">
+                                <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full flex-grow flex items-center justify-center">
                                     <p class="text-orange-900 font-bold text-[12px] sm:text-[13px] md:text-[14px]">ส่ง REFER</p>
                                 </div>
+                                <div class="line-v h-6 sm:h-8 flex-shrink-0"></div>
                             </div>
                         </div>
                         
-                        <!-- Post Care Bridge -->
-                        <div class="w-[66.66%] flex justify-start self-start relative mt-[-1px]">
-                             <div class="w-full line-h"></div>
-                             <div class="absolute left-[50%] w-[3px] h-6 transform -translate-x-1/2" style="background-color: var(--line-color);"></div>
-                             <div class="absolute left-[50%] bottom-[-24px] transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-line"></div>
+                        <!-- Post Care Bridge (แก้ไขให้รวบเส้นทั้ง 3 กล่องมาบรรจบกัน) -->
+                        <div class="w-full relative mt-[-1px]">
+                             <div class="absolute top-0 left-[16.66%] right-[16.66%] h-[3px]" style="background-color: var(--line-color);"></div>
+                             <div class="line-v h-6 sm:h-8 relative"></div>
+                             <div class="arrow-down relative"></div>
                         </div>
                         
-                        <!-- Post Care Box -->
-                        <div class="w-[95%] sm:w-[90%] bg-blue-100 border-2 border-blue-300 rounded-xl p-3 sm:p-4 shadow-md mt-6 flex self-start sm:ml-[8%] relative z-10">
-                            <div class="text-left w-full">
+                        <!-- Post Care Box (กรอบสีฟ้ารวมข้อมูล จัดให้อยู่กึ่งกลางพอดี) -->
+                        <div class="w-full bg-blue-100 border-2 border-blue-300 rounded-xl p-3 sm:p-4 shadow-md mt-1 relative z-10">
+                            <div class="text-left w-full pl-2 sm:pl-6">
                                 <ul class="text-blue-900 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-relaxed space-y-1">
                                     <li class="flex items-start"><span class="mr-1">1.</span> <span class="card-text">ให้คำปรึกษาก่อนกลับบ้าน</span></li>
                                     <li class="flex items-start"><span class="mr-1">2.</span> <span class="card-text">เยี่ยมบ้านโดยทีม 3 หมอ และ อปท.</span></li>
