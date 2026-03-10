@@ -2,7 +2,8 @@ import streamlit.components.v1 as components
 
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow 
-    # อัปเดตล่าสุด: ใช้ CSS โยกแกน Y (top: -4px) ของข้อความขึ้นตรงๆ เพื่อชดเชย Baseline ของฟอนต์ไทย ทำให้ข้อความอยู่กึ่งกลางกรอบเป๊ะ 100%
+    # อัปเดตล่าสุด: เปลี่ยนตัวเลขในวงกลม 1, 2, 3 เป็น SVG Text แทน HTML DOM 
+    # เพื่อบังคับให้ html2canvas วาดตัวเลขกึ่งกลางวงกลมเป๊ะๆ 100% โดยไม่อิงกับ Line-height ของ CSS
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -133,8 +134,11 @@ def render_flow():
                     
                     <!-- 1. ปรึกษาออนไลน์ -->
                     <div class="flex items-center gap-3 bg-blue-50 border-2 border-blue-300 rounded-full px-4 py-2 shadow-sm relative z-10 w-fit">
-                        <div class="bg-blue-600 text-white rounded-full shrink-0 shadow-inner flex items-center justify-center" style="width: 40px; height: 40px; min-width: 40px;">
-                            <span class="font-bold text-xl baseline-fix-inline" style="top: -1px !important;">1</span>
+                        <!-- นอกกรอบ: ใช้ SVG Text จัดตำแหน่งตัวเลข 1 ให้กึ่งกลาง 100% -->
+                        <div class="bg-blue-600 rounded-full shrink-0 shadow-inner relative overflow-hidden" style="width: 40px; height: 40px; min-width: 40px;">
+                            <svg width="100%" height="100%" viewBox="0 0 40 40" class="absolute inset-0 pointer-events-none">
+                                <text x="50%" y="50%" text-anchor="middle" dy=".35em" font-family="Arial, sans-serif" font-weight="bold" font-size="20" fill="#ffffff">1</text>
+                            </svg>
                         </div>
                         <span class="text-blue-900 font-bold text-lg sm:text-xl pr-2 baseline-fix-inline">ปรึกษาออนไลน์</span>
                     </div>
@@ -201,8 +205,11 @@ def render_flow():
                         <div class="flex-[0.8] flex flex-col items-center h-full">
                             <!-- 2. เข้ารับบริการ -->
                             <div class="flex items-center justify-center gap-1 sm:gap-2 bg-pink-50 border-2 border-pink-200 rounded-full px-4 py-2 shadow-sm z-10 w-fit h-[55px] sm:h-[65px]">
-                                <div class="bg-pink-500 text-white rounded-full shrink-0 shadow-inner flex items-center justify-center" style="width: 32px; height: 32px; min-width: 32px;">
-                                    <span class="font-bold text-lg baseline-fix-inline" style="top: -1px !important;">2</span>
+                                <!-- นอกกรอบ: ใช้ SVG Text จัดตำแหน่งตัวเลข 2 ให้กึ่งกลาง 100% -->
+                                <div class="bg-pink-500 rounded-full shrink-0 shadow-inner relative overflow-hidden" style="width: 32px; height: 32px; min-width: 32px;">
+                                    <svg width="100%" height="100%" viewBox="0 0 32 32" class="absolute inset-0 pointer-events-none">
+                                        <text x="50%" y="50%" text-anchor="middle" dy=".35em" font-family="Arial, sans-serif" font-weight="bold" font-size="18" fill="#ffffff">2</text>
+                                    </svg>
                                 </div>
                                 <h3 class="text-pink-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center baseline-fix">เข้ารับบริการ<br>ที่รพ./รพ.สต./PCU หนองหาร</h3>
                             </div>
@@ -213,8 +220,11 @@ def render_flow():
                         <div class="flex-[1.2] flex flex-col items-center h-full">
                             <!-- 3. การเฝ้าระวัง -->
                             <div class="flex items-center justify-center gap-1 sm:gap-2 bg-purple-50 border-2 border-purple-300 rounded-full px-4 py-2 shadow-sm z-10 w-fit h-[55px] sm:h-[65px]">
-                                <div class="bg-purple-600 text-white rounded-full shrink-0 shadow-inner flex items-center justify-center" style="width: 32px; height: 32px; min-width: 32px;">
-                                    <span class="font-bold text-lg baseline-fix-inline" style="top: -1px !important;">3</span>
+                                <!-- นอกกรอบ: ใช้ SVG Text จัดตำแหน่งตัวเลข 3 ให้กึ่งกลาง 100% -->
+                                <div class="bg-purple-600 rounded-full shrink-0 shadow-inner relative overflow-hidden" style="width: 32px; height: 32px; min-width: 32px;">
+                                    <svg width="100%" height="100%" viewBox="0 0 32 32" class="absolute inset-0 pointer-events-none">
+                                        <text x="50%" y="50%" text-anchor="middle" dy=".35em" font-family="Arial, sans-serif" font-weight="bold" font-size="18" fill="#ffffff">3</text>
+                                    </svg>
                                 </div>
                                 <h3 class="text-purple-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center baseline-fix">การเฝ้าระวัง</h3>
                             </div>
