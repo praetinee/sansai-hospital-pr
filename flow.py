@@ -2,7 +2,7 @@ import streamlit.components.v1 as components
 
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow 
-    # อัปเดตล่าสุด: กู้คืนโครงสร้างคอลัมน์ซ้ายที่หายไป (ซ่อมเลย์เอาต์เบี้ยว), รักษาเส้นสีแดง/ม่วง และปุ่มดาวน์โหลดไว้
+    # อัปเดตล่าสุด: แก้ไขภาพเบี้ยวยืดตอนดาวน์โหลด, ขยายขอบเขต SVG ไม่ให้เส้นขาดหาย, เพิ่มความคมชัดตอนดาวน์โหลด
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -61,18 +61,15 @@ def render_flow():
                คำสั่งบังคับสำหรับการปริ้น (PRINT STYLES)
                ======================================= */
             @media print {
-                /* บังคับให้เบราว์เซอร์พิมพ์สีพื้นหลังและสีเส้น SVG ทั้งหมด */
                 body, *, .line-v, .line-h, .arrow-down, svg, path {
                     -webkit-print-color-adjust: exact !important;
                     print-color-adjust: exact !important;
                 }
-                /* บังคับให้แสดง SVG เสมอเมื่อปริ้น */
                 #flow-svg {
                     display: block !important;
                     visibility: visible !important;
                     opacity: 1 !important;
                 }
-                /* ปรับแต่งกรณีมีเงาเพื่อการปริ้นที่ชัดเจนขึ้น */
                 .shadow-sm, .shadow-md {
                     box-shadow: none !important;
                     border: 1px solid #e2e8f0 !important;
@@ -82,7 +79,8 @@ def render_flow():
     </head>
     <body>
         
-        <div id="capture-area" class="w-full bg-white pb-10 pt-4 px-2 sm:px-4">
+        <!-- เพิ่ม px-8 md:px-16 เพื่อเว้นขอบซ้ายขวาให้เส้นลูกศรมีพื้นที่โชว์เวลาดาวน์โหลดรูป -->
+        <div id="capture-area" class="w-full bg-white pb-10 pt-4 px-4 sm:px-8 md:px-16">
             <!-- Header -->
             <div class="text-center mb-8 sm:mb-12 relative">
                 <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 tracking-wide" style="color: var(--text-main);">Flow การให้บริการ รพ.สันทราย</h2>
@@ -98,44 +96,39 @@ def render_flow():
             <!-- Main Flow Container -->
             <div class="w-full max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 relative z-10" id="main-flow-container">
                 
-                <!-- SVG Overlay สำหรับเส้นโยงข้ามคอลัมน์ (เพิ่ม overflow: visible ป้องกันเส้นแนวตั้งแหว่ง/หาย) -->
-                <svg id="flow-svg" class="absolute inset-0 w-full h-full pointer-events-none z-[100] hidden md:block" style="filter: drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.3)); overflow: visible;">
+                <!-- SVG Overlay (ขยายพื้นที่ให้กว้างกว่ากล่องหลักด้านละ 50px เพื่อป้องกันเส้นแหว่งเวลาดาวน์โหลด) -->
+                <svg id="flow-svg" class="pointer-events-none z-[100] hidden md:block" style="position: absolute; top: 0; bottom: 0; left: -50px; right: -50px; width: calc(100% + 100px); height: 100%; overflow: visible;">
                     <defs>
                         <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                             <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
                         </marker>
-                        <!-- ปรับขนาดหัวลูกศรสีม่วงให้สมดุลกับความหนาเส้นใหม่ -->
                         <marker id="arrow-purple" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
                             <path d="M 0 0 L 10 5 L 0 10 z" fill="#9333ea" />
                         </marker>
                     </defs>
-                    
-                    <!-- เส้นตัวจริง -->
-                    <!-- เส้นแดง: ส่งต่ออาการรุนแรง -->
+                    <!-- เอา drop-shadow ออกเนื่องจากทำให้ html2canvas เรนเดอร์บั๊ก -->
                     <path id="red-line-path" fill="none" stroke="#dc2626" stroke-width="4" stroke-linejoin="round" marker-end="url(#arrow-red)" />
-                    <!-- เส้นม่วง: ส่งข้อมูลควบคุมโรค (ปรับ stroke-width เป็น 8 ให้หนาขึ้นอย่างชัดเจน) -->
                     <path id="purple-line-path" fill="none" stroke="#9333ea" stroke-width="8" stroke-linejoin="round" marker-end="url(#arrow-purple)" stroke-dasharray="8,6" />
                 </svg>
 
                 <!-- ================= LEFT COLUMN (ONLINE) ================= -->
-                <!-- เติม div container คอลัมน์ซ้ายที่หายไปกลับคืนมา -->
                 <div class="w-full md:w-[40%] flex flex-col items-center">
                     
-                    <!-- 1. ปรึกษาออนไลน์ -->
-                    <div class="flex items-center gap-3 bg-blue-50 border-2 border-blue-300 rounded-full px-4 py-2 shadow-sm relative z-10">
-                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-lg sm:text-xl shadow-inner">1</div>
+                    <!-- 1. ปรึกษาออนไลน์ (เพิ่ม w-fit กันภาพยืด) -->
+                    <div class="flex items-center gap-3 bg-blue-50 border-2 border-blue-300 rounded-full px-4 py-2 shadow-sm relative z-10 w-fit">
+                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-lg sm:text-xl shadow-inner shrink-0">1</div>
                         <span class="text-blue-900 font-bold text-lg sm:text-xl pr-2">ปรึกษาออนไลน์</span>
                     </div>
                     <div class="line-v h-6"></div><div class="arrow-down"></div>
 
                     <!-- หมอพร้อม -->
-                    <div class="bg-blue-50 border border-blue-200 rounded-2xl sm:rounded-full px-6 sm:px-8 py-3 shadow-sm text-center w-[90%] sm:w-auto z-10">
+                    <div class="bg-blue-50 border border-blue-200 rounded-2xl sm:rounded-full px-6 py-3 shadow-sm text-center w-fit max-w-[90%] z-10">
                         <p class="text-blue-900 font-bold text-[14px] sm:text-[15px] md:text-[16px] leading-snug card-text">ผ่านระบบหมอพร้อม/<br class="hidden sm:block">telemedicine ของโรงพยาบาล</p>
                     </div>
                     <div class="line-v h-6"></div><div class="arrow-down"></div>
                     
                     <!-- คัดกรอง -->
-                    <div class="bg-blue-200 border border-blue-300 rounded-full px-8 py-2 shadow-sm text-center z-10">
+                    <div class="bg-blue-200 border border-blue-300 rounded-full px-8 py-2 shadow-sm text-center w-fit z-10">
                         <p class="text-blue-900 font-bold text-[14px] sm:text-[15px] md:text-[16px]">ทำการคัดกรอง</p>
                     </div>
                     <div class="line-v h-6"></div>
@@ -149,18 +142,18 @@ def render_flow():
                         
                         <div class="w-[95%] sm:w-[90%] flex gap-2 sm:gap-4 items-stretch">
                             <!-- Left: ไม่เข้าข่าย -->
-                            <div class="flex-1 flex flex-col items-center">
+                            <div class="flex-1 flex flex-col items-center h-full">
                                 <div class="bg-green-50 border-[3px] border-green-600 rounded-2xl sm:rounded-[1.5rem] py-2 px-1 shadow-sm text-center w-full z-10">
                                     <p class="text-green-800 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-tight card-text">ไม่เข้าข่าย/<br>อาการเล็กน้อย</p>
                                 </div>
                                 <div class="line-v h-4 my-1"></div>
-                                <div class="bg-white border-2 border-green-500 rounded-lg p-2 shadow-sm text-center w-full flex-grow z-10">
+                                <div class="bg-white border-2 border-green-500 rounded-lg p-2 shadow-sm text-center w-full flex-grow z-10 min-h-[50px] flex items-center justify-center">
                                     <p class="text-green-700 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-snug card-text">ให้คำแนะนำ<br>การปฏิบัติตัว<br>และส่งต่อ<br>ทีม 3 หมอ</p>
                                 </div>
                             </div>
                             
                             <!-- Right: เข้าข่าย -->
-                            <div class="flex-1 flex flex-col items-center">
+                            <div class="flex-1 flex flex-col items-center h-full">
                                 <div class="bg-emerald-200 border border-emerald-500 rounded-2xl sm:rounded-[1.5rem] py-2 px-1 shadow-sm text-center w-full z-10">
                                     <p class="text-emerald-900 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-tight card-text">เข้าข่าย<br>มีอาการที่สงสัย</p>
                                 </div>
@@ -186,7 +179,7 @@ def render_flow():
                         <!-- ====== Col 2: Onsite ====== -->
                         <div class="flex-[0.8] flex flex-col items-center h-full">
                             <!-- 2. เข้ารับบริการ -->
-                            <div class="flex items-center justify-center gap-1 sm:gap-2 bg-pink-50 border-2 border-pink-200 rounded-full px-1 sm:px-2 py-2 shadow-sm z-10 w-[95%] sm:w-full h-[55px] sm:h-[65px]">
+                            <div class="flex items-center justify-center gap-1 sm:gap-2 bg-pink-50 border-2 border-pink-200 rounded-full px-4 py-2 shadow-sm z-10 w-fit h-[55px] sm:h-[65px]">
                                 <div class="bg-pink-500 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center font-bold text-sm sm:text-lg shadow-inner shrink-0">2</div>
                                 <h3 class="text-pink-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center">เข้ารับบริการ<br>ที่รพ./รพ.สต./PCU หนองหาร</h3>
                             </div>
@@ -196,7 +189,7 @@ def render_flow():
                         <!-- ====== Col 3: Surveillance ====== -->
                         <div class="flex-[1.2] flex flex-col items-center h-full">
                             <!-- 3. การเฝ้าระวัง -->
-                            <div class="flex items-center justify-center gap-1 sm:gap-2 bg-purple-50 border-2 border-purple-300 rounded-full px-2 py-2 shadow-sm z-10 w-[80%] sm:w-[75%] h-[55px] sm:h-[65px]">
+                            <div class="flex items-center justify-center gap-1 sm:gap-2 bg-purple-50 border-2 border-purple-300 rounded-full px-4 py-2 shadow-sm z-10 w-fit h-[55px] sm:h-[65px]">
                                 <div class="bg-purple-600 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center font-bold text-sm sm:text-lg shadow-inner shrink-0">3</div>
                                 <h3 class="text-purple-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center">การเฝ้าระวัง</h3>
                             </div>
@@ -308,7 +301,7 @@ def render_flow():
 
                     <!-- ================= CLINIC SECTION ================= -->
                     <div class="w-full flex flex-col items-center relative z-20">
-                        <div class="bg-orange-300 border-[3px] border-orange-500 rounded-3xl sm:rounded-full px-3 sm:px-6 py-3 shadow-md text-center w-[95%] sm:w-[90%] z-10">
+                        <div class="bg-orange-300 border-[3px] border-orange-500 rounded-3xl sm:rounded-full px-5 sm:px-8 py-3 shadow-md text-center w-fit max-w-[95%] z-10">
                             <h3 class="text-orange-900 font-bold text-[14px] sm:text-[16px] md:text-[18px] leading-tight mb-1">ส่งเข้าคลินิกมลพิษเฉพาะ รพ.</h3>
                             <p class="text-orange-800 font-bold text-[11px] sm:text-[12px] md:text-[13px]">(กรณี รพ.สต./PCU หนองหาร ให้ส่งต่อ รพ.)</p>
                         </div>
@@ -337,18 +330,18 @@ def render_flow():
                             </div>
                             
                             <div class="w-full flex items-stretch">
-                                <div class="flex-1 flex flex-col items-center px-1 sm:px-2">
-                                    <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full flex-grow flex items-center justify-center relative z-10">
+                                <div class="flex-1 flex flex-col items-center px-1 sm:px-2 h-full">
+                                    <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full flex-grow flex items-center justify-center relative z-10 min-h-[40px]">
                                         <p class="text-orange-900 font-bold text-[12px] sm:text-[13px] md:text-[14px]">ให้ยากลับบ้าน</p>
                                     </div>
                                 </div>
-                                <div class="flex-1 flex flex-col items-center px-1 sm:px-2">
-                                    <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full flex-grow flex items-center justify-center relative z-10">
+                                <div class="flex-1 flex flex-col items-center px-1 sm:px-2 h-full">
+                                    <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full flex-grow flex items-center justify-center relative z-10 min-h-[40px]">
                                         <p class="text-orange-900 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-tight">Admit<br>ให้การรักษา</p>
                                     </div>
                                 </div>
-                                <div class="flex-1 flex flex-col items-center px-1 sm:px-2">
-                                    <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full flex-grow flex items-center justify-center relative z-10">
+                                <div class="flex-1 flex flex-col items-center px-1 sm:px-2 h-full">
+                                    <div class="bg-orange-200 border-[2px] border-orange-300 rounded-md p-2 shadow-sm text-center w-full flex-grow flex items-center justify-center relative z-10 min-h-[40px]">
                                         <p class="text-orange-900 font-bold text-[12px] sm:text-[13px] md:text-[14px]">ส่ง REFER</p>
                                     </div>
                                 </div>
@@ -393,37 +386,37 @@ def render_flow():
 
         <!-- Script สำหรับวาดเส้นโยง SVG และบันทึกรูปภาพ -->
         <script>
-            function downloadImage() {
-                // อัปเดตเส้นก่อนเผื่อจอเพิ่งเปลี่ยนขนาด
+            async function downloadImage() {
                 drawFlowLines();
-                
-                // หา element ปุ่ม และเปลี่ยนข้อความเพื่อบอกผู้ใช้ว่ากำลังประมวลผล
                 const btn = document.querySelector('button[onclick="downloadImage()"]');
                 const originalContent = btn.innerHTML;
                 btn.innerHTML = 'กำลังประมวลผล...';
                 
-                const captureArea = document.getElementById('capture-area');
+                // รอให้ฟอนต์โหลดครบ 100% เพื่อไม่ให้ข้อความเพี้ยนตอนแคปรูป
+                await document.fonts.ready;
                 
-                // ใช้ html2canvas จับภาพ
-                html2canvas(captureArea, {
-                    scale: 2, // ความละเอียดสูง (2x)
-                    backgroundColor: "#ffffff", // กำหนดพื้นหลังสีขาว
-                    useCORS: true, // อนุญาตให้โหลด assets ข้ามโดเมนได้
-                    logging: false
-                }).then(canvas => {
-                    // สร้างลิงก์ดาวน์โหลด
-                    const link = document.createElement('a');
-                    link.download = 'PM25_Flow_Sansai_Hospital.png';
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
+                // ดีเลย์เล็กน้อยให้เบราว์เซอร์จัด Layout โค้งมนให้เสร็จสมบูรณ์
+                setTimeout(() => {
+                    const captureArea = document.getElementById('capture-area');
                     
-                    // คืนค่าปุ่มกลับเหมือนเดิม
-                    btn.innerHTML = originalContent;
-                }).catch(err => {
-                    console.error("Error generating image:", err);
-                    btn.innerHTML = originalContent;
-                    alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
-                });
+                    html2canvas(captureArea, {
+                        scale: 2.5, // ความละเอียดคมชัดสูง
+                        backgroundColor: "#ffffff",
+                        useCORS: true, 
+                        logging: false
+                    }).then(canvas => {
+                        const link = document.createElement('a');
+                        link.download = 'PM25_Flow_Sansai_Hospital.png';
+                        link.href = canvas.toDataURL('image/png', 1.0);
+                        link.click();
+                        
+                        btn.innerHTML = originalContent;
+                    }).catch(err => {
+                        console.error("Error generating image:", err);
+                        btn.innerHTML = originalContent;
+                        alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
+                    });
+                }, 400);
             }
 
             function drawFlowLines() {
@@ -443,14 +436,15 @@ def render_flow():
                         const rSrcRect = redSrc.getBoundingClientRect();
                         const rTgtRect = redTgt.getBoundingClientRect();
                         
+                        // การคำนวณตำแหน่งอ้างอิงจาก svgRect.left ที่ชดเชยค่าติดลบแล้ว
                         const rStartX = rSrcRect.right - svgRect.left;
                         const rStartY = rSrcRect.top + (rSrcRect.height / 2) - svgRect.top;
                         const rEndX = rTgtRect.left + (rTgtRect.width / 2) - svgRect.left;
                         const rEndY = rTgtRect.top - svgRect.top - 8;
                         
-                        // ปรับให้ลากออกทางขวาให้พ้นกล่องข้อความก่อน (บวกไป 50 px) แล้วค่อยหักศอก
-                        const gutterX = rStartX + 50; 
-                        const safeY = rEndY - 25; // ลอยอยู่เหนือกล่องเป้าหมาย
+                        // ลากพ้นกล่องไป 45px ก่อนหักศอก
+                        const gutterX = rStartX + 45; 
+                        const safeY = rEndY - 25;
                         
                         const dRed = `M ${rStartX} ${rStartY} L ${gutterX} ${rStartY} L ${gutterX} ${safeY} L ${rEndX} ${safeY} L ${rEndX} ${rEndY}`;
                         redPath.setAttribute('d', dRed);
@@ -470,9 +464,8 @@ def render_flow():
                         const pEndX = dcRect.right - svgRect.left;
                         const pEndY = dcRect.top + (dcRect.height / 2) - svgRect.top;
                         
-                        // ลากออกทางขวาให้พ้นกรอบ แล้วดิ่งลงมาหาเป้าหมาย
-                        // ปรับให้บวกเผื่อออกไปทางขวาเยอะขึ้นอีกนิด เส้นจะได้ไม่ทับขอบกล่อง (ไม่โดนตัดเพราะใส่ overflow: visible แล้ว)
-                        const pGutterX = Math.max(pStartX + 40, pEndX + 40); 
+                        // เส้นแนวตั้งลากห่างจากขอบกล่องที่อยู่ขวาสุดไป 40px
+                        const pGutterX = Math.max(pStartX, pEndX) + 40; 
                         
                         const dPurple = `M ${pStartX} ${pStartY} L ${pGutterX} ${pStartY} L ${pGutterX} ${pEndY} L ${pEndX + 8} ${pEndY}`;
                         pLinePath.setAttribute('d', dPurple);
