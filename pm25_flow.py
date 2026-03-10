@@ -163,7 +163,7 @@ def render_pm25_flow():
                 </div>
 
                 <!-- 4 Columns Grid (1:2:1 Ratio to give more space to the middle section) -->
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10 items-stretch">
+                <div id="main-grid" class="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10 items-stretch">
 
                     <!-- ================= Column 1: Left (Community) ================= -->
                     <div id="col-left" class="col-1 flow-col lg:col-span-1">
@@ -203,7 +203,7 @@ def render_pm25_flow():
                     <div id="col-mid" class="col-2 flow-col lg:col-span-2">
                         <h2 class="text-lg sm:text-xl font-extrabold text-center c2-title py-2.5 rounded-full mx-2 sm:mx-4 shadow-sm">การรับผู้ป่วยและดูแลรักษา (รับ)</h2>
                         
-                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 h-full mt-2">
+                        <div id="inner-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-4 h-full mt-2">
                             
                             <!-- Left Sub-column (4 original rows) -->
                             <div class="space-y-4 flex flex-col justify-between h-full">
@@ -434,14 +434,13 @@ def render_pm25_flow():
                 lucide.createIcons();
             });
 
-            // ฟังก์ชันวาดเส้น SVG ข้ามคอลัมน์ โดยรับพารามิเตอร์ forceDesktop ไว้ใช้ตอนดาวน์โหลดรูป
+            // ฟังก์ชันวาดเส้น SVG ข้ามคอลัมน์
             function drawLines(forceDesktop = false) {
                 const svg = document.getElementById('flow-svg');
                 const container = document.getElementById('main-container');
                 const label = document.getElementById('return-label');
                 const mobileLabel = document.getElementById('mobile-return-label');
                 
-                // ถ้า forceDesktop เป็น true ให้มองว่าจอกว้างกว่า 1024 ตลอด (สำหรับการถ่ายภาพจอขยาย 1280px)
                 const isDesktop = forceDesktop || window.innerWidth >= 1024;
                 
                 if (isDesktop && svg && container) { 
@@ -457,7 +456,6 @@ def render_pm25_flow():
                     const colM = document.getElementById('col-mid').getBoundingClientRect();
                     const colR = document.getElementById('col-right').getBoundingClientRect();
                     
-                    // Helpers relative to container
                     const getX = (rect) => rect.left - contRect.left;
                     const getY = (rect) => rect.top - contRect.top;
                     
@@ -481,11 +479,9 @@ def render_pm25_flow():
                     
                     const dropY = Math.max(retStartY, retEndY) + 40;
                     
-                    // Path: Down -> Left -> Up into column 1
                     const returnPath = `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${retEndY + 15}`;
                     document.getElementById('path-return').setAttribute('d', returnPath);
                     
-                    // Center the label on the bottom line
                     if (label) {
                         label.style.top = `${dropY}px`;
                         label.style.left = `${getX(colM) + (colM.width / 2)}px`;
@@ -493,7 +489,6 @@ def render_pm25_flow():
                     }
                     
                 } else {
-                    // ซ่อนการวาดเส้น SVG บนจอมือถือ
                     if (svg) svg.classList.add('hidden');
                     if (label) {
                         label.classList.add('hidden');
@@ -509,7 +504,7 @@ def render_pm25_flow():
                 setTimeout(() => drawLines(), 500); 
             });
 
-            // ฟังก์ชันดาวน์โหลดรูปที่ใช้ตรรกะกางหน้าจอ (Freeze to 1280px) 
+            // ฟังก์ชันดาวน์โหลดรูป (อัปเกรดความเสถียรเต็มรูปแบบ 100%)
             async function downloadImage() {
                 const btn = document.querySelector('button[onclick="downloadImage()"]');
                 const originalContent = btn.innerHTML;
@@ -521,34 +516,87 @@ def render_pm25_flow():
                 window.scrollTo(0, 0);
                 
                 const captureArea = document.getElementById('capture-area');
+                const mainContainer = document.getElementById('main-container');
+                const mainGrid = document.getElementById('main-grid');
+                const innerGrid = document.getElementById('inner-grid');
+                const colLeft = document.getElementById('col-left');
+                const colMid = document.getElementById('col-mid');
+                const colRight = document.getElementById('col-right');
+                
+                // Backup styles เดิม
                 const origCapWidth = captureArea.style.width;
                 const origCapMinWidth = captureArea.style.minWidth;
+                const origMainMaxWidth = mainContainer.style.maxWidth;
+                const origMainWidth = mainContainer.style.width;
                 
-                // กางพื้นที่ให้กว้างสุดๆ เพื่อบังคับ Layout แบบ Desktop เสมอ
-                captureArea.style.width = '1280px';
-                captureArea.style.minWidth = '1280px';
+                // กางพื้นที่แบบ 1920px (Full HD) เพื่อให้มีพื้นที่เหลือเฟือ ไม่ให้ข้อความโดนบีบย่น
+                const targetWidth = 1920;
+                captureArea.style.width = targetWidth + 'px';
+                captureArea.style.minWidth = targetWidth + 'px';
                 
-                // บังคับให้เบราว์เซอร์รับรู้ Layout ใหม่ทันทีก่อนวาดเส้น
+                // ปลดล็อคความกว้างสูงสุดของคอนเทนเนอร์หลักชั่วคราว
+                mainContainer.style.maxWidth = targetWidth + 'px';
+                mainContainer.style.width = targetWidth + 'px';
+                
+                // ปิดการเรียงตัวแบบมือถือ บังคับคลาสแบบ Desktop เพื่อความชัวร์ (Grid 4 คอลัมน์)
+                if (mainGrid) {
+                    mainGrid.classList.remove('grid-cols-1', 'lg:grid-cols-4');
+                    mainGrid.classList.add('grid-cols-4');
+                }
+                if (innerGrid) {
+                    innerGrid.classList.remove('grid-cols-1', 'xl:grid-cols-2');
+                    innerGrid.classList.add('grid-cols-2');
+                }
+                if (colLeft) { colLeft.classList.remove('lg:col-span-1'); colLeft.classList.add('col-span-1'); }
+                if (colMid) { colMid.classList.remove('lg:col-span-2'); colMid.classList.add('col-span-2'); }
+                if (colRight) { colRight.classList.remove('lg:col-span-1'); colRight.classList.add('col-span-1'); }
+                
+                // ปิดการตัดคำ flex wrap เพื่อไม่ให้กล่องย่น
+                const flexWraps = document.querySelectorAll('.flex-wrap');
+                flexWraps.forEach(el => el.classList.remove('flex-wrap'));
+                
+                // โชว์ลูกศรทั้งหมดที่ซ่อนอยู่บนมือถือ
+                const hiddenArrows = document.querySelectorAll('.hidden.sm\\:block');
+                hiddenArrows.forEach(el => {
+                    el.classList.remove('hidden', 'sm:block');
+                    el.classList.add('block', 'temp-arrow-show');
+                });
+                
                 void captureArea.offsetHeight;
-                
-                // วาดเส้น SVG ใหม่ โดยบังคับให้มองว่าเป็นหน้าจอ Desktop (true)
                 drawLines(true);
                 
                 setTimeout(() => {
                     html2canvas(captureArea, {
-                        scale: 3, 
-                        backgroundColor: "#f8fafc", // สีพื้นหลังตรงกับ bg-slate-50
+                        scale: 2, // Scale 2.0 บน 1920px ได้ภาพ 4K คมชัดสุดๆ
+                        backgroundColor: "#f8fafc", 
                         useCORS: true, 
                         scrollY: 0, 
-                        windowWidth: 1280, 
+                        windowWidth: targetWidth, 
                         windowHeight: captureArea.scrollHeight,
                         logging: false
                     }).then(canvas => {
-                        // คืนค่ากลับเหมือนเดิม
+                        // คืนค่ารูปแบบกลับ
                         captureArea.style.width = origCapWidth;
                         captureArea.style.minWidth = origCapMinWidth;
+                        mainContainer.style.maxWidth = origMainMaxWidth;
+                        mainContainer.style.width = origMainWidth;
+                        
+                        if (mainGrid) { mainGrid.classList.remove('grid-cols-4'); mainGrid.classList.add('grid-cols-1', 'lg:grid-cols-4'); }
+                        if (innerGrid) { innerGrid.classList.remove('grid-cols-2'); innerGrid.classList.add('grid-cols-1', 'xl:grid-cols-2'); }
+                        if (colLeft) { colLeft.classList.remove('col-span-1'); colLeft.classList.add('lg:col-span-1'); }
+                        if (colMid) { colMid.classList.remove('col-span-2'); colMid.classList.add('lg:col-span-2'); }
+                        if (colRight) { colRight.classList.remove('col-span-1'); colRight.classList.add('lg:col-span-1'); }
+                        
+                        flexWraps.forEach(el => el.classList.add('flex-wrap'));
+                        
+                        const tempArrows = document.querySelectorAll('.temp-arrow-show');
+                        tempArrows.forEach(el => {
+                            el.classList.remove('block', 'temp-arrow-show');
+                            el.classList.add('hidden', 'sm:block');
+                        });
+                        
                         window.scrollTo(0, originalScrollY);
-                        drawLines(); // คำนวณเส้นใหม่ตามจอจริง
+                        drawLines(); 
                         
                         const link = document.createElement('a');
                         link.download = 'PM25_Roles_Sansai_Hospital.png';
@@ -559,21 +607,37 @@ def render_pm25_flow():
                     }).catch(err => {
                         console.error("Error generating image:", err);
                         
-                        // คืนค่ากลับถ้ามี Error
+                        // คืนค่ากลับถ้าพัง
                         captureArea.style.width = origCapWidth;
                         captureArea.style.minWidth = origCapMinWidth;
+                        mainContainer.style.maxWidth = origMainMaxWidth;
+                        mainContainer.style.width = origMainWidth;
+                        
+                        if (mainGrid) { mainGrid.classList.remove('grid-cols-4'); mainGrid.classList.add('grid-cols-1', 'lg:grid-cols-4'); }
+                        if (innerGrid) { innerGrid.classList.remove('grid-cols-2'); innerGrid.classList.add('grid-cols-1', 'xl:grid-cols-2'); }
+                        if (colLeft) { colLeft.classList.remove('col-span-1'); colLeft.classList.add('lg:col-span-1'); }
+                        if (colMid) { colMid.classList.remove('col-span-2'); colMid.classList.add('lg:col-span-2'); }
+                        if (colRight) { colRight.classList.remove('col-span-1'); colRight.classList.add('lg:col-span-1'); }
+                        
+                        flexWraps.forEach(el => el.classList.add('flex-wrap'));
+                        
+                        const tempArrows = document.querySelectorAll('.temp-arrow-show');
+                        tempArrows.forEach(el => {
+                            el.classList.remove('block', 'temp-arrow-show');
+                            el.classList.add('hidden', 'sm:block');
+                        });
+                        
                         window.scrollTo(0, originalScrollY);
                         drawLines(); 
                         
                         btn.innerHTML = originalContent;
                         alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
                     });
-                }, 200); 
+                }, 300); 
             }
         </script>
     </body>
     </html>
     """
     
-    # เพิ่ม Height เผื่อเนื้อหากล่องที่เพิ่มขึ้น
     components.html(html_code, height=1300, scrolling=True)
