@@ -93,8 +93,6 @@ def render_pm25_flow():
             
             /* =======================================
                THAI FONT BASELINE FIX
-               ขยับข้อความขึ้นเล็กน้อยเพื่อชดเชย Bounding Box 
-               ของฟอนต์ไทยเวลา Render ด้วย html2canvas
                ======================================= */
             .baseline-fix {
                 position: relative !important;
@@ -129,7 +127,7 @@ def render_pm25_flow():
     </head>
     <body class="bg-slate-50">
         
-        <!-- พื้นที่สำหรับ Capture (เพิ่ม padding เพื่อไม่ให้เนื้อหาชิดขอบจอเกินไปตอนโหลดรูป) -->
+        <!-- พื้นที่สำหรับ Capture -->
         <div id="capture-area" class="w-full bg-slate-50 pb-10 pt-6 px-4 sm:px-8 lg:px-12 transition-all duration-300">
             
             <!-- Header & Download Button -->
@@ -145,8 +143,7 @@ def render_pm25_flow():
             </div>
 
             <!-- Main Container (เพิ่ม padding bottom เผื่อพื้นที่ให้เส้นประด้านล่างสุด) -->
-            <!-- ขยาย padding-bottom เป็น pb-32 sm:pb-40 lg:pb-48 เพื่อรองรับการขยับเส้นประให้ห่างลงมาอีก -->
-            <div id="main-container" class="max-w-[1400px] mx-auto relative pb-32 sm:pb-40 lg:pb-48 z-10">
+            <div id="main-container" class="max-w-[1400px] mx-auto relative pb-40 sm:pb-48 lg:pb-56 z-10">
                 
                 <!-- Alert Box -->
                 <div class="flex justify-end mb-6 relative z-20">
@@ -155,21 +152,14 @@ def render_pm25_flow():
                     </div>
                 </div>
 
-                <!-- SVG Overlay for Dynamic Line Drawing -->
+                <!-- SVG Overlay for Dynamic Line Drawing (อัปเดตยกเลิก Marker ป้องกัน html2canvas บั๊ก) -->
                 <svg id="flow-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none hidden z-0" style="overflow: visible;">
-                    <defs>
-                        <!-- Marker สำหรับหัวลูกศรเส้นประ -->
-                        <marker id="arrow-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--line-color)" />
-                        </marker>
-                    </defs>
-                    
                     <!-- Path Left -> Middle -->
-                    <path id="path-lm" fill="none" stroke="var(--line-color)" stroke-width="3" stroke-dasharray="6,5" marker-end="url(#arrow-head)" />
+                    <path id="path-lm" fill="none" stroke="var(--line-color)" stroke-width="3" stroke-dasharray="6,5" stroke-linecap="round" stroke-linejoin="round" />
                     <!-- Path Middle -> Right -->
-                    <path id="path-mr" fill="none" stroke="var(--line-color)" stroke-width="3" stroke-dasharray="6,5" marker-end="url(#arrow-head)" />
+                    <path id="path-mr" fill="none" stroke="var(--line-color)" stroke-width="3" stroke-dasharray="6,5" stroke-linecap="round" stroke-linejoin="round" />
                     <!-- Bottom Return Dashed Path -->
-                    <path id="path-return" fill="none" stroke="var(--line-color)" stroke-width="3" stroke-dasharray="6,5" stroke-linejoin="round" marker-end="url(#arrow-head)" />
+                    <path id="path-return" fill="none" stroke="var(--line-color)" stroke-width="3" stroke-dasharray="6,5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
 
                 <!-- Return Label -->
@@ -179,7 +169,7 @@ def render_pm25_flow():
                     </p>
                 </div>
 
-                <!-- 4 Columns Grid (1:2:1 Ratio to give more space to the middle section) -->
+                <!-- 4 Columns Grid (1:2:1 Ratio) -->
                 <div id="main-grid" class="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10 items-stretch">
 
                     <!-- ================= Column 1: Left (Community) ================= -->
@@ -229,10 +219,11 @@ def render_pm25_flow():
                                     <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-1.5">
                                         <i data-lucide="smartphone" class="w-5 h-5 sm:w-6 sm:h-6 c2-icon shrink-0"></i>
                                         <h3 class="font-bold text-main text-[13px] sm:text-[14px] baseline-fix">ระบบก่อนถึง รพ. และออนไลน์</h3>
-                                        <!-- SVG Text สำหรับจัดข้อความคลินิกมลพิษให้อยู่กึ่งกลางเป๊ะ 100% -->
+                                        
+                                        <!-- เปลี่ยนป้ายคลินิกมลพิษ ให้ใช้ SVG Text จัดกึ่งกลาง 100% -->
                                         <div class="bg-orange-500 rounded-full shrink-0 shadow-sm ml-auto relative overflow-hidden" style="width: 70px; height: 20px; min-width: 70px;">
                                             <svg width="100%" height="100%" viewBox="0 0 70 20" class="absolute inset-0 pointer-events-none">
-                                                <text x="50%" y="50%" text-anchor="middle" dy=".35em" font-family="Sarabun, sans-serif" font-weight="bold" font-size="11" fill="#ffffff">คลินิกมลพิษ</text>
+                                                <text x="50%" y="50%" text-anchor="middle" dy=".35em" font-family="'Sarabun', sans-serif" font-weight="bold" font-size="11" fill="#ffffff">คลินิกมลพิษ</text>
                                             </svg>
                                         </div>
                                     </div>
@@ -324,10 +315,16 @@ def render_pm25_flow():
 
                             <!-- Right Sub-column (Pollution Clinic Box) -->
                             <div class="inner-box border-orange-400 bg-[#fff2e5] p-4 sm:p-5 flex flex-col h-full relative shadow-md">
-                                <h3 class="font-extrabold text-orange-900 text-sm sm:text-base mb-4 flex items-center gap-2 border-b border-orange-200 pb-2.5 baseline-fix">
+                                
+                                <!-- อัปเดตหัวข้อ "คลินิกมลพิษ" ให้ใช้ SVG จัดกึ่งกลาง 100% ตรงตามโจทย์ -->
+                                <div class="flex items-center justify-center gap-2 border-b border-orange-200 pb-2.5 mb-4">
                                     <i data-lucide="stethoscope" class="w-5 h-5 text-orange-600"></i>
-                                    คลินิกมลพิษ
-                                </h3>
+                                    <div class="relative overflow-hidden" style="width: 80px; height: 24px; min-width: 80px;">
+                                        <svg width="100%" height="100%" viewBox="0 0 80 24" class="absolute inset-0 pointer-events-none">
+                                            <text x="50%" y="50%" text-anchor="middle" dy=".35em" font-family="'Sarabun', sans-serif" font-weight="800" font-size="16" fill="#7c2d12">คลินิกมลพิษ</text>
+                                        </svg>
+                                    </div>
+                                </div>
 
                                 <div class="space-y-4 flex-grow text-[12px] sm:text-[13px] text-main overflow-y-auto pr-1">
                                     
@@ -459,7 +456,7 @@ def render_pm25_flow():
                 lucide.createIcons();
             });
 
-            // ฟังก์ชันวาดเส้น SVG ข้ามคอลัมน์
+            // ฟังก์ชันวาดเส้น SVG ข้ามคอลัมน์ (อัปเดตวาดหัวลูกศรเองในโค้ด Path)
             function drawLines(forceDesktop = false) {
                 const svg = document.getElementById('flow-svg');
                 const container = document.getElementById('main-container');
@@ -488,13 +485,17 @@ def render_pm25_flow():
                     const lmStartY = getY(colL) + (colL.height / 2);
                     const lmStartX = getX(colL) + colL.width;
                     const lmEndX = getX(colM) - 8;
-                    document.getElementById('path-lm').setAttribute('d', `M ${lmStartX} ${lmStartY} L ${lmEndX} ${lmStartY}`);
+                    // วาดเส้น + วาดปีกหัวลูกศรชี้ไปทางขวาด้วยตัวเอง
+                    const pathLM = `M ${lmStartX} ${lmStartY} L ${lmEndX} ${lmStartY} L ${lmEndX-8} ${lmStartY-6} M ${lmEndX} ${lmStartY} L ${lmEndX-8} ${lmStartY+6}`;
+                    document.getElementById('path-lm').setAttribute('d', pathLM);
                     
                     // 2. Line Middle -> Right
                     const mrStartY = getY(colM) + (colM.height / 2);
                     const mrStartX = getX(colM) + colM.width;
                     const mrEndX = getX(colR) - 8;
-                    document.getElementById('path-mr').setAttribute('d', `M ${mrStartX} ${mrStartY} L ${mrEndX} ${mrStartY}`);
+                    // วาดเส้น + วาดปีกหัวลูกศรชี้ไปทางขวาด้วยตัวเอง
+                    const pathMR = `M ${mrStartX} ${mrStartY} L ${mrEndX} ${mrStartY} L ${mrEndX-8} ${mrStartY-6} M ${mrEndX} ${mrStartY} L ${mrEndX-8} ${mrStartY+6}`;
+                    document.getElementById('path-mr').setAttribute('d', pathMR);
                     
                     // 3. Return Dashed Line (Right -> Left at Bottom)
                     const retStartX = getX(colR) + (colR.width / 2);
@@ -509,11 +510,14 @@ def render_pm25_flow():
                         getY(colR) + colR.height
                     );
                     
-                    // ขยับเส้นประลงมาให้ห่างจากขอบล่างสุดของคอลัมน์ที่ยาวที่สุดเพิ่มขึ้น (จากเดิม +50 เป็น +100)
-                    const dropY = maxBottom + 100;
+                    // ขยับเส้นประลงมาให้ห่างจากขอบล่างสุดของคอลัมน์ที่ยาวที่สุด เพิ่มระยะให้กว้างกว่าเดิมเพื่อไม่ทับกรอบ
+                    const dropY = maxBottom + 140; 
                     
-                    const returnPath = `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${retEndY + 15}`;
-                    document.getElementById('path-return').setAttribute('d', returnPath);
+                    // คำนวณจุดปลายลูกศรชี้ขึ้นที่คอลัมน์ซ้าย
+                    const rTipY = retEndY + 15;
+                    // วาดเส้นลากลง -> ซ้าย -> ขึ้น + วาดปีกหัวลูกศรชี้ขึ้นด้วยตัวเอง
+                    const pathReturn = `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${rTipY} L ${retEndX-6} ${rTipY+8} M ${retEndX} ${rTipY} L ${retEndX+6} ${rTipY+8}`;
+                    document.getElementById('path-return').setAttribute('d', pathReturn);
                     
                     if (label) {
                         label.style.top = `${dropY}px`;
@@ -562,8 +566,10 @@ def render_pm25_flow():
                 // บังคับให้เบราว์เซอร์รับรู้ Layout ใหม่ทันทีก่อนวาดเส้น
                 void captureArea.offsetHeight;
                 
-                // วาดเส้นแบบ Desktop บังคับ
-                drawLines(true);
+                // วาดเส้นแบบ Desktop บังคับ (เพิ่มเวลาหน่วงเล็กน้อยให้มั่นใจว่าตีเส้นตรง)
+                setTimeout(() => {
+                    drawLines(true);
+                }, 100);
                 
                 setTimeout(() => {
                     html2canvas(captureArea, {
@@ -571,7 +577,7 @@ def render_pm25_flow():
                         backgroundColor: "#f8fafc", 
                         useCORS: true, 
                         scrollY: 0, 
-                        windowWidth: targetWidth, // จุดสำคัญ: หลอก html2canvas ว่าจอคอมกว้าง 1400px เสมอ
+                        windowWidth: targetWidth, 
                         windowHeight: captureArea.scrollHeight,
                         logging: false
                     }).then(canvas => {
@@ -599,12 +605,12 @@ def render_pm25_flow():
                         btn.innerHTML = originalContent;
                         alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
                     });
-                }, 500); 
+                }, 600); // ดีเลย์เพิ่มขึ้นเพื่อให้กล่องและเส้นจัดเรียงตัวสมบูรณ์ 100%
             }
         </script>
     </body>
     </html>
     """
     
-    # เพิ่มความสูงขึ้นอีกนิดเผื่อเส้นประด้านล่างสุด
-    components.html(html_code, height=1450, scrolling=True)
+    # เพิ่มความสูงขึ้นอีกนิดเผื่อเส้นประด้านล่างสุดที่ขยับลงมา
+    components.html(html_code, height=1550, scrolling=True)
