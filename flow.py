@@ -2,7 +2,7 @@ import streamlit.components.v1 as components
 
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow 
-    # อัปเดตล่าสุด: เพิ่มคลาส .baseline-fix เพื่อชดเชยสระ/วรรณยุกต์ภาษาไทย ช่วยดันข้อความให้อยู่กึ่งกลางกล่องเป๊ะ 100%
+    # อัปเดตล่าสุด: ใช้ CSS โยกแกน Y (top: -4px) ของข้อความขึ้นตรงๆ เพื่อชดเชย Baseline ของฟอนต์ไทย ทำให้ข้อความอยู่กึ่งกลางกรอบเป๊ะ 100%
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -59,14 +59,17 @@ def render_flow():
 
             /* =======================================
                THAI FONT BASELINE FIX
-               ชดเชยสระ/วรรณยุกต์ไทยที่ทำให้ข้อความดูตกขอบล่าง
+               ใช้วิธีขยับแกน Y ขึ้นไปด้านบนโดยตรง เพื่อให้ข้อความ
+               ที่ค่อนไปทางขอบล่าง (จากฟอนต์ไทย) กลับมากึ่งกลาง
                ======================================= */
             .baseline-fix {
-                padding-bottom: 5px !important;
+                position: relative !important;
+                top: -4px !important;
                 display: block;
             }
             .baseline-fix-inline {
-                padding-bottom: 5px !important;
+                position: relative !important;
+                top: -2px !important;
                 display: inline-block;
             }
 
@@ -130,8 +133,8 @@ def render_flow():
                     
                     <!-- 1. ปรึกษาออนไลน์ -->
                     <div class="flex items-center gap-3 bg-blue-50 border-2 border-blue-300 rounded-full px-4 py-2 shadow-sm relative z-10 w-fit">
-                        <div class="bg-blue-600 text-white rounded-full shrink-0 text-center font-bold text-xl shadow-inner" style="width: 40px; height: 40px; min-width: 40px; line-height: 40px;">
-                            1
+                        <div class="bg-blue-600 text-white rounded-full shrink-0 shadow-inner flex items-center justify-center" style="width: 40px; height: 40px; min-width: 40px;">
+                            <span class="font-bold text-xl baseline-fix-inline" style="top: -1px !important;">1</span>
                         </div>
                         <span class="text-blue-900 font-bold text-lg sm:text-xl pr-2 baseline-fix-inline">ปรึกษาออนไลน์</span>
                     </div>
@@ -198,8 +201,8 @@ def render_flow():
                         <div class="flex-[0.8] flex flex-col items-center h-full">
                             <!-- 2. เข้ารับบริการ -->
                             <div class="flex items-center justify-center gap-1 sm:gap-2 bg-pink-50 border-2 border-pink-200 rounded-full px-4 py-2 shadow-sm z-10 w-fit h-[55px] sm:h-[65px]">
-                                <div class="bg-pink-500 text-white rounded-full shrink-0 text-center font-bold text-lg shadow-inner" style="width: 32px; height: 32px; min-width: 32px; line-height: 32px;">
-                                    2
+                                <div class="bg-pink-500 text-white rounded-full shrink-0 shadow-inner flex items-center justify-center" style="width: 32px; height: 32px; min-width: 32px;">
+                                    <span class="font-bold text-lg baseline-fix-inline" style="top: -1px !important;">2</span>
                                 </div>
                                 <h3 class="text-pink-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center baseline-fix">เข้ารับบริการ<br>ที่รพ./รพ.สต./PCU หนองหาร</h3>
                             </div>
@@ -210,8 +213,8 @@ def render_flow():
                         <div class="flex-[1.2] flex flex-col items-center h-full">
                             <!-- 3. การเฝ้าระวัง -->
                             <div class="flex items-center justify-center gap-1 sm:gap-2 bg-purple-50 border-2 border-purple-300 rounded-full px-4 py-2 shadow-sm z-10 w-fit h-[55px] sm:h-[65px]">
-                                <div class="bg-purple-600 text-white rounded-full shrink-0 text-center font-bold text-lg shadow-inner" style="width: 32px; height: 32px; min-width: 32px; line-height: 32px;">
-                                    3
+                                <div class="bg-purple-600 text-white rounded-full shrink-0 shadow-inner flex items-center justify-center" style="width: 32px; height: 32px; min-width: 32px;">
+                                    <span class="font-bold text-lg baseline-fix-inline" style="top: -1px !important;">3</span>
                                 </div>
                                 <h3 class="text-purple-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center baseline-fix">การเฝ้าระวัง</h3>
                             </div>
@@ -308,7 +311,7 @@ def render_flow():
                         
                         <!-- ฝั่งขวา ห้องฉุกเฉิน -->
                         <div class="flex flex-col items-center h-full w-full">
-                            <div class="bg-red-500 rounded-md p-1 sm:p-2 shadow-sm text-center w-[95%] sm:w-[90%] z-10">
+                            <div class="bg-red-500 rounded-md p-1 sm:p-2 shadow-sm text-center w-[95%] sm:w-[90%] z-10 flex flex-col justify-center">
                                 <p class="text-white font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text baseline-fix">ส่งเข้า<br>ห้องฉุกเฉิน</p>
                             </div>
                             <div class="line-v h-3 sm:h-4 my-1"></div>
@@ -324,7 +327,7 @@ def render_flow():
                     <!-- ================= CLINIC SECTION ================= -->
                     <div class="w-full flex flex-col items-center relative z-20">
                         <div class="bg-orange-300 border-[3px] border-orange-500 rounded-3xl sm:rounded-full px-5 sm:px-8 py-3 shadow-md text-center w-fit max-w-[95%] z-10">
-                            <h3 class="text-orange-900 font-bold text-[14px] sm:text-[16px] md:text-[18px] leading-tight mb-1">ส่งเข้าคลินิกมลพิษเฉพาะ รพ.</h3>
+                            <h3 class="text-orange-900 font-bold text-[14px] sm:text-[16px] md:text-[18px] leading-tight mb-1 baseline-fix">ส่งเข้าคลินิกมลพิษเฉพาะ รพ.</h3>
                             <p class="text-orange-800 font-bold text-[11px] sm:text-[12px] md:text-[13px] baseline-fix">(กรณี รพ.สต./PCU หนองหาร ให้ส่งต่อ รพ.)</p>
                         </div>
                         
@@ -381,11 +384,11 @@ def render_flow():
                             <!-- Post Care Box -->
                             <div class="w-full bg-blue-100 border-2 border-blue-300 rounded-xl p-3 sm:p-4 shadow-md mt-1 relative z-10">
                                 <div class="text-left w-full pl-2 sm:pl-6">
-                                    <ul class="text-blue-900 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-relaxed space-y-1 baseline-fix">
-                                        <li class="flex items-start"><span class="mr-1">1.</span> <span class="card-text">ให้คำปรึกษาก่อนกลับบ้าน</span></li>
-                                        <li class="flex items-start"><span class="mr-1">2.</span> <span class="card-text">เยี่ยมบ้านโดยทีม 3 หมอ และ อปท.</span></li>
-                                        <li class="flex items-start"><span class="mr-1">3.</span> <span class="card-text">ประเมินสภาพที่อยู่ซ้ำให้เหมาะสมกับผู้ป่วย</span></li>
-                                        <li class="flex items-start"><span class="mr-1">4.</span> <span class="card-text">ผู้ป่วยอาการคงที่ติดตามและสั่งยาผ่าน telemedicine เพื่อลดความเสี่ยงสัมผัสฝุ่น</span></li>
+                                    <ul class="text-blue-900 font-bold text-[12px] sm:text-[13px] md:text-[14px] leading-relaxed space-y-1">
+                                        <li class="flex items-start baseline-fix"><span class="mr-1">1.</span> <span class="card-text">ให้คำปรึกษาก่อนกลับบ้าน</span></li>
+                                        <li class="flex items-start baseline-fix"><span class="mr-1">2.</span> <span class="card-text">เยี่ยมบ้านโดยทีม 3 หมอ และ อปท.</span></li>
+                                        <li class="flex items-start baseline-fix"><span class="mr-1">3.</span> <span class="card-text">ประเมินสภาพที่อยู่ซ้ำให้เหมาะสมกับผู้ป่วย</span></li>
+                                        <li class="flex items-start baseline-fix"><span class="mr-1">4.</span> <span class="card-text">ผู้ป่วยอาการคงที่ติดตามและสั่งยาผ่าน telemedicine เพื่อลดความเสี่ยงสัมผัสฝุ่น</span></li>
                                     </ul>
                                 </div>
                             </div>
@@ -394,7 +397,7 @@ def render_flow():
                             <div class="line-v h-6 sm:h-8 relative z-0 mx-auto"></div>
                             <div class="arrow-down relative z-0 mx-auto"></div>
                             
-                            <div id="disease-control-box" class="w-full bg-purple-100 border-[2px] border-purple-400 rounded-xl p-3 sm:p-4 shadow-md mt-1 relative z-10 text-center">
+                            <div id="disease-control-box" class="w-full bg-purple-100 border-[2px] border-purple-400 rounded-xl p-3 sm:p-4 shadow-md mt-1 relative z-10 text-center flex flex-col justify-center">
                                 <p class="text-purple-900 font-bold text-[13px] sm:text-[14px] md:text-[15px] leading-snug card-text baseline-fix">
                                     ทีมคลินิกมลพิษ แจ้งข้อมูลแก่ ควบคุมโรค (เพื่อซักประวัติ+รายงาน สสจ. ทราบ)<br class="hidden sm:block">
                                 </p>
