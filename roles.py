@@ -143,7 +143,7 @@ def render_roles():
             </div>
 
             <!-- ขยาย Main Container ให้เป็น 1600px เพื่อไม่ให้กรอบบีบตัวหนังสือ -->
-            <div id="main-container" class="max-w-[1600px] w-full mx-auto relative pb-40 sm:pb-48 lg:pb-56 z-10 px-2 sm:px-4">
+            <div id="main-container" class="max-w-[1600px] w-full mx-auto relative pb-24 sm:pb-28 lg:pb-32 z-10 px-2 sm:px-4">
                 
                 <!-- Alert Box -->
                 <div class="flex justify-end mb-6 relative z-20">
@@ -510,7 +510,8 @@ def render_roles():
                         getY(colR) + colR.height
                     );
                     
-                    const dropY = maxBottom + 140; 
+                    // ปรับระยะห่างเส้นประให้พอดีกับขอบกล่อง (ลดจาก 140 เหลือ 45)
+                    const dropY = maxBottom + 45; 
                     const rTipY = retEndY + 15;
                     const pathReturn = `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${rTipY} L ${retEndX-6} ${rTipY+8} M ${retEndX} ${rTipY} L ${retEndX+6} ${rTipY+8}`;
                     document.getElementById('path-return').setAttribute('d', pathReturn);
@@ -552,10 +553,22 @@ def render_roles():
                 const origCapWidth = captureArea.style.width;
                 const origCapMinWidth = captureArea.style.minWidth;
                 
-                // กางพื้นที่ให้เต็มสัดส่วน Desktop กว้างสุดๆ (1800px) เพื่อไม่ให้กรอบบีบ
-                const targetWidth = 1800;
+                // กางพื้นที่ให้เต็มสัดส่วน Desktop (1600px)
+                const targetWidth = 1600;
                 captureArea.style.width = targetWidth + 'px';
                 captureArea.style.minWidth = targetWidth + 'px';
+                
+                // ฉีด CSS บังคับโครงสร้างตาราง (Freeze Layout) ไม่ให้เพี้ยนตามขนาดหน้าจอมือถือ
+                const forceStyle = document.createElement('style');
+                forceStyle.id = 'force-desktop-style';
+                forceStyle.innerHTML = `
+                    #main-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+                    #col-left { grid-column: span 1 / span 1 !important; }
+                    #col-mid { grid-column: span 2 / span 2 !important; }
+                    #col-right { grid-column: span 1 / span 1 !important; }
+                    #inner-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+                `;
+                document.head.appendChild(forceStyle);
                 
                 void captureArea.offsetHeight;
                 
@@ -565,7 +578,7 @@ def render_roles():
                 
                 setTimeout(() => {
                     html2canvas(captureArea, {
-                        scale: 2, // สเกล 2 + กว้าง 1800px = ภาพระดับ 4K โคตรชัด
+                        scale: 2, // สเกล 2 + กว้าง 1600px ภาพคมชัดพอดี
                         backgroundColor: "#f8fafc", 
                         useCORS: true, 
                         scrollY: 0, 
@@ -573,6 +586,8 @@ def render_roles():
                         windowHeight: captureArea.scrollHeight,
                         logging: false
                     }).then(canvas => {
+                        // เคลียร์การตั้งค่าคืน
+                        document.head.removeChild(forceStyle);
                         captureArea.style.width = origCapWidth;
                         captureArea.style.minWidth = origCapMinWidth;
                         window.scrollTo(0, originalScrollY);
@@ -586,6 +601,9 @@ def render_roles():
                         btn.innerHTML = originalContent;
                     }).catch(err => {
                         console.error("Error generating image:", err);
+                        
+                        // เคลียร์การตั้งค่าคืนกรณี Error
+                        document.head.removeChild(forceStyle);
                         captureArea.style.width = origCapWidth;
                         captureArea.style.minWidth = origCapMinWidth;
                         window.scrollTo(0, originalScrollY);
@@ -600,5 +618,5 @@ def render_roles():
     </html>
     """
     
-    # เพิ่มความสูงขึ้นให้สัมพันธ์กับหน้าจอ
-    components.html(html_code, height=1550, scrolling=True)
+    # ปรับความสูงของ Iframe ให้พอดี ไม่เหลือขอบขาวด้านล่างมากเกินไป
+    components.html(html_code, height=1350, scrolling=True)
