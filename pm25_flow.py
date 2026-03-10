@@ -301,9 +301,9 @@ def render_pm25_flow():
                                             <p class="text-muted font-medium">รับเข้า ER</p>
                                         </div>
                                         <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
-                                        <div class="text-center shrink-0 w-16 sm:w-20">
-                                            <p class="font-bold text-main">ประเมิน Admit</p>
-                                            <p class="text-muted font-medium">หรือ กลับบ้าน</p>
+                                        <div class="text-center shrink-0 w-24 sm:w-28">
+                                            <p class="font-bold text-main leading-tight">เข้าข่าย: ลง GG Sheets</p>
+                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium">+ ประเมิน Admit/กลับบ้าน</p>
                                         </div>
                                     </div>
                                 </div>
