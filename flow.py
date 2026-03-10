@@ -394,7 +394,6 @@ def render_flow():
         <!-- Script สำหรับวาดเส้นโยง SVG และบันทึกรูปภาพ -->
         <script>
             async function downloadImage() {
-                drawFlowLines();
                 const btn = document.querySelector('button[onclick="downloadImage()"]');
                 const originalContent = btn.innerHTML;
                 btn.innerHTML = 'กำลังประมวลผล...';
@@ -402,18 +401,48 @@ def render_flow():
                 // รอให้ฟอนต์โหลดครบ 100% เพื่อไม่ให้ข้อความเพี้ยนตอนแคปรูป
                 await document.fonts.ready;
                 
-                // ดีเลย์เล็กน้อยให้เบราว์เซอร์จัด Layout โค้งมนให้เสร็จสมบูรณ์
+                // 1. เก็บค่าย้อนกลับของ Scroll
+                const originalScrollY = window.scrollY;
+                
+                // 2. เลื่อนขึ้นบนสุดเพื่อไม่ให้พิกัด SVG เพี้ยนจาก Scroll offset
+                window.scrollTo(0, 0);
+                
+                // 3. Freeze (ล็อค) ความกว้างของกล่อง Layout หลัก!
+                // สาเหตุที่เส้นเบี้ยวเพราะเวลา html2canvas โคลน DOM ความกว้างจอจะเปลี่ยนไปนิดหน่อย 
+                // ทำให้กล่องขยับ แต่เส้น SVG ยังจำพิกัดเดิม จึงต้องล็อคความกว้างเป็น Pixel ไว้ก่อน
+                const captureArea = document.getElementById('capture-area');
+                const flowContainer = document.getElementById('main-flow-container');
+                
+                const origCapWidth = captureArea.style.width;
+                const origCapMaxWidth = captureArea.style.maxWidth;
+                const origFlowWidth = flowContainer.style.width;
+                const origFlowMaxWidth = flowContainer.style.maxWidth;
+                
+                captureArea.style.width = captureArea.offsetWidth + 'px';
+                captureArea.style.maxWidth = 'none';
+                flowContainer.style.width = flowContainer.offsetWidth + 'px';
+                flowContainer.style.maxWidth = 'none';
+                
+                // วาดเส้นใหม่ให้เป๊ะที่สุดในจังหวะที่ล็อค Layout แล้ว
+                drawFlowLines();
+                
+                // ดีเลย์เล็กน้อยให้เบราว์เซอร์จัด Layout ให้เสร็จสมบูรณ์
                 setTimeout(() => {
-                    const captureArea = document.getElementById('capture-area');
-                    
                     html2canvas(captureArea, {
                         scale: 3, // เพิ่มความคมชัด (จาก 2.5 เป็น 3) ให้ตัวหนังสือเป๊ะยิ่งขึ้นเวลาซูม
                         backgroundColor: "#ffffff",
                         useCORS: true, 
-                        scrollY: 0, // [สำคัญ] ป้องกันการตัดขอบบนเวลาที่ผู้ใช้เลื่อน Scroll bar ลงมา
+                        scrollY: 0, // ป้องกันการตัดขอบบนเวลาที่ผู้ใช้เลื่อน Scroll bar ลงมา
                         windowHeight: captureArea.scrollHeight, // ตรวจจับความสูงทั้งหมด
                         logging: false
                     }).then(canvas => {
+                        // คืนค่า Layout และ Scroll
+                        captureArea.style.width = origCapWidth;
+                        captureArea.style.maxWidth = origCapMaxWidth;
+                        flowContainer.style.width = origFlowWidth;
+                        flowContainer.style.maxWidth = origFlowMaxWidth;
+                        window.scrollTo(0, originalScrollY);
+                        
                         const link = document.createElement('a');
                         link.download = 'PM25_Flow_Sansai_Hospital.png';
                         link.href = canvas.toDataURL('image/png', 1.0);
@@ -422,6 +451,14 @@ def render_flow():
                         btn.innerHTML = originalContent;
                     }).catch(err => {
                         console.error("Error generating image:", err);
+                        
+                        // คืนค่า Layout และ Scroll (ถ้าเกิด Error)
+                        captureArea.style.width = origCapWidth;
+                        captureArea.style.maxWidth = origCapMaxWidth;
+                        flowContainer.style.width = origFlowWidth;
+                        flowContainer.style.maxWidth = origFlowMaxWidth;
+                        window.scrollTo(0, originalScrollY);
+                        
                         btn.innerHTML = originalContent;
                         alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
                     });
