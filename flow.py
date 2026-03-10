@@ -100,7 +100,7 @@ def render_flow():
         <div id="capture-area" class="w-full bg-white pb-10 pt-4 px-4 sm:px-10 md:px-24">
             <!-- Header -->
             <div class="text-center mb-8 sm:mb-12 relative">
-                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 tracking-wide" style="color: var(--text-main);">Flow การให้บริการ รพ.สันทราย</h2>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 tracking-wide" style="color: var(--text-main);">ขั้นตอนการให้บริการ รพ.สันทราย</h2>
                 <p class="text-sm sm:text-base md:text-[1.15rem] font-bold" style="color: var(--text-main);">กรณีผู้ป่วยสงสัยตนเอง/ญาติได้รับผลกระทบจาก PM 2.5 จังหวัดเชียงใหม่</p>
                 
                 <!-- ปุ่มสำหรับดาวน์โหลดรูปภาพ -->
