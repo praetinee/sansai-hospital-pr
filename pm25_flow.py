@@ -504,7 +504,7 @@ def render_pm25_flow():
                 setTimeout(() => drawLines(), 500); 
             });
 
-            // ฟังก์ชันดาวน์โหลดรูป (อัปเกรดความเสถียรเต็มรูปแบบ 100%)
+            // ฟังก์ชันดาวน์โหลดรูป (อัปเกรดความเสถียรเต็มรูปแบบ)
             async function downloadImage() {
                 const btn = document.querySelector('button[onclick="downloadImage()"]');
                 const originalContent = btn.innerHTML;
@@ -516,85 +516,35 @@ def render_pm25_flow():
                 window.scrollTo(0, 0);
                 
                 const captureArea = document.getElementById('capture-area');
-                const mainContainer = document.getElementById('main-container');
-                const mainGrid = document.getElementById('main-grid');
-                const innerGrid = document.getElementById('inner-grid');
-                const colLeft = document.getElementById('col-left');
-                const colMid = document.getElementById('col-mid');
-                const colRight = document.getElementById('col-right');
                 
                 // Backup styles เดิม
                 const origCapWidth = captureArea.style.width;
                 const origCapMinWidth = captureArea.style.minWidth;
-                const origMainMaxWidth = mainContainer.style.maxWidth;
-                const origMainWidth = mainContainer.style.width;
                 
-                // กางพื้นที่แบบ 1920px (Full HD) เพื่อให้มีพื้นที่เหลือเฟือ ไม่ให้ข้อความโดนบีบย่น
-                const targetWidth = 1920;
+                // กางพื้นที่ให้เต็มสัดส่วน Desktop 1400px
+                const targetWidth = 1400;
                 captureArea.style.width = targetWidth + 'px';
                 captureArea.style.minWidth = targetWidth + 'px';
                 
-                // ปลดล็อคความกว้างสูงสุดของคอนเทนเนอร์หลักชั่วคราว
-                mainContainer.style.maxWidth = targetWidth + 'px';
-                mainContainer.style.width = targetWidth + 'px';
-                
-                // ปิดการเรียงตัวแบบมือถือ บังคับคลาสแบบ Desktop เพื่อความชัวร์ (Grid 4 คอลัมน์)
-                if (mainGrid) {
-                    mainGrid.classList.remove('grid-cols-1', 'lg:grid-cols-4');
-                    mainGrid.classList.add('grid-cols-4');
-                }
-                if (innerGrid) {
-                    innerGrid.classList.remove('grid-cols-1', 'xl:grid-cols-2');
-                    innerGrid.classList.add('grid-cols-2');
-                }
-                if (colLeft) { colLeft.classList.remove('lg:col-span-1'); colLeft.classList.add('col-span-1'); }
-                if (colMid) { colMid.classList.remove('lg:col-span-2'); colMid.classList.add('col-span-2'); }
-                if (colRight) { colRight.classList.remove('lg:col-span-1'); colRight.classList.add('col-span-1'); }
-                
-                // ปิดการตัดคำ flex wrap เพื่อไม่ให้กล่องย่น
-                const flexWraps = document.querySelectorAll('.flex-wrap');
-                flexWraps.forEach(el => el.classList.remove('flex-wrap'));
-                
-                // โชว์ลูกศรทั้งหมดที่ซ่อนอยู่บนมือถือ
-                const hiddenArrows = document.querySelectorAll('.hidden.sm\\:block');
-                hiddenArrows.forEach(el => {
-                    el.classList.remove('hidden', 'sm:block');
-                    el.classList.add('block', 'temp-arrow-show');
-                });
-                
+                // บังคับให้เบราว์เซอร์รับรู้ Layout ใหม่ทันทีก่อนวาดเส้น
                 void captureArea.offsetHeight;
+                
+                // วาดเส้นแบบ Desktop บังคับ
                 drawLines(true);
                 
                 setTimeout(() => {
                     html2canvas(captureArea, {
-                        scale: 2, // Scale 2.0 บน 1920px ได้ภาพ 4K คมชัดสุดๆ
+                        scale: 3, // คมชัดระดับสูง
                         backgroundColor: "#f8fafc", 
                         useCORS: true, 
                         scrollY: 0, 
-                        windowWidth: targetWidth, 
+                        windowWidth: targetWidth, // จุดสำคัญ: หลอก html2canvas ว่าจอคอมกว้าง 1400px เสมอ
                         windowHeight: captureArea.scrollHeight,
                         logging: false
                     }).then(canvas => {
                         // คืนค่ารูปแบบกลับ
                         captureArea.style.width = origCapWidth;
                         captureArea.style.minWidth = origCapMinWidth;
-                        mainContainer.style.maxWidth = origMainMaxWidth;
-                        mainContainer.style.width = origMainWidth;
-                        
-                        if (mainGrid) { mainGrid.classList.remove('grid-cols-4'); mainGrid.classList.add('grid-cols-1', 'lg:grid-cols-4'); }
-                        if (innerGrid) { innerGrid.classList.remove('grid-cols-2'); innerGrid.classList.add('grid-cols-1', 'xl:grid-cols-2'); }
-                        if (colLeft) { colLeft.classList.remove('col-span-1'); colLeft.classList.add('lg:col-span-1'); }
-                        if (colMid) { colMid.classList.remove('col-span-2'); colMid.classList.add('lg:col-span-2'); }
-                        if (colRight) { colRight.classList.remove('col-span-1'); colRight.classList.add('lg:col-span-1'); }
-                        
-                        flexWraps.forEach(el => el.classList.add('flex-wrap'));
-                        
-                        const tempArrows = document.querySelectorAll('.temp-arrow-show');
-                        tempArrows.forEach(el => {
-                            el.classList.remove('block', 'temp-arrow-show');
-                            el.classList.add('hidden', 'sm:block');
-                        });
-                        
                         window.scrollTo(0, originalScrollY);
                         drawLines(); 
                         
@@ -610,23 +560,6 @@ def render_pm25_flow():
                         // คืนค่ากลับถ้าพัง
                         captureArea.style.width = origCapWidth;
                         captureArea.style.minWidth = origCapMinWidth;
-                        mainContainer.style.maxWidth = origMainMaxWidth;
-                        mainContainer.style.width = origMainWidth;
-                        
-                        if (mainGrid) { mainGrid.classList.remove('grid-cols-4'); mainGrid.classList.add('grid-cols-1', 'lg:grid-cols-4'); }
-                        if (innerGrid) { innerGrid.classList.remove('grid-cols-2'); innerGrid.classList.add('grid-cols-1', 'xl:grid-cols-2'); }
-                        if (colLeft) { colLeft.classList.remove('col-span-1'); colLeft.classList.add('lg:col-span-1'); }
-                        if (colMid) { colMid.classList.remove('col-span-2'); colMid.classList.add('lg:col-span-2'); }
-                        if (colRight) { colRight.classList.remove('col-span-1'); colRight.classList.add('lg:col-span-1'); }
-                        
-                        flexWraps.forEach(el => el.classList.add('flex-wrap'));
-                        
-                        const tempArrows = document.querySelectorAll('.temp-arrow-show');
-                        tempArrows.forEach(el => {
-                            el.classList.remove('block', 'temp-arrow-show');
-                            el.classList.add('hidden', 'sm:block');
-                        });
-                        
                         window.scrollTo(0, originalScrollY);
                         drawLines(); 
                         
