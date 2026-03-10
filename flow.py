@@ -163,7 +163,7 @@ def render_flow():
                                 <div class="line-v h-4 my-1"></div>
                                 <!-- ใส่ ID เพื่อใช้อ้างอิงระยะตีเส้นสีแดงให้พ้นกล่องนี้แบบ 100% -->
                                 <div id="suspect-container" class="bg-emerald-100 border border-emerald-200 rounded-lg p-2 shadow-sm text-left w-full flex-grow relative z-10">
-                                    <p class="text-emerald-900 font-bold text-[12px] sm:text-[13px] leading-snug mb-2 card-text">1. ส่งต่อเข้ารับบริการ<br>ที่รพ./รพ.สต./PCU หนองหาร</p>
+                                    <p class="text-emerald-900 font-bold text-[12px] sm:text-[13px] leading-snug mb-2 card-text">1. ส่งต่อเข้ารับบริการ<br>ที่ รพ./รพ.สต./PCU หนองหาร</p>
                                     <!-- กล่องต้นทางของเส้นสีแดง -->
                                     <div id="red-source" class="bg-red-200 text-red-900 border border-red-400 px-2 py-1 rounded text-[12px] sm:text-[13px] font-bold leading-snug inline-block shadow-sm relative z-[110]">
                                         2. ถ้าอาการรุนแรง<br>ประสาน 1669
