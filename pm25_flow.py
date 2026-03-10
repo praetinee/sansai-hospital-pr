@@ -392,7 +392,7 @@ def render_pm25_flow():
                                                 <ul class="list-disc pl-8 space-y-1.5 text-muted font-medium ml-1">
                                                     <li>ส่งพบแพทย์ ตรวจ Lab</li>
                                                     <li><span class="text-red-600 font-bold">ส่งห้องฉุกเฉิน (ER)</span> หากอาการรุนแรง</li>
-                                                    <li class="leading-snug">แจ้งข้อมูลผู้ป่วยที่เข้าข่ายแก่งาน<span class="text-purple-700 font-bold">ควบคุมโรค</span> <br/><span class="text-[11px] opacity-80">(เพื่อให้ดำเนินการลงพื้นที่ + รายงาน สสจ.)</span></li>
+                                                    <li class="leading-snug">แจ้งข้อมูลผู้ป่วยที่เข้าข่ายแก่งาน<span style="color: #7e22ce; font-weight: 800;">ควบคุมโรค</span> <br/><span class="text-[11px] opacity-80">(เพื่อให้ดำเนินการลงพื้นที่ + รายงาน สสจ.)</span></li>
                                                 </ul>
                                             </div>
 
