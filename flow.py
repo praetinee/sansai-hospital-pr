@@ -2,7 +2,7 @@ import streamlit.components.v1 as components
 
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow 
-    # อัปเดตล่าสุด: แก้ไขตัวเลข 1 2 3 ตกขอบโดยใช้ Flexbox และถอด Animation ออกเพื่อให้เส้นสีม่วงคำนวณพิกัดได้เป๊ะ 100% ไม่ยืดทะลุกล่อง
+    # อัปเดตล่าสุด: แก้ปัญหาตัวเลข 1 2 3 ตกขอบวงกลมตอนดาวน์โหลด โดยใช้ Fixed Width/Height และ Line-height แบบ 100%
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -115,10 +115,10 @@ def render_flow():
                 <!-- ================= LEFT COLUMN (ONLINE) ================= -->
                 <div class="w-full md:w-[40%] flex flex-col items-center">
                     
-                    <!-- 1. ปรึกษาออนไลน์ (แก้เลขตกขอบโดยใช้ flex center แทน absolute inset-0) -->
+                    <!-- 1. ปรึกษาออนไลน์ (แก้เลขตกขอบโดยใช้ Fixed size & Line-height) -->
                     <div class="flex items-center gap-3 bg-blue-50 border-2 border-blue-300 rounded-full px-4 py-2 shadow-sm relative z-10 w-fit">
-                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shadow-inner shrink-0">
-                            <span class="font-bold text-lg sm:text-xl leading-none">1</span>
+                        <div class="bg-blue-600 text-white rounded-full shrink-0 text-center font-bold text-xl shadow-inner" style="width: 40px; height: 40px; min-width: 40px; line-height: 40px;">
+                            1
                         </div>
                         <span class="text-blue-900 font-bold text-lg sm:text-xl pr-2">ปรึกษาออนไลน์</span>
                     </div>
@@ -183,10 +183,10 @@ def render_flow():
                         
                         <!-- ====== Col 2: Onsite ====== -->
                         <div class="flex-[0.8] flex flex-col items-center h-full">
-                            <!-- 2. เข้ารับบริการ (แก้เลขตกขอบโดยใช้ flex center) -->
+                            <!-- 2. เข้ารับบริการ (แก้เลขตกขอบโดยใช้ Fixed size & Line-height) -->
                             <div class="flex items-center justify-center gap-1 sm:gap-2 bg-pink-50 border-2 border-pink-200 rounded-full px-4 py-2 shadow-sm z-10 w-fit h-[55px] sm:h-[65px]">
-                                <div class="bg-pink-500 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center shadow-inner shrink-0">
-                                    <span class="font-bold text-sm sm:text-lg leading-none">2</span>
+                                <div class="bg-pink-500 text-white rounded-full shrink-0 text-center font-bold text-lg shadow-inner" style="width: 32px; height: 32px; min-width: 32px; line-height: 32px;">
+                                    2
                                 </div>
                                 <h3 class="text-pink-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center">เข้ารับบริการ<br>ที่รพ./รพ.สต./PCU หนองหาร</h3>
                             </div>
@@ -195,10 +195,10 @@ def render_flow():
 
                         <!-- ====== Col 3: Surveillance ====== -->
                         <div class="flex-[1.2] flex flex-col items-center h-full">
-                            <!-- 3. การเฝ้าระวัง (แก้เลขตกขอบโดยใช้ flex center) -->
+                            <!-- 3. การเฝ้าระวัง (แก้เลขตกขอบโดยใช้ Fixed size & Line-height) -->
                             <div class="flex items-center justify-center gap-1 sm:gap-2 bg-purple-50 border-2 border-purple-300 rounded-full px-4 py-2 shadow-sm z-10 w-fit h-[55px] sm:h-[65px]">
-                                <div class="bg-purple-600 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center shadow-inner shrink-0">
-                                    <span class="font-bold text-sm sm:text-lg leading-none">3</span>
+                                <div class="bg-purple-600 text-white rounded-full shrink-0 text-center font-bold text-lg shadow-inner" style="width: 32px; height: 32px; min-width: 32px; line-height: 32px;">
+                                    3
                                 </div>
                                 <h3 class="text-purple-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center">การเฝ้าระวัง</h3>
                             </div>
