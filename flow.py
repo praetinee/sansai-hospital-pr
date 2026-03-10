@@ -2,7 +2,7 @@ import streamlit.components.v1 as components
 
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow 
-    # อัปเดตล่าสุด: เปลี่ยนเส้นลูกศรข้ามคอลัมน์จาก SVG ให้เป็น CSS <div> (DOM แท้) เพื่อแก้ปัญหาเส้นแหว่ง/เบี้ยวตอนโหลดรูป 100%
+    # อัปเดตล่าสุด: เปลี่ยนวิธีการ Freeze หน้าจอตอนดาวน์โหลด ให้ขยายเต็มที่ (1280px) เพื่อให้องค์ประกอบทุกส่วนกางออก 100%
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -80,7 +80,7 @@ def render_flow():
     <body>
         
         <!-- เพิ่ม px อย่างมาก เพื่อเว้นขอบซ้ายขวาให้เส้นลูกศรมีพื้นที่โชว์เวลาดาวน์โหลดรูป ไม่โดนตัด -->
-        <div id="capture-area" class="w-full bg-white pb-10 pt-4 px-4 sm:px-10 md:px-24">
+        <div id="capture-area" class="w-full bg-white pb-10 pt-4 px-4 sm:px-10 md:px-24 transition-all duration-300">
             <!-- Header -->
             <div class="text-center mb-8 sm:mb-12 relative">
                 <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 tracking-wide" style="color: var(--text-main);">Flow การให้บริการ รพ.สันทราย</h2>
@@ -163,7 +163,7 @@ def render_flow():
                                 <div class="line-v h-4 my-1"></div>
                                 <!-- ใส่ ID เพื่อใช้อ้างอิงระยะตีเส้นสีแดงให้พ้นกล่องนี้แบบ 100% -->
                                 <div id="suspect-container" class="bg-emerald-100 border border-emerald-200 rounded-lg p-2 shadow-sm text-left w-full flex-grow relative z-10">
-                                    <p class="text-emerald-900 font-bold text-[12px] sm:text-[13px] leading-snug mb-2 card-text">1. ส่งต่อเข้ารับบริการ<br>ที่ รพ./รพ.สต./PCU หนองหาร</p>
+                                    <p class="text-emerald-900 font-bold text-[12px] sm:text-[13px] leading-snug mb-2 card-text">1. ส่งต่อเข้ารับบริการ<br>ที่รพ./รพ.สต./PCU หนองหาร</p>
                                     <!-- กล่องต้นทางของเส้นสีแดง -->
                                     <div id="red-source" class="bg-red-200 text-red-900 border border-red-400 px-2 py-1 rounded text-[12px] sm:text-[13px] font-bold leading-snug inline-block shadow-sm relative z-[110]">
                                         2. ถ้าอาการรุนแรง<br>ประสาน 1669
@@ -409,38 +409,34 @@ def render_flow():
                 // 2. เลื่อนขึ้นบนสุดเพื่อไม่ให้พิกัดเพี้ยนจาก Scroll offset
                 window.scrollTo(0, 0);
                 
-                // 3. Freeze (ล็อค) ความกว้างของกล่อง Layout หลัก!
+                // 3. Freeze ความกว้างแบบ "ขยายเต็มที่" (1280px) คงที่ไปเลย
+                // เพื่อให้องค์ประกอบทุกส่วนกางออก 100% ไม่บีบอัด ไม่ตกขอบ ไม่เบี้ยว
                 const captureArea = document.getElementById('capture-area');
-                const flowContainer = document.getElementById('main-flow-container');
                 
                 const origCapWidth = captureArea.style.width;
-                const origCapMaxWidth = captureArea.style.maxWidth;
-                const origFlowWidth = flowContainer.style.width;
-                const origFlowMaxWidth = flowContainer.style.maxWidth;
+                const origCapMinWidth = captureArea.style.minWidth;
                 
-                captureArea.style.width = captureArea.offsetWidth + 'px';
-                captureArea.style.maxWidth = 'none';
-                flowContainer.style.width = flowContainer.offsetWidth + 'px';
-                flowContainer.style.maxWidth = 'none';
+                // กางพื้นที่ให้กว้างสุดๆ เพื่อบังคับ Layout แบบ Desktop สมบูรณ์
+                captureArea.style.width = '1280px';
+                captureArea.style.minWidth = '1280px';
                 
-                // วาดเส้นใหม่ให้เป๊ะที่สุดในจังหวะที่ล็อค Layout แล้ว
+                // วาดเส้นใหม่ให้ลงล็อคกับระยะของหน้าจอที่กางออก 1280px แล้ว
                 drawFlowLines();
                 
-                // ดีเลย์เล็กน้อยให้เบราว์เซอร์จัด Layout ให้เสร็จสมบูรณ์
+                // ดีเลย์เล็กน้อยให้เบราว์เซอร์จัด Layout โค้งมนให้เสร็จสมบูรณ์
                 setTimeout(() => {
                     html2canvas(captureArea, {
                         scale: 3, // เพิ่มความคมชัด
                         backgroundColor: "#ffffff",
                         useCORS: true, 
                         scrollY: 0, 
+                        windowWidth: 1280, // บอก html2canvas ว่าเราแคปไซส์นี้ จะได้ไม่ดึง CSS Media Query ผิด
                         windowHeight: captureArea.scrollHeight,
                         logging: false
                     }).then(canvas => {
-                        // คืนค่า Layout และ Scroll
+                        // คืนค่า Layout กลับเป็น Responsive เหมือนเดิม
                         captureArea.style.width = origCapWidth;
-                        captureArea.style.maxWidth = origCapMaxWidth;
-                        flowContainer.style.width = origFlowWidth;
-                        flowContainer.style.maxWidth = origFlowMaxWidth;
+                        captureArea.style.minWidth = origCapMinWidth;
                         window.scrollTo(0, originalScrollY);
                         
                         const link = document.createElement('a');
@@ -451,16 +447,16 @@ def render_flow():
                         btn.innerHTML = originalContent;
                     }).catch(err => {
                         console.error("Error generating image:", err);
+                        
+                        // คืนค่าเมื่อ error
                         captureArea.style.width = origCapWidth;
-                        captureArea.style.maxWidth = origCapMaxWidth;
-                        flowContainer.style.width = origFlowWidth;
-                        flowContainer.style.maxWidth = origFlowMaxWidth;
+                        captureArea.style.minWidth = origCapMinWidth;
                         window.scrollTo(0, originalScrollY);
                         
                         btn.innerHTML = originalContent;
                         alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
                     });
-                }, 400);
+                }, 500); // ดีเลย์เพิ่มนิดนึงให้การจัดหน้าเว็บที่ 1280px นิ่งสนิท
             }
 
             function drawFlowLines() {
