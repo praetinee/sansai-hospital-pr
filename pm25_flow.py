@@ -224,102 +224,93 @@ def render_pm25_flow():
                             <!-- Left Sub-column (4 original rows) -->
                             <div class="space-y-4 flex flex-col justify-between h-full">
                                 <!-- Row 1: Online -->
-                                <div class="inner-box flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 relative border-orange-200 shadow-sm flex-1">
-                                    <div class="flex items-center gap-3 flex-grow min-w-0">
-                                        <i data-lucide="smartphone" class="w-8 h-8 sm:w-9 sm:h-9 c2-icon shrink-0"></i>
-                                        <div class="min-w-0">
-                                            <h3 class="font-bold text-main text-sm sm:text-base baseline-fix">ระบบก่อนถึง รพ. และออนไลน์</h3>
-                                            <p class="text-[11px] sm:text-xs text-muted leading-tight mt-0.5 truncate sm:whitespace-normal font-medium">คลินิกมลพิษออนไลน์ ผ่าน Line OA หรือ หมอพร้อม</p>
-                                        </div>
+                                <div class="inner-box flex flex-col justify-center gap-2 relative border-orange-200 shadow-sm flex-1 p-3 sm:p-4">
+                                    <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-1.5">
+                                        <i data-lucide="smartphone" class="w-5 h-5 sm:w-6 sm:h-6 c2-icon shrink-0"></i>
+                                        <h3 class="font-bold text-main text-[13px] sm:text-[14px] baseline-fix">ระบบก่อนถึง รพ. และออนไลน์</h3>
+                                        <span class="bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold ml-auto shrink-0 shadow-sm">คลินิกมลพิษ</span>
                                     </div>
-                                    <div class="flex items-center gap-2 shrink-0 sm:w-auto w-full justify-end sm:justify-center mt-2 sm:mt-0">
-                                        <i data-lucide="arrow-right" class="arrow-icon w-5 h-5 hidden sm:block"></i>
-                                        <div class="text-right sm:text-center">
-                                            <p class="font-bold text-[13px] sm:text-sm c2-text baseline-fix">ประเมินเบื้องต้น</p>
-                                            <p class="text-[11px] sm:text-xs text-muted font-medium">& Telemedicine</p>
+                                    <div class="flex items-center justify-between w-full gap-2 text-[10px] sm:text-[11px] pt-1">
+                                        <div class="flex-1">
+                                            <p class="text-muted font-medium leading-tight">ผ่าน Line OA หรือ หมอพร้อม</p>
+                                        </div>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="text-right flex-shrink-0">
+                                            <p class="font-bold c2-text leading-tight baseline-fix">ประเมินเบื้องต้น</p>
+                                            <p class="text-muted font-medium leading-tight mt-0.5">& Telemedicine</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Row 2: PCU หนองหาร / รพ.สต. -->
-                                <div class="inner-box pt-8 sm:pt-6 flex flex-wrap items-center gap-2 relative border-orange-200 shadow-sm flex-1">
+                                <div class="inner-box flex flex-col justify-center gap-2 relative border-orange-200 shadow-sm flex-1 p-3 sm:p-4 pt-7 sm:pt-7">
                                     <div class="tag-code"><span class="baseline-fix-inline">รหัส Z58.1</span></div>
-                                    <div class="flex items-center gap-2 w-full lg:w-auto mb-2 lg:mb-0 shrink-0">
-                                        <div class="flex shrink-0 c2-icon">
-                                            <i data-lucide="building-2" class="w-6 h-6 sm:w-7 sm:h-7"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-bold text-[13px] sm:text-sm text-main leading-tight baseline-fix">PCU หนองหาร<br/>& รพ.สต.</h3>
-                                        </div>
+                                    <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-1.5">
+                                        <i data-lucide="building-2" class="w-5 h-5 sm:w-6 sm:h-6 c2-icon shrink-0"></i>
+                                        <h3 class="font-bold text-[13px] sm:text-[14px] text-main leading-tight baseline-fix">PCU หนองหาร & รพ.สต.</h3>
                                     </div>
-                                    <div class="flex-grow flex items-center justify-between sm:justify-around gap-1 text-[11px] sm:text-xs">
-                                        <div class="text-center shrink-0">
-                                            <p class="font-bold text-main baseline-fix">คัดกรองอาการ</p>
+                                    <div class="flex items-center justify-between w-full gap-1 text-[10px] sm:text-[11px] pt-1">
+                                        <div class="text-center flex-1">
+                                            <p class="font-bold text-main leading-tight baseline-fix">คัดกรองอาการ</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
-                                        <div class="text-center shrink-0 w-20 sm:w-24">
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="text-center flex-[1.3]">
                                             <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง GG Sheets</p>
-                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium">+ รักษาตามอาการ</p>
+                                            <p class="text-muted font-medium leading-tight mt-0.5">+ รักษาตามอาการ</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
-                                        <div class="text-center shrink-0">
-                                            <p class="text-[10px] text-muted font-medium baseline-fix">อาการรุนแรง</p>
-                                            <p class="font-bold text-red-600">Refer รพ.</p>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="text-center flex-[0.8]">
+                                            <p class="text-muted font-medium leading-tight baseline-fix">อาการรุนแรง</p>
+                                            <p class="font-bold text-red-600 leading-tight mt-0.5">Refer รพ.</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Row 3: OPD -->
-                                <div class="inner-box pt-8 sm:pt-6 flex flex-wrap items-center gap-2 relative border-orange-200 shadow-sm flex-1">
+                                <div class="inner-box flex flex-col justify-center gap-2 relative border-orange-200 shadow-sm flex-1 p-3 sm:p-4 pt-7 sm:pt-7">
                                     <div class="tag-code"><span class="baseline-fix-inline">รหัส Z58.1</span></div>
-                                    <div class="flex items-center gap-2 w-full lg:w-auto mb-2 lg:mb-0 shrink-0">
-                                        <div class="flex shrink-0 c2-icon">
-                                            <i data-lucide="eye" class="w-6 h-6 sm:w-7 sm:h-7"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-bold text-[13px] sm:text-sm text-main leading-tight baseline-fix">ผู้ป่วยนอก (OPD)</h3>
-                                        </div>
+                                    <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-1.5">
+                                        <i data-lucide="eye" class="w-5 h-5 sm:w-6 sm:h-6 c2-icon shrink-0"></i>
+                                        <h3 class="font-bold text-[13px] sm:text-[14px] text-main leading-tight baseline-fix">ผู้ป่วยนอก (OPD)</h3>
                                     </div>
-                                    <div class="flex-grow flex items-center justify-between sm:justify-around gap-1 text-[11px] sm:text-xs">
-                                        <div class="text-center shrink-0">
-                                            <p class="font-bold text-main baseline-fix">คัดกรองอาการ</p>
+                                    <div class="flex items-center justify-between w-full gap-1 text-[10px] sm:text-[11px] pt-1">
+                                        <div class="text-center flex-[0.8]">
+                                            <p class="font-bold text-main leading-tight baseline-fix">คัดกรองอาการ</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
-                                        <div class="text-center shrink-0 w-20 sm:w-24">
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="text-center flex-[1.3]">
                                             <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง GG Sheets</p>
-                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium">+ รักษาตามอาการ</p>
+                                            <p class="text-muted font-medium leading-tight mt-0.5">+ รักษาตามอาการ</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
-                                        <div class="text-center shrink-0 w-16 sm:w-20">
-                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium leading-tight baseline-fix">นัดติดตาม ไม่ทุเลา</p>
-                                            <p class="font-bold c2-text">ส่งคลินิกมลพิษ</p>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="text-center flex-1">
+                                            <p class="text-muted font-medium leading-tight baseline-fix">นัดติดตาม ไม่ทุเลา</p>
+                                            <p class="font-bold c2-text leading-tight mt-0.5">ส่งคลินิกมลพิษ</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Row 4: ER -->
-                                <div class="inner-box pt-8 sm:pt-6 flex flex-wrap items-center gap-2 relative border-orange-200 shadow-sm flex-1">
+                                <div class="inner-box flex flex-col justify-center gap-2 relative border-orange-200 shadow-sm flex-1 p-3 sm:p-4 pt-7 sm:pt-7">
                                     <div class="tag-code"><span class="baseline-fix-inline">รหัส Z58.1</span></div>
-                                    <div class="flex items-center gap-2 w-full lg:w-auto mb-2 lg:mb-0 shrink-0">
-                                        <i data-lucide="ambulance" class="w-6 h-6 sm:w-7 sm:h-7 text-red-500 shrink-0"></i>
-                                        <div>
-                                            <h3 class="font-bold text-[13px] sm:text-sm text-main leading-tight baseline-fix">ผู้ป่วยฉุกเฉิน (ER) <br/>และระบบ 1669</h3>
-                                        </div>
+                                    <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-1.5">
+                                        <i data-lucide="ambulance" class="w-5 h-5 sm:w-6 sm:h-6 text-red-500 shrink-0"></i>
+                                        <h3 class="font-bold text-[13px] sm:text-[14px] text-main leading-tight baseline-fix">ผู้ป่วยฉุกเฉิน (ER) & 1669</h3>
                                     </div>
-                                    <div class="flex-grow flex items-center justify-between sm:justify-around gap-1 text-[11px] sm:text-xs">
-                                        <div class="text-center shrink-0">
-                                            <p class="font-bold text-main baseline-fix">อาการรุนแรง</p>
-                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium">(หอบหืด, COPD..)</p>
+                                    <div class="flex items-center justify-between w-full gap-1 text-[10px] sm:text-[11px] pt-1">
+                                        <div class="text-center flex-1">
+                                            <p class="font-bold text-main leading-tight baseline-fix">อาการรุนแรง</p>
+                                            <p class="text-muted font-medium leading-tight mt-0.5">(หอบหืด, COPD..)</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
-                                        <div class="text-center shrink-0">
-                                            <p class="font-bold text-main baseline-fix">1669 / EMS</p>
-                                            <p class="text-muted font-medium">รับเข้า ER</p>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="text-center flex-[0.8]">
+                                            <p class="font-bold text-main leading-tight baseline-fix">1669 / EMS</p>
+                                            <p class="text-muted font-medium leading-tight mt-0.5">รับเข้า ER</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
-                                        <div class="text-center shrink-0 w-24 sm:w-28">
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="text-center flex-[1.4]">
                                             <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง GG Sheets</p>
-                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium">+ ประเมิน Admit/กลับบ้าน</p>
+                                            <p class="text-muted font-medium leading-tight mt-0.5">+ ประเมิน Admit/กลับบ้าน</p>
                                         </div>
                                     </div>
                                 </div>
