@@ -282,19 +282,21 @@ def render_pm25_flow():
                                 </div>
 
                                 <!-- Row 4: IPD -->
-                                <div class="inner-box pt-8 sm:pt-6 flex items-center justify-between gap-2 sm:gap-4 relative border-orange-200 shadow-sm flex-1">
+                                <div class="inner-box pt-8 sm:pt-6 flex flex-wrap items-center gap-2 relative border-orange-200 shadow-sm flex-1">
                                     <div class="tag-code">รหัส Z58.1</div>
-                                    <div class="flex items-center gap-2 shrink-0">
-                                        <i data-lucide="bed" class="w-6 h-6 sm:w-8 sm:h-8 text-blue-500"></i>
-                                        <h3 class="font-bold text-[13px] sm:text-sm text-main">ผู้ป่วยใน (IPD)</h3>
+                                    <div class="flex items-center gap-2 w-full lg:w-auto mb-2 lg:mb-0 shrink-0">
+                                        <i data-lucide="bed" class="w-6 h-6 sm:w-7 sm:h-7 text-blue-500 shrink-0"></i>
+                                        <div>
+                                            <h3 class="font-bold text-[13px] sm:text-sm text-main leading-tight">ผู้ป่วยใน (IPD)</h3>
+                                        </div>
                                     </div>
-                                    <div class="flex items-center gap-2 sm:gap-4 flex-grow justify-end">
-                                        <div class="text-right sm:text-center text-[11px] sm:text-sm">
+                                    <div class="flex-grow flex items-center justify-between sm:justify-around gap-1 text-[11px] sm:text-xs">
+                                        <div class="text-center shrink-0">
                                             <p class="font-bold text-main">รับ Admit</p>
-                                            <p class="text-[10px] sm:text-xs text-muted font-medium">เข้าหอผู้ป่วย</p>
+                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium">เข้าหอผู้ป่วย</p>
                                         </div>
                                         <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
-                                        <div class="text-center text-[11px] sm:text-sm shrink-0">
+                                        <div class="text-center shrink-0 w-20 sm:w-24">
                                             <p class="font-bold text-main leading-tight">พยาบาล<br/>ซักประวัติเพิ่มเติม</p>
                                         </div>
                                     </div>
