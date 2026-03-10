@@ -233,7 +233,7 @@ def render_pm25_flow():
                                             <i data-lucide="eye" class="w-6 h-6 sm:w-7 sm:h-7"></i>
                                         </div>
                                         <div>
-                                            <h3 class="font-bold text-[13px] sm:text-sm text-main leading-tight">ผู้ป่วยนอก (OPD) <br/>& คลินิกมลพิษ</h3>
+                                            <h3 class="font-bold text-[13px] sm:text-sm text-main leading-tight">ผู้ป่วยนอก (OPD)</h3>
                                         </div>
                                     </div>
                                     <div class="flex-grow flex items-center justify-between sm:justify-around gap-1 text-[11px] sm:text-xs">
@@ -309,25 +309,26 @@ def render_pm25_flow():
                                 </h3>
 
                                 <div class="space-y-4 flex-grow text-[12px] sm:text-[13px] text-main overflow-y-auto pr-1">
-                                    <!-- 1. เฝ้าระวัง -->
+                                    
+                                    <!-- 1. จัดการนัดหมาย -->
                                     <div>
                                         <p class="font-bold text-orange-800 flex items-start gap-2 mb-1.5">
                                             <span class="bg-orange-200 text-orange-800 w-5 h-5 rounded-full flex items-center justify-center text-[11px] shrink-0 mt-0.5">1</span>
+                                            จัดการนัดหมาย
+                                        </p>
+                                        <p class="pl-8 text-muted font-medium">(หมอพร้อม/Telemedicine/Walk-in)</p>
+                                    </div>
+
+                                    <!-- 2. เฝ้าระวัง -->
+                                    <div>
+                                        <p class="font-bold text-orange-800 flex items-start gap-2 mb-1.5">
+                                            <span class="bg-orange-200 text-orange-800 w-5 h-5 rounded-full flex items-center justify-center text-[11px] shrink-0 mt-0.5">2</span>
                                             เฝ้าระวัง (การเข้ารับการรักษาของผู้ป่วย)
                                         </p>
                                         <ul class="list-disc pl-8 space-y-1.5 text-muted font-medium">
                                             <li>ตรวจสอบรหัส ICD-10 ที่เกี่ยวข้องกับการสัมผัส PM2.5 ในระบบ HosOS</li>
                                             <li>ตรวจสอบผู้ป่วยที่เข้ารับการรักษาในวันที่ฝุ่นสูง (> 37.5) GG sheets ของ OPD/ER/PCU หนองหาร</li>
                                         </ul>
-                                    </div>
-
-                                    <!-- 2. จัดการนัดหมาย -->
-                                    <div>
-                                        <p class="font-bold text-orange-800 flex items-start gap-2 mb-1.5">
-                                            <span class="bg-orange-200 text-orange-800 w-5 h-5 rounded-full flex items-center justify-center text-[11px] shrink-0 mt-0.5">2</span>
-                                            จัดการนัดหมาย
-                                        </p>
-                                        <p class="pl-8 text-muted font-medium">(หมอพร้อม/Telemedicine/Walk-in)</p>
                                     </div>
 
                                     <!-- 3. คัดกรอง ซักประวัติ -->
