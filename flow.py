@@ -2,7 +2,7 @@ import streamlit.components.v1 as components
 
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow 
-    # อัปเดตล่าสุด: แก้ไขตัวเลขตกขอบวงกลมตอนดาวน์โหลด, คำนวณเส้นสีม่วงและสีแดงแบบ Dynamic หลบกล่องข้อความ 100%
+    # อัปเดตล่าสุด: ปรับแต่ง html2canvas ให้ดาวน์โหลด PNG ได้สมบูรณ์แบบที่สุด คมชัด ไม่แหว่ง
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -407,9 +407,11 @@ def render_flow():
                     const captureArea = document.getElementById('capture-area');
                     
                     html2canvas(captureArea, {
-                        scale: 2.5, // ความละเอียดคมชัดสูง
+                        scale: 3, // เพิ่มความคมชัด (จาก 2.5 เป็น 3) ให้ตัวหนังสือเป๊ะยิ่งขึ้นเวลาซูม
                         backgroundColor: "#ffffff",
                         useCORS: true, 
+                        scrollY: 0, // [สำคัญ] ป้องกันการตัดขอบบนเวลาที่ผู้ใช้เลื่อน Scroll bar ลงมา
+                        windowHeight: captureArea.scrollHeight, // ตรวจจับความสูงทั้งหมด
                         logging: false
                     }).then(canvas => {
                         const link = document.createElement('a');
