@@ -65,7 +65,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 tab1, tab2, tab3 = st.tabs([
     "📊 แผนการดำเนินงาน", 
     "🔄 Flow การให้บริการ", 
-    "🗺️ แผนผัง PM2.5"
+    "🗺️ บทบาทของแต่ละหน่วยงาน"
 ])
 
 with tab1:
