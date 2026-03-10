@@ -2,7 +2,7 @@ import streamlit.components.v1 as components
 
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow 
-    # อัปเดตล่าสุด: ปรับแต่ง html2canvas ให้ดาวน์โหลด PNG ได้สมบูรณ์แบบที่สุด คมชัด ไม่แหว่ง
+    # อัปเดตล่าสุด: เปลี่ยนเส้นลูกศรข้ามคอลัมน์จาก SVG ให้เป็น CSS <div> (DOM แท้) เพื่อแก้ปัญหาเส้นแหว่ง/เบี้ยวตอนโหลดรูป 100%
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -61,11 +61,11 @@ def render_flow():
                คำสั่งบังคับสำหรับการปริ้น (PRINT STYLES)
                ======================================= */
             @media print {
-                body, *, .line-v, .line-h, .arrow-down, svg, path {
+                body, *, .line-v, .line-h, .arrow-down, #dynamic-lines-container {
                     -webkit-print-color-adjust: exact !important;
                     print-color-adjust: exact !important;
                 }
-                #flow-svg {
+                #dynamic-lines-container {
                     display: block !important;
                     visibility: visible !important;
                     opacity: 1 !important;
@@ -96,19 +96,21 @@ def render_flow():
             <!-- Main Flow Container -->
             <div class="w-full max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 relative z-10" id="main-flow-container">
                 
-                <!-- SVG Overlay (ขยายพื้นที่ให้กว้างสุดๆ เพื่อป้องกันเส้นแหว่งเวลาดาวน์โหลด) -->
-                <svg id="flow-svg" class="pointer-events-none z-[100] hidden md:block" style="position: absolute; top: 0; bottom: 0; left: -100px; right: -100px; width: calc(100% + 200px); height: 100%; overflow: visible;">
-                    <defs>
-                        <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
-                        </marker>
-                        <marker id="arrow-purple" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#9333ea" />
-                        </marker>
-                    </defs>
-                    <path id="red-line-path" fill="none" stroke="#dc2626" stroke-width="4" stroke-linejoin="round" marker-end="url(#arrow-red)" />
-                    <path id="purple-line-path" fill="none" stroke="#9333ea" stroke-width="8" stroke-linejoin="round" marker-end="url(#arrow-purple)" stroke-dasharray="8,6" />
-                </svg>
+                <!-- Dynamic Lines Container (ใช้ Div แทน SVG เพื่อแก้ปัญหาพิกัดเบี้ยว 100%) -->
+                <div id="dynamic-lines-container" class="absolute inset-0 pointer-events-none z-[100] hidden md:block">
+                    <!-- เส้นสีแดง (ผู้ป่วยอาการรุนแรง) -->
+                    <div id="red-seg-1" class="absolute bg-red-600 transition-all duration-300"></div>
+                    <div id="red-seg-2" class="absolute bg-red-600 transition-all duration-300"></div>
+                    <div id="red-seg-3" class="absolute bg-red-600 transition-all duration-300"></div>
+                    <div id="red-seg-4" class="absolute bg-red-600 transition-all duration-300"></div>
+                    <div id="red-arrow" class="absolute w-0 h-0 border-t-[10px] border-l-[6px] border-r-[6px] border-t-red-600 border-l-transparent border-r-transparent transition-all duration-300"></div>
+
+                    <!-- เส้นสีม่วง (แจ้งควบคุมโรค) -->
+                    <div id="purp-seg-1" class="absolute border-t-[4px] border-dashed border-purple-600 box-border transition-all duration-300"></div>
+                    <div id="purp-seg-2" class="absolute border-l-[4px] border-dashed border-purple-600 box-border transition-all duration-300"></div>
+                    <div id="purp-seg-3" class="absolute border-t-[4px] border-dashed border-purple-600 box-border transition-all duration-300"></div>
+                    <div id="purp-arrow" class="absolute w-0 h-0 border-r-[10px] border-t-[6px] border-b-[6px] border-r-purple-600 border-t-transparent border-b-transparent transition-all duration-300"></div>
+                </div>
 
                 <!-- ================= LEFT COLUMN (ONLINE) ================= -->
                 <div class="w-full md:w-[40%] flex flex-col items-center">
@@ -391,7 +393,7 @@ def render_flow():
             </div>
         </div> <!-- ปิด capture-area -->
 
-        <!-- Script สำหรับวาดเส้นโยง SVG และบันทึกรูปภาพ -->
+        <!-- Script สำหรับวาดเส้นโยงแบบ Div -->
         <script>
             async function downloadImage() {
                 const btn = document.querySelector('button[onclick="downloadImage()"]');
@@ -404,12 +406,10 @@ def render_flow():
                 // 1. เก็บค่าย้อนกลับของ Scroll
                 const originalScrollY = window.scrollY;
                 
-                // 2. เลื่อนขึ้นบนสุดเพื่อไม่ให้พิกัด SVG เพี้ยนจาก Scroll offset
+                // 2. เลื่อนขึ้นบนสุดเพื่อไม่ให้พิกัดเพี้ยนจาก Scroll offset
                 window.scrollTo(0, 0);
                 
                 // 3. Freeze (ล็อค) ความกว้างของกล่อง Layout หลัก!
-                // สาเหตุที่เส้นเบี้ยวเพราะเวลา html2canvas โคลน DOM ความกว้างจอจะเปลี่ยนไปนิดหน่อย 
-                // ทำให้กล่องขยับ แต่เส้น SVG ยังจำพิกัดเดิม จึงต้องล็อคความกว้างเป็น Pixel ไว้ก่อน
                 const captureArea = document.getElementById('capture-area');
                 const flowContainer = document.getElementById('main-flow-container');
                 
@@ -429,11 +429,11 @@ def render_flow():
                 // ดีเลย์เล็กน้อยให้เบราว์เซอร์จัด Layout ให้เสร็จสมบูรณ์
                 setTimeout(() => {
                     html2canvas(captureArea, {
-                        scale: 3, // เพิ่มความคมชัด (จาก 2.5 เป็น 3) ให้ตัวหนังสือเป๊ะยิ่งขึ้นเวลาซูม
+                        scale: 3, // เพิ่มความคมชัด
                         backgroundColor: "#ffffff",
                         useCORS: true, 
-                        scrollY: 0, // ป้องกันการตัดขอบบนเวลาที่ผู้ใช้เลื่อน Scroll bar ลงมา
-                        windowHeight: captureArea.scrollHeight, // ตรวจจับความสูงทั้งหมด
+                        scrollY: 0, 
+                        windowHeight: captureArea.scrollHeight,
                         logging: false
                     }).then(canvas => {
                         // คืนค่า Layout และ Scroll
@@ -451,8 +451,6 @@ def render_flow():
                         btn.innerHTML = originalContent;
                     }).catch(err => {
                         console.error("Error generating image:", err);
-                        
-                        // คืนค่า Layout และ Scroll (ถ้าเกิด Error)
                         captureArea.style.width = origCapWidth;
                         captureArea.style.maxWidth = origCapMaxWidth;
                         flowContainer.style.width = origFlowWidth;
@@ -466,63 +464,87 @@ def render_flow():
             }
 
             function drawFlowLines() {
-                const svg = document.getElementById('flow-svg');
+                const linesContainer = document.getElementById('dynamic-lines-container');
                 const container = document.getElementById('main-flow-container');
                 
-                if(svg && container && container.offsetWidth >= 768) {
-                    svg.classList.remove('hidden');
-                    const svgRect = svg.getBoundingClientRect();
+                if(linesContainer && container && container.offsetWidth >= 768) {
+                    linesContainer.classList.remove('hidden');
+                    const contRect = container.getBoundingClientRect();
                     
+                    // Helper ฟังก์ชันสำหรับดึงพิกัดสัมพัทธ์อ้างอิงกับ main-flow-container
+                    const getRelRect = (el) => {
+                        const rect = el.getBoundingClientRect();
+                        return {
+                            top: rect.top - contRect.top,
+                            bottom: rect.bottom - contRect.top,
+                            left: rect.left - contRect.left,
+                            right: rect.right - contRect.left,
+                            width: rect.width,
+                            height: rect.height
+                        };
+                    };
+
                     // 1. เส้นแดง (ประสาน 1669 -> ผู้ป่วยอาการรุนแรง)
                     const redSrc = document.getElementById('red-source');
                     const redTgt = document.getElementById('red-target');
-                    const redPath = document.getElementById('red-line-path');
-                    const suspectCont = document.getElementById('suspect-container'); // กล่องสีเขียวใหญ่สุดที่คลุม red-source ไว้
+                    const suspectCont = document.getElementById('suspect-container'); 
                     
-                    if (redSrc && redTgt && redPath && suspectCont) {
-                        const rSrcRect = redSrc.getBoundingClientRect();
-                        const rTgtRect = redTgt.getBoundingClientRect();
-                        const suspectRect = suspectCont.getBoundingClientRect();
+                    if (redSrc && redTgt && suspectCont) {
+                        const rSrcRect = getRelRect(redSrc);
+                        const rTgtRect = getRelRect(redTgt);
+                        const suspectRect = getRelRect(suspectCont);
                         
-                        // การคำนวณตำแหน่งอ้างอิงจาก svgRect.left ที่ชดเชยค่าติดลบแล้ว
-                        const rStartX = rSrcRect.right - svgRect.left;
-                        const rStartY = rSrcRect.top + (rSrcRect.height / 2) - svgRect.top;
-                        const rEndX = rTgtRect.left + (rTgtRect.width / 2) - svgRect.left;
-                        const rEndY = rTgtRect.top - svgRect.top - 8;
+                        const rStartX = rSrcRect.right;
+                        const rStartY = rSrcRect.top + (rSrcRect.height / 2);
+                        const rEndX = rTgtRect.left + (rTgtRect.width / 2);
+                        const rEndY = rTgtRect.top - 4; // เว้นระยะ 4px ก่อนถึงกล่อง
                         
-                        // ลากเส้นให้พ้นขอบขวาสุดของกล่องสีเขียว (suspect-container) มั่นใจได้ 100% ว่าไม่ทับแน่นอน
-                        const gutterX = (suspectRect.right - svgRect.left) + 30; 
+                        // ลากอ้อมให้พ้นขอบกล่องเขียวไปทางขวา 30px
+                        const gutterX = suspectRect.right + 30; 
                         const safeY = rEndY - 25;
                         
-                        const dRed = `M ${rStartX} ${rStartY} L ${gutterX} ${rStartY} L ${gutterX} ${safeY} L ${rEndX} ${safeY} L ${rEndX} ${rEndY}`;
-                        redPath.setAttribute('d', dRed);
+                        document.getElementById('red-seg-1').style.cssText = `left: ${rStartX}px; top: ${rStartY - 2}px; width: ${gutterX - rStartX}px; height: 4px;`;
+                        document.getElementById('red-seg-2').style.cssText = `left: ${gutterX - 2}px; top: ${Math.min(rStartY, safeY) - 2}px; width: 4px; height: ${Math.abs(safeY - rStartY) + 4}px;`;
+                        document.getElementById('red-seg-3').style.cssText = `left: ${Math.min(gutterX, rEndX) - 2}px; top: ${safeY - 2}px; width: ${Math.abs(rEndX - gutterX) + 4}px; height: 4px;`;
+                        
+                        // ปรับความสูงของส่วนที่วิ่งลงหากล่องแดงให้เนียนกับลูกศร
+                        const rs4Height = Math.max(0, (rEndY - 10) - (safeY - 2));
+                        document.getElementById('red-seg-4').style.cssText = `left: ${rEndX - 2}px; top: ${safeY - 2}px; width: 4px; height: ${rs4Height}px;`;
+                        
+                        // ลูกศรชี้ลง
+                        document.getElementById('red-arrow').style.cssText = `left: ${rEndX - 6}px; top: ${rEndY - 10}px;`;
                     }
 
                     // 2. เส้นม่วง (ส่ง REFER -> แจ้งควบคุมโรค สสจ.)
                     const referBox = document.getElementById('er-refer-box');
                     const dcBox = document.getElementById('disease-control-box');
-                    const pLinePath = document.getElementById('purple-line-path');
-                    const rightCol = document.getElementById('right-column'); // คอลัมน์ขวาทั้งคอลัมน์
+                    const rightCol = document.getElementById('right-column'); 
                     
-                    if (referBox && dcBox && pLinePath && rightCol) {
-                        const refRect = referBox.getBoundingClientRect();
-                        const dcRect = dcBox.getBoundingClientRect();
-                        const rightColRect = rightCol.getBoundingClientRect(); // ดึงค่ากรอบกว้างที่สุดของคอลัมน์ฝั่งขวา
+                    if (referBox && dcBox && rightCol) {
+                        const refRect = getRelRect(referBox);
+                        const dcRect = getRelRect(dcBox);
+                        const rightColRect = getRelRect(rightCol);
                         
-                        const pStartX = refRect.right - svgRect.left;
-                        const pStartY = refRect.top + (refRect.height / 2) - svgRect.top;
-                        const pEndX = dcRect.right - svgRect.left;
-                        const pEndY = dcRect.top + (dcRect.height / 2) - svgRect.top;
+                        const pStartX = refRect.right;
+                        const pStartY = refRect.top + (refRect.height / 2);
+                        const pEndX = dcRect.right;
+                        const pEndY = dcRect.top + (dcRect.height / 2);
                         
-                        // เส้นแนวตั้งลากห่างจากขอบขวาสุดของคอลัมน์ขวาทั้งหมด (right-column) ไปอีก 30px รับประกันไม่ทับกล่องใดๆ เลย
-                        const pGutterX = (rightColRect.right - svgRect.left) + 30; 
+                        // ลากอ้อมให้พ้นขอบขวาสุดของฝั่งขวาไป 30px
+                        const pGutterX = rightColRect.right + 30; 
                         
-                        const dPurple = `M ${pStartX} ${pStartY} L ${pGutterX} ${pStartY} L ${pGutterX} ${pEndY} L ${pEndX + 8} ${pEndY}`;
-                        pLinePath.setAttribute('d', dPurple);
+                        document.getElementById('purp-seg-1').style.cssText = `left: ${pStartX}px; top: ${pStartY - 2}px; width: ${pGutterX - pStartX}px; height: 0px;`;
+                        document.getElementById('purp-seg-2').style.cssText = `left: ${pGutterX - 2}px; top: ${pStartY - 2}px; width: 0px; height: ${pEndY - pStartY + 4}px;`;
+                        
+                        // ปรับระยะให้เสียบเข้าฐานลูกศรซ้ายได้พอดี
+                        document.getElementById('purp-seg-3').style.cssText = `left: ${pEndX + 12}px; top: ${pEndY - 2}px; width: ${pGutterX - pEndX - 12}px; height: 0px;`;
+                        
+                        // ลูกศรชี้ซ้าย
+                        document.getElementById('purp-arrow').style.cssText = `left: ${pEndX + 2}px; top: ${pEndY - 6}px;`;
                     }
 
-                } else if (svg) {
-                    svg.classList.add('hidden'); // ซ่อนในมือถือ
+                } else if (linesContainer) {
+                    linesContainer.classList.add('hidden'); 
                 }
             }
             
@@ -532,7 +554,7 @@ def render_flow():
                 setTimeout(drawFlowLines, 500);
             };
             
-            // เรียกซ้ำก่อนสั่งปริ้นเพื่อยืนยันว่าเส้นโหลดขึ้นมาแล้ว
+            // วาดใหม่เสมอเมื่อสั่งพิมพ์
             window.onbeforeprint = drawFlowLines;
         </script>
     </body>
