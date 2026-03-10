@@ -10,6 +10,7 @@ def render_flow():
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
         <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700;800&display=swap" rel="stylesheet">
         <style>
             /* ตั้งค่า Theme แบบยืดหยุ่นรองรับ Light/Dark Mode */
@@ -81,42 +82,42 @@ def render_flow():
     </head>
     <body>
         
-        <!-- Header -->
-        <div class="text-center mb-8 sm:mb-12">
-            <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 tracking-wide" style="color: var(--text-main);">Flow การให้บริการ รพ.สันทราย</h2>
-            <p class="text-sm sm:text-base md:text-[1.15rem] font-bold" style="color: var(--text-main);">กรณีผู้ป่วยสงสัยตนเอง/ญาติได้รับผลกระทบจาก PM 2.5 จังหวัดเชียงใหม่</p>
-        </div>
-
-        <!-- Main Flow Container -->
-        <div class="w-full max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 relative z-10" id="main-flow-container">
-            
-            <!-- SVG Overlay สำหรับเส้นโยงข้ามคอลัมน์ -->
-            <svg id="flow-svg" class="absolute inset-0 w-full h-full pointer-events-none z-[100] hidden md:block" style="filter: drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.3));">
-                <defs>
-                    <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
-                    </marker>
-                    <!-- ปรับขนาดหัวลูกศรสีม่วงให้สมดุลกับความหนาเส้นใหม่ -->
-                    <marker id="arrow-purple" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#9333ea" />
-                    </marker>
-                </defs>
+        <div id="capture-area" class="w-full bg-white pb-10 pt-4 px-2 sm:px-4">
+            <!-- Header -->
+            <div class="text-center mb-8 sm:mb-12 relative">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 tracking-wide" style="color: var(--text-main);">Flow การให้บริการ รพ.สันทราย</h2>
+                <p class="text-sm sm:text-base md:text-[1.15rem] font-bold" style="color: var(--text-main);">กรณีผู้ป่วยสงสัยตนเอง/ญาติได้รับผลกระทบจาก PM 2.5 จังหวัดเชียงใหม่</p>
                 
-                <!-- เส้นตัวจริง -->
-                <!-- เส้นแดง: ส่งต่ออาการรุนแรง -->
-                <path id="red-line-path" fill="none" stroke="#dc2626" stroke-width="4" stroke-linejoin="round" marker-end="url(#arrow-red)" />
-                <!-- เส้นม่วง: ส่งข้อมูลควบคุมโรค (ปรับ stroke-width เป็น 6 ให้หนาขึ้น) -->
-                <path id="purple-line-path" fill="none" stroke="#9333ea" stroke-width="6" stroke-linejoin="round" marker-end="url(#arrow-purple)" stroke-dasharray="8,6" />
-            </svg>
+                <!-- ปุ่มสำหรับดาวน์โหลดรูปภาพ -->
+                <button onclick="downloadImage()" class="mt-5 inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-full shadow-lg transition-all print:hidden" data-html2canvas-ignore="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    ดาวน์โหลดรูปภาพ Flow
+                </button>
+            </div>
 
-            <!-- ================= LEFT COLUMN (ONLINE) ================= -->
-            <div class="w-full md:w-[40%] flex flex-col items-center">
-                <!-- 1. ปรึกษาออนไลน์ -->
-                <div class="flex items-center gap-3 bg-blue-50 border-2 border-blue-300 rounded-full px-4 py-2 shadow-sm relative z-10">
-                    <div class="bg-blue-600 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-lg sm:text-xl shadow-inner">1</div>
-                    <span class="text-blue-900 font-bold text-lg sm:text-xl pr-2">ปรึกษาออนไลน์</span>
-                </div>
-                <div class="line-v h-6"></div><div class="arrow-down"></div>
+            <!-- Main Flow Container -->
+            <div class="w-full max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 relative z-10" id="main-flow-container">
+                
+                <!-- SVG Overlay สำหรับเส้นโยงข้ามคอลัมน์ (เพิ่ม overflow: visible ป้องกันเส้นแนวตั้งแหว่ง/หาย) -->
+                <svg id="flow-svg" class="absolute inset-0 w-full h-full pointer-events-none z-[100] hidden md:block" style="filter: drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.3)); overflow: visible;">
+                    <defs>
+                        <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
+                        </marker>
+                        <!-- ปรับขนาดหัวลูกศรสีม่วงให้สมดุลกับความหนาเส้นใหม่ -->
+                        <marker id="arrow-purple" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#9333ea" />
+                        </marker>
+                    </defs>
+                    
+                    <!-- เส้นตัวจริง -->
+                    <!-- เส้นแดง: ส่งต่ออาการรุนแรง -->
+                    <path id="red-line-path" fill="none" stroke="#dc2626" stroke-width="4" stroke-linejoin="round" marker-end="url(#arrow-red)" />
+                    <!-- เส้นม่วง: ส่งข้อมูลควบคุมโรค (ปรับ stroke-width เป็น 8 ให้หนาขึ้นอย่างชัดเจน) -->
+                    <path id="purple-line-path" fill="none" stroke="#9333ea" stroke-width="8" stroke-linejoin="round" marker-end="url(#arrow-purple)" stroke-dasharray="8,6" />
+                </svg>
+
+                <!-- ================= LEFT COLUMN (ONLINE) ================= -->
                 
                 <!-- หมอพร้อม -->
                 <div class="bg-blue-50 border border-blue-200 rounded-2xl sm:rounded-full px-6 sm:px-8 py-3 shadow-sm text-center w-[90%] sm:w-auto z-10">
@@ -379,9 +380,43 @@ def render_flow():
                 </div>
             </div>
         </div>
+        </div> <!-- ปิด capture-area -->
 
-        <!-- Script สำหรับวาดเส้นโยง SVG -->
+        <!-- Script สำหรับวาดเส้นโยง SVG และบันทึกรูปภาพ -->
         <script>
+            function downloadImage() {
+                // อัปเดตเส้นก่อนเผื่อจอเพิ่งเปลี่ยนขนาด
+                drawFlowLines();
+                
+                // หา element ปุ่ม และเปลี่ยนข้อความเพื่อบอกผู้ใช้ว่ากำลังประมวลผล
+                const btn = document.querySelector('button[onclick="downloadImage()"]');
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = 'กำลังประมวลผล...';
+                
+                const captureArea = document.getElementById('capture-area');
+                
+                // ใช้ html2canvas จับภาพ
+                html2canvas(captureArea, {
+                    scale: 2, // ความละเอียดสูง (2x)
+                    backgroundColor: "#ffffff", // กำหนดพื้นหลังสีขาว
+                    useCORS: true, // อนุญาตให้โหลด assets ข้ามโดเมนได้
+                    logging: false
+                }).then(canvas => {
+                    // สร้างลิงก์ดาวน์โหลด
+                    const link = document.createElement('a');
+                    link.download = 'PM25_Flow_Sansai_Hospital.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    // คืนค่าปุ่มกลับเหมือนเดิม
+                    btn.innerHTML = originalContent;
+                }).catch(err => {
+                    console.error("Error generating image:", err);
+                    btn.innerHTML = originalContent;
+                    alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
+                });
+            }
+
             function drawFlowLines() {
                 const svg = document.getElementById('flow-svg');
                 const container = document.getElementById('main-flow-container');
@@ -427,7 +462,8 @@ def render_flow():
                         const pEndY = dcRect.top + (dcRect.height / 2) - svgRect.top;
                         
                         // ลากออกทางขวาให้พ้นกรอบ แล้วดิ่งลงมาหาเป้าหมาย
-                        const pGutterX = Math.max(pStartX + 30, pEndX + 30); 
+                        // ปรับให้บวกเผื่อออกไปทางขวาเยอะขึ้นอีกนิด เส้นจะได้ไม่ทับขอบกล่อง (ไม่โดนตัดเพราะใส่ overflow: visible แล้ว)
+                        const pGutterX = Math.max(pStartX + 40, pEndX + 40); 
                         
                         const dPurple = `M ${pStartX} ${pStartY} L ${pGutterX} ${pStartY} L ${pGutterX} ${pEndY} L ${pEndX + 8} ${pEndY}`;
                         pLinePath.setAttribute('d', dPurple);
