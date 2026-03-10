@@ -144,8 +144,8 @@ def render_pm25_flow():
                 </button>
             </div>
 
-            <!-- Main Container -->
-            <div id="main-container" class="max-w-[1400px] mx-auto relative pb-20 sm:pb-28 lg:pb-32 z-10">
+            <!-- Main Container (เพิ่ม padding bottom เผื่อพื้นที่ให้เส้นประด้านล่างสุด) -->
+            <div id="main-container" class="max-w-[1400px] mx-auto relative pb-24 sm:pb-32 lg:pb-40 z-10">
                 
                 <!-- Alert Box -->
                 <div class="flex justify-end mb-6 relative z-20">
@@ -228,7 +228,12 @@ def render_pm25_flow():
                                     <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-1.5">
                                         <i data-lucide="smartphone" class="w-5 h-5 sm:w-6 sm:h-6 c2-icon shrink-0"></i>
                                         <h3 class="font-bold text-main text-[13px] sm:text-[14px] baseline-fix">ระบบก่อนถึง รพ. และออนไลน์</h3>
-                                        <span class="bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold ml-auto shrink-0 shadow-sm">คลินิกมลพิษ</span>
+                                        <!-- SVG Text สำหรับจัดข้อความคลินิกมลพิษให้อยู่กึ่งกลางเป๊ะ 100% -->
+                                        <div class="bg-orange-500 rounded-full shrink-0 shadow-sm ml-auto relative overflow-hidden" style="width: 70px; height: 20px; min-width: 70px;">
+                                            <svg width="100%" height="100%" viewBox="0 0 70 20" class="absolute inset-0 pointer-events-none">
+                                                <text x="50%" y="50%" text-anchor="middle" dy=".35em" font-family="Sarabun, sans-serif" font-weight="bold" font-size="11" fill="#ffffff">คลินิกมลพิษ</text>
+                                            </svg>
+                                        </div>
                                     </div>
                                     <div class="flex items-center justify-between w-full gap-2 text-[10px] sm:text-[11px] pt-1">
                                         <div class="flex-1">
@@ -496,7 +501,15 @@ def render_pm25_flow():
                     const retEndX = getX(colL) + (colL.width / 2);
                     const retEndY = getY(colL) + colL.height;
                     
-                    const dropY = Math.max(retStartY, retEndY) + 40;
+                    // คำนวณจุดล่างสุดของ "ทุกคอลัมน์" เพื่อไม่ให้เส้นลากทะลุคอลัมน์กลาง
+                    const maxBottom = Math.max(
+                        getY(colL) + colL.height,
+                        getY(colM) + colM.height,
+                        getY(colR) + colR.height
+                    );
+                    
+                    // ขยับเส้นประลงมาใต้คอลัมน์ที่ยาวที่สุด
+                    const dropY = maxBottom + 50;
                     
                     const returnPath = `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${retEndY + 15}`;
                     document.getElementById('path-return').setAttribute('d', returnPath);
@@ -592,4 +605,5 @@ def render_pm25_flow():
     </html>
     """
     
-    components.html(html_code, height=1350, scrolling=True)
+    # เพิ่มความสูงขึ้นอีกนิดเผื่อเส้นประด้านล่างสุด
+    components.html(html_code, height=1400, scrolling=True)
