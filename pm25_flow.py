@@ -145,7 +145,8 @@ def render_pm25_flow():
             </div>
 
             <!-- Main Container (เพิ่ม padding bottom เผื่อพื้นที่ให้เส้นประด้านล่างสุด) -->
-            <div id="main-container" class="max-w-[1400px] mx-auto relative pb-24 sm:pb-32 lg:pb-40 z-10">
+            <!-- ขยาย padding-bottom เป็น pb-32 sm:pb-40 lg:pb-48 เพื่อรองรับการขยับเส้นประให้ห่างลงมาอีก -->
+            <div id="main-container" class="max-w-[1400px] mx-auto relative pb-32 sm:pb-40 lg:pb-48 z-10">
                 
                 <!-- Alert Box -->
                 <div class="flex justify-end mb-6 relative z-20">
@@ -508,8 +509,8 @@ def render_pm25_flow():
                         getY(colR) + colR.height
                     );
                     
-                    // ขยับเส้นประลงมาใต้คอลัมน์ที่ยาวที่สุด
-                    const dropY = maxBottom + 50;
+                    // ขยับเส้นประลงมาให้ห่างจากขอบล่างสุดของคอลัมน์ที่ยาวที่สุดเพิ่มขึ้น (จากเดิม +50 เป็น +100)
+                    const dropY = maxBottom + 100;
                     
                     const returnPath = `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${retEndY + 15}`;
                     document.getElementById('path-return').setAttribute('d', returnPath);
@@ -606,4 +607,4 @@ def render_pm25_flow():
     """
     
     # เพิ่มความสูงขึ้นอีกนิดเผื่อเส้นประด้านล่างสุด
-    components.html(html_code, height=1400, scrolling=True)
+    components.html(html_code, height=1450, scrolling=True)
