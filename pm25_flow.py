@@ -3,7 +3,7 @@ import streamlit.components.v1 as components
 def render_pm25_flow():
     html_code = """
     <!DOCTYPE html>
-    <html lang="th">
+    <html lang="th" style="background: transparent;">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -125,10 +125,10 @@ def render_pm25_flow():
             }
         </style>
     </head>
-    <body class="bg-slate-50">
+    <body class="bg-transparent antialiased">
         
-        <!-- พื้นที่สำหรับ Capture -->
-        <div id="capture-area" class="w-full bg-slate-50 pb-10 pt-6 px-4 sm:px-8 lg:px-12 transition-all duration-300">
+        <!-- พื้นที่สำหรับ Capture (เติม min-h-screen เพื่อความยืดหยุ่นหน้าจอ) -->
+        <div id="capture-area" class="w-full min-h-screen bg-slate-50 pb-10 pt-6 px-4 sm:px-8 lg:px-12 transition-all duration-300">
             
             <!-- Header & Download Button -->
             <div class="text-center mb-8 sm:mb-12 relative">
@@ -600,4 +600,5 @@ def render_pm25_flow():
     </html>
     """
     
+    # เพิ่มความสูงขึ้นให้สัมพันธ์กับหน้าจอ
     components.html(html_code, height=1550, scrolling=True)
