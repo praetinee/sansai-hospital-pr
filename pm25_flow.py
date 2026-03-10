@@ -67,7 +67,7 @@ def render_pm25_flow():
             .inner-box { background-color: var(--bg-card); border: 1px solid var(--border-card); border-radius: 0.75rem; padding: 1rem; box-shadow: var(--shadow-box); transition: all 0.3s; }
             .inner-box:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
             
-            .tag-code { position: absolute; top: 0.5rem; right: 0.5rem; background-color: var(--alert-bg); color: var(--alert-text); font-size: 0.65rem; padding: 0.2rem 0.6rem; border-radius: 9999px; font-weight: 700; z-index: 10; border: 1px solid var(--alert-border); box-shadow: 0 2px 4px rgba(0,0,0,0.15); letter-spacing: 0.025em; }
+            .tag-code { position: absolute; top: 0.5rem; right: 0.5rem; background-color: var(--alert-bg); color: var(--alert-text); font-size: 0.7rem; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: 700; z-index: 10; border: 1px solid var(--alert-border); box-shadow: 0 2px 4px rgba(0,0,0,0.15); letter-spacing: 0.025em; white-space: nowrap; }
             .arrow-icon { color: var(--line-color); flex-shrink: 0; }
 
             /* Semantic Theme Classes */
@@ -142,8 +142,8 @@ def render_pm25_flow():
                 </button>
             </div>
 
-            <!-- Main Container -->
-            <div id="main-container" class="max-w-[1400px] mx-auto relative pb-40 sm:pb-48 lg:pb-56 z-10">
+            <!-- ขยาย Main Container ให้เป็น 1600px เพื่อไม่ให้กรอบบีบตัวหนังสือ -->
+            <div id="main-container" class="max-w-[1600px] w-full mx-auto relative pb-40 sm:pb-48 lg:pb-56 z-10 px-2 sm:px-4">
                 
                 <!-- Alert Box -->
                 <div class="flex justify-end mb-6 relative z-20">
@@ -166,15 +166,19 @@ def render_pm25_flow():
                     </p>
                 </div>
 
-                <!-- 4 Columns Grid (1:2:1 Ratio) -->
+                <!-- 4 Columns Grid (ขยายสัดส่วนอัตโนมัติตามเนื้อหา) -->
                 <div id="main-grid" class="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10 items-stretch">
 
                     <!-- ================= Column 1: Left (Community) ================= -->
                     <div id="col-left" class="col-1 flow-col lg:col-span-1">
-                        <h2 class="text-[15px] sm:text-lg lg:text-base xl:text-lg font-extrabold text-center c1-title py-2.5 rounded-full mx-1 shadow-sm whitespace-nowrap px-2 flex items-center justify-center">
-                            <span class="baseline-fix-inline">ชุมชนและหน่วยบริการปฐมภูมิ (เชิงรุก)</span>
-                        </h2>
-                        <div class="flex flex-col items-center text-center py-5 bg-white/60 rounded-xl border border-yellow-200 shadow-sm">
+                        <!-- บังคับบรรทัดเดียว ไม่ให้ตกบรรทัด -->
+                        <div class="w-full flex justify-center">
+                            <h2 class="text-[15px] sm:text-base lg:text-[17px] font-extrabold text-center c1-title py-3 px-6 rounded-full shadow-sm whitespace-nowrap w-max min-w-full flex items-center justify-center">
+                                <span class="baseline-fix-inline">ชุมชนและหน่วยบริการปฐมภูมิ (เชิงรุก)</span>
+                            </h2>
+                        </div>
+
+                        <div class="flex flex-col items-center text-center py-5 mt-3 bg-white/60 rounded-xl border border-yellow-200 shadow-sm">
                             <div class="flex justify-center mb-2">
                                 <i data-lucide="users" class="w-10 h-10 sm:w-12 sm:h-12 c1-icon"></i>
                             </div>
@@ -207,155 +211,148 @@ def render_pm25_flow():
 
                     <!-- ================= Column 2: Middle (Clinic & ER) ================= -->
                     <div id="col-mid" class="col-2 flow-col lg:col-span-2">
-                        <h2 class="text-[15px] sm:text-lg font-extrabold text-center c2-title py-2.5 rounded-full mx-2 sm:mx-4 shadow-sm flex items-center justify-center">
-                            <span class="baseline-fix-inline">การรับผู้ป่วยและดูแลรักษา (รับ)</span>
-                        </h2>
+                        <div class="w-full flex justify-center">
+                            <h2 class="text-[15px] sm:text-base lg:text-[17px] font-extrabold text-center c2-title py-3 px-6 rounded-full shadow-sm flex items-center justify-center whitespace-nowrap w-max min-w-[70%]">
+                                <span class="baseline-fix-inline">การรับผู้ป่วยและดูแลรักษา (รับ)</span>
+                            </h2>
+                        </div>
                         
-                        <div id="inner-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-4 h-full mt-2">
+                        <div id="inner-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-5 h-full mt-3">
                             
                             <!-- Left Sub-column (4 original rows) -->
                             <div class="space-y-4 flex flex-col justify-between h-full">
+                                
                                 <!-- Row 1: Online -->
-                                <div class="inner-box flex flex-col justify-center gap-2 relative border-orange-200 shadow-sm flex-1 p-3 sm:p-4">
-                                    <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-1.5">
+                                <div class="inner-box flex flex-col gap-2 relative border-orange-200 shadow-sm flex-1 p-3 sm:p-4">
+                                    <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-2">
                                         <i data-lucide="smartphone" class="w-5 h-5 sm:w-6 sm:h-6 c2-icon shrink-0"></i>
-                                        <h3 class="font-bold text-main text-[13px] sm:text-[14px] baseline-fix">ระบบก่อนถึง รพ. และออนไลน์</h3>
-                                        <!-- เปลี่ยนป้ายคลินิกมลพิษ กลับมาใช้ HTML ธรรมดาเพื่อความคมชัดและไม่แหว่ง -->
-                                        <div class="bg-orange-500 text-white text-[10px] px-2.5 py-1 rounded-full font-bold ml-auto shrink-0 shadow-sm flex items-center justify-center">
+                                        <h3 class="font-bold text-main text-[14px] sm:text-[15px] baseline-fix whitespace-nowrap">ระบบก่อนถึง รพ. และออนไลน์</h3>
+                                        
+                                        <!-- ป้ายคลินิกมลพิษ: ล็อกขนาด ห้ามหด ห้ามตัดคำ -->
+                                        <div class="bg-orange-500 text-white text-[11px] px-3 py-1 rounded-full font-bold ml-auto shrink-0 min-w-max shadow-sm flex items-center justify-center">
                                             <span class="baseline-fix-inline whitespace-nowrap">คลินิกมลพิษ</span>
                                         </div>
                                     </div>
-                                    <div class="flex items-stretch justify-between w-full gap-2 text-[10px] sm:text-[11px] pt-1 h-full">
-                                        <div class="flex-1 flex flex-col justify-center">
-                                            <p class="text-muted font-medium leading-tight">ผ่าน Line OA หรือ หมอพร้อม</p>
+                                    <div class="grid grid-cols-[1fr_auto_1fr] w-full gap-2 items-center h-full min-h-[40px]">
+                                        <div class="flex flex-col justify-center h-full">
+                                            <p class="text-muted font-medium leading-tight text-[11px] sm:text-[12px]">ผ่าน Line OA หรือ หมอพร้อม</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0 my-auto"></i>
-                                        <div class="text-right flex-shrink-0 flex flex-col justify-center">
-                                            <p class="font-bold c2-text leading-tight baseline-fix">ประเมินเบื้องต้น</p>
-                                            <p class="text-muted font-medium leading-tight mt-0.5">& Telemedicine</p>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 shrink-0"></i>
+                                        <div class="flex flex-col justify-center items-end text-right h-full">
+                                            <p class="font-bold c2-text leading-tight baseline-fix text-[12px] sm:text-[13px]">ประเมินเบื้องต้น</p>
+                                            <p class="text-muted font-medium leading-tight mt-1 text-[11px] sm:text-[12px]">& Telemedicine</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Row 2: PCU หนองหาร / รพ.สต. -->
-                                <div class="inner-box flex flex-col justify-center gap-2 relative border-orange-200 shadow-sm flex-1 p-3 sm:p-4 pt-7 sm:pt-7">
-                                    <div class="tag-code flex items-center justify-center"><span class="baseline-fix-inline whitespace-nowrap">รหัส Z58.1</span></div>
-                                    <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-1.5">
+                                <div class="inner-box flex flex-col gap-2 relative border-orange-200 shadow-sm flex-1 p-3 sm:p-4 pt-7">
+                                    <div class="tag-code"><span class="baseline-fix-inline">รหัส Z58.1</span></div>
+                                    <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-2">
                                         <i data-lucide="building-2" class="w-5 h-5 sm:w-6 sm:h-6 c2-icon shrink-0"></i>
-                                        <h3 class="font-bold text-[13px] sm:text-[14px] text-main leading-tight baseline-fix">PCU หนองหาร & รพ.สต.</h3>
+                                        <h3 class="font-bold text-[14px] sm:text-[15px] text-main leading-tight baseline-fix whitespace-nowrap">PCU หนองหาร & รพ.สต.</h3>
                                     </div>
-                                    <div class="flex items-stretch justify-between w-full gap-1 text-[10px] sm:text-[11px] pt-1 h-full">
-                                        <div class="text-center flex-1 flex flex-col justify-center items-center">
-                                            <p class="font-bold text-main leading-tight baseline-fix my-auto">คัดกรองอาการ</p>
+                                    <!-- ใช้ CSS Grid แบบแข็งแรง แบ่งสัดส่วนคอลัมน์ชัดเจน -->
+                                    <div class="grid grid-cols-[1fr_auto_1.4fr_auto_0.8fr] w-full gap-1 sm:gap-2 h-full min-h-[50px] items-center text-[11px] sm:text-[12px]">
+                                        <div class="flex flex-col justify-center items-center text-center h-full px-1">
+                                            <p class="font-bold text-main leading-tight baseline-fix">คัดกรองอาการ</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0 my-auto"></i>
-                                        <div class="text-center flex-[1.3] flex flex-col justify-center items-center">
-                                            <div class="my-auto">
-                                                <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง GG Sheets</p>
-                                                <p class="text-muted font-medium leading-tight mt-0.5">+ รักษาตามอาการ</p>
-                                            </div>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="flex flex-col justify-center items-center text-center h-full px-1">
+                                            <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง GG Sheets</p>
+                                            <p class="text-muted font-medium leading-tight mt-1">+ รักษาตามอาการ</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0 my-auto"></i>
-                                        <div class="text-center flex-[0.8] flex flex-col justify-center items-center">
-                                            <div class="my-auto">
-                                                <p class="text-muted font-medium leading-tight baseline-fix">อาการรุนแรง</p>
-                                                <p class="font-bold text-red-600 leading-tight mt-0.5">Refer รพ.</p>
-                                            </div>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="flex flex-col justify-center items-center text-center h-full px-1">
+                                            <p class="text-muted font-medium leading-tight baseline-fix">อาการรุนแรง</p>
+                                            <p class="font-bold text-red-600 leading-tight mt-1">Refer รพ.</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Row 3: OPD -->
-                                <div class="inner-box flex flex-col justify-center gap-2 relative border-orange-200 shadow-sm flex-1 p-3 sm:p-4 pt-7 sm:pt-7">
-                                    <div class="tag-code flex items-center justify-center"><span class="baseline-fix-inline whitespace-nowrap">รหัส Z58.1</span></div>
-                                    <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-1.5">
+                                <div class="inner-box flex flex-col gap-2 relative border-orange-200 shadow-sm flex-1 p-3 sm:p-4 pt-7">
+                                    <div class="tag-code"><span class="baseline-fix-inline">รหัส Z58.1</span></div>
+                                    <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-2">
                                         <i data-lucide="eye" class="w-5 h-5 sm:w-6 sm:h-6 c2-icon shrink-0"></i>
-                                        <h3 class="font-bold text-[13px] sm:text-[14px] text-main leading-tight baseline-fix">ผู้ป่วยนอก (OPD)</h3>
+                                        <h3 class="font-bold text-[14px] sm:text-[15px] text-main leading-tight baseline-fix whitespace-nowrap">ผู้ป่วยนอก (OPD)</h3>
                                     </div>
-                                    <div class="flex items-stretch justify-between w-full gap-1 text-[10px] sm:text-[11px] pt-1 h-full">
-                                        <div class="text-center flex-[0.8] flex flex-col justify-center items-center">
-                                            <p class="font-bold text-main leading-tight baseline-fix my-auto">คัดกรองอาการ</p>
+                                    <div class="grid grid-cols-[0.8fr_auto_1.4fr_auto_1fr] w-full gap-1 sm:gap-2 h-full min-h-[50px] items-center text-[11px] sm:text-[12px]">
+                                        <div class="flex flex-col justify-center items-center text-center h-full px-1">
+                                            <p class="font-bold text-main leading-tight baseline-fix">คัดกรองอาการ</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0 my-auto"></i>
-                                        <div class="text-center flex-[1.3] flex flex-col justify-center items-center">
-                                            <div class="my-auto">
-                                                <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง GG Sheets</p>
-                                                <p class="text-muted font-medium leading-tight mt-0.5">+ รักษาตามอาการ</p>
-                                            </div>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="flex flex-col justify-center items-center text-center h-full px-1">
+                                            <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง GG Sheets</p>
+                                            <p class="text-muted font-medium leading-tight mt-1">+ รักษาตามอาการ</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0 my-auto"></i>
-                                        <div class="text-center flex-1 flex flex-col justify-center items-center">
-                                            <div class="my-auto">
-                                                <p class="text-muted font-medium leading-tight baseline-fix">นัดติดตาม ไม่ทุเลา</p>
-                                                <p class="font-bold c2-text leading-tight mt-0.5">ส่งคลินิกมลพิษ</p>
-                                            </div>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="flex flex-col justify-center items-center text-center h-full px-1">
+                                            <p class="text-muted font-medium leading-tight baseline-fix">นัดติดตาม ไม่ทุเลา</p>
+                                            <p class="font-bold c2-text leading-tight mt-1 whitespace-nowrap">ส่งคลินิกมลพิษ</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Row 4: ER -->
-                                <div class="inner-box flex flex-col justify-center gap-2 relative border-orange-200 shadow-sm flex-1 p-3 sm:p-4 pt-7 sm:pt-7">
-                                    <div class="tag-code flex items-center justify-center"><span class="baseline-fix-inline whitespace-nowrap">รหัส Z58.1</span></div>
-                                    <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-1.5">
+                                <div class="inner-box flex flex-col gap-2 relative border-orange-200 shadow-sm flex-1 p-3 sm:p-4 pt-7">
+                                    <div class="tag-code"><span class="baseline-fix-inline">รหัส Z58.1</span></div>
+                                    <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-2">
                                         <i data-lucide="ambulance" class="w-5 h-5 sm:w-6 sm:h-6 text-red-500 shrink-0"></i>
-                                        <h3 class="font-bold text-[13px] sm:text-[14px] text-main leading-tight baseline-fix">ผู้ป่วยฉุกเฉิน (ER) & 1669</h3>
+                                        <h3 class="font-bold text-[14px] sm:text-[15px] text-main leading-tight baseline-fix whitespace-nowrap">ผู้ป่วยฉุกเฉิน (ER) & 1669</h3>
                                     </div>
-                                    <div class="flex items-stretch justify-between w-full gap-1 text-[10px] sm:text-[11px] pt-1 h-full">
-                                        <div class="text-center flex-1 flex flex-col justify-center items-center">
-                                            <div class="my-auto">
-                                                <p class="font-bold text-main leading-tight baseline-fix">อาการรุนแรง</p>
-                                                <p class="text-muted font-medium leading-tight mt-0.5">(หอบหืด, COPD..)</p>
-                                            </div>
+                                    <div class="grid grid-cols-[1fr_auto_0.8fr_auto_1.4fr] w-full gap-1 sm:gap-2 h-full min-h-[50px] items-center text-[11px] sm:text-[12px]">
+                                        <div class="flex flex-col justify-center items-center text-center h-full px-1">
+                                            <p class="font-bold text-main leading-tight baseline-fix">อาการรุนแรง</p>
+                                            <p class="text-muted font-medium leading-tight mt-1 whitespace-nowrap">(หอบหืด, COPD..)</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0 my-auto"></i>
-                                        <div class="text-center flex-[0.8] flex flex-col justify-center items-center">
-                                            <div class="my-auto">
-                                                <p class="font-bold text-main leading-tight baseline-fix">1669 / EMS</p>
-                                                <p class="text-muted font-medium leading-tight mt-0.5">รับเข้า ER</p>
-                                            </div>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="flex flex-col justify-center items-center text-center h-full px-1">
+                                            <p class="font-bold text-main leading-tight baseline-fix">1669 / EMS</p>
+                                            <p class="text-muted font-medium leading-tight mt-1">รับเข้า ER</p>
                                         </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0 my-auto"></i>
-                                        <div class="text-center flex-[1.4] flex flex-col justify-center items-center">
-                                            <div class="my-auto">
-                                                <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง GG Sheets</p>
-                                                <p class="text-muted font-medium leading-tight mt-0.5">+ ประเมิน Admit/กลับบ้าน</p>
-                                            </div>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
+                                        <div class="flex flex-col justify-center items-center text-center h-full px-1">
+                                            <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง GG Sheets</p>
+                                            <p class="text-muted font-medium leading-tight mt-1">+ ประเมิน Admit/กลับบ้าน</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Right Sub-column (Pollution Clinic Box) -->
-                            <div class="inner-box border-orange-400 bg-[#fff2e5] p-4 sm:p-5 flex flex-col h-full relative shadow-md">
+                            <div class="inner-box border-orange-400 bg-[#fff2e5] p-5 flex flex-col h-full relative shadow-md">
                                 
-                                <!-- อัปเดตหัวข้อ "คลินิกมลพิษ" ใช้ HTML ธรรมดา ป้องกันการแหว่ง -->
-                                <h3 class="font-extrabold text-orange-900 text-sm sm:text-base flex items-center justify-center gap-2 border-b border-orange-200 pb-2.5 mb-4 whitespace-nowrap">
-                                    <i data-lucide="stethoscope" class="w-5 h-5 text-orange-600"></i>
-                                    <span class="baseline-fix-inline">คลินิกมลพิษ</span>
-                                </h3>
+                                <!-- หัวข้อ "คลินิกมลพิษ" จัดเรียงแบบ Flex ธรรมดา ป้องกันปัญหาตัดคำ 100% -->
+                                <div class="flex items-center justify-center gap-3 border-b-2 border-orange-200 pb-3 mb-5 w-full">
+                                    <i data-lucide="stethoscope" class="w-6 h-6 text-orange-600 shrink-0"></i>
+                                    <h3 class="font-extrabold text-orange-900 text-base sm:text-lg whitespace-nowrap baseline-fix">
+                                        คลินิกมลพิษ
+                                    </h3>
+                                </div>
 
-                                <div class="space-y-4 flex-grow text-[12px] sm:text-[13px] text-main overflow-y-auto pr-1">
+                                <div class="space-y-5 flex-grow text-[13px] sm:text-[14px] text-main">
                                     
                                     <!-- 1. จัดการนัดหมาย -->
                                     <div>
-                                        <div class="font-bold text-orange-800 flex items-start gap-2 mb-1.5">
-                                            <div class="bg-orange-200 rounded-full shrink-0 shadow-inner relative overflow-hidden mt-0.5 flex items-center justify-center" style="width: 20px; height: 20px; min-width: 20px;">
-                                                <span class="text-[11px] text-[#9a3412] leading-none baseline-fix-inline">1</span>
+                                        <div class="font-bold text-orange-800 flex items-start gap-2 mb-2">
+                                            <div class="bg-orange-200 rounded-full shrink-0 shadow-inner flex items-center justify-center" style="width: 22px; height: 22px; min-width: 22px;">
+                                                <span class="text-[12px] text-[#9a3412] leading-none baseline-fix-inline font-black">1</span>
                                             </div>
-                                            <span class="baseline-fix-inline mt-0.5">จัดการนัดหมาย</span>
+                                            <span class="baseline-fix-inline mt-[2px]">จัดการนัดหมาย</span>
                                         </div>
-                                        <p class="pl-7 text-muted font-medium">(หมอพร้อม/Telemedicine/Walk-in)</p>
+                                        <p class="pl-8 text-muted font-medium">(หมอพร้อม/Telemedicine/Walk-in)</p>
                                     </div>
 
                                     <!-- 2. เฝ้าระวัง -->
                                     <div>
-                                        <div class="font-bold text-orange-800 flex items-start gap-2 mb-1.5">
-                                            <div class="bg-orange-200 rounded-full shrink-0 shadow-inner relative overflow-hidden mt-0.5 flex items-center justify-center" style="width: 20px; height: 20px; min-width: 20px;">
-                                                <span class="text-[11px] text-[#9a3412] leading-none baseline-fix-inline">2</span>
+                                        <div class="font-bold text-orange-800 flex items-start gap-2 mb-2">
+                                            <div class="bg-orange-200 rounded-full shrink-0 shadow-inner flex items-center justify-center" style="width: 22px; height: 22px; min-width: 22px;">
+                                                <span class="text-[12px] text-[#9a3412] leading-none baseline-fix-inline font-black">2</span>
                                             </div>
-                                            <span class="baseline-fix-inline mt-0.5">เฝ้าระวัง (การเข้ารับการรักษาของผู้ป่วย)</span>
+                                            <span class="baseline-fix-inline mt-[2px]">เฝ้าระวัง (การเข้ารับการรักษาของผู้ป่วย)</span>
                                         </div>
-                                        <ul class="list-disc pl-11 space-y-1.5 text-muted font-medium">
+                                        <ul class="list-disc pl-12 space-y-2 text-muted font-medium">
                                             <li>ตรวจสอบรหัส ICD-10 ที่เกี่ยวข้องกับการสัมผัส PM2.5 ในระบบ HosOS</li>
                                             <li>ตรวจสอบผู้ป่วยที่เข้ารับการรักษาในวันที่ฝุ่นสูง (> 37.5) GG sheets ของ OPD/ER/PCU หนองหาร</li>
                                         </ul>
@@ -363,33 +360,33 @@ def render_pm25_flow():
 
                                     <!-- 3. คัดกรอง ซักประวัติ -->
                                     <div>
-                                        <div class="font-bold text-orange-800 flex items-start gap-2 mb-2">
-                                            <div class="bg-orange-200 rounded-full shrink-0 shadow-inner relative overflow-hidden mt-0.5 flex items-center justify-center" style="width: 20px; height: 20px; min-width: 20px;">
-                                                <span class="text-[11px] text-[#9a3412] leading-none baseline-fix-inline">3</span>
+                                        <div class="font-bold text-orange-800 flex items-start gap-2 mb-3">
+                                            <div class="bg-orange-200 rounded-full shrink-0 shadow-inner flex items-center justify-center" style="width: 22px; height: 22px; min-width: 22px;">
+                                                <span class="text-[12px] text-[#9a3412] leading-none baseline-fix-inline font-black">3</span>
                                             </div>
-                                            <span class="baseline-fix-inline mt-0.5">คัดกรอง ซักประวัติ สอบสวนโรค</span>
+                                            <span class="baseline-fix-inline mt-[2px]">คัดกรอง ซักประวัติ สอบสวนโรค</span>
                                         </div>
-                                        <div class="pl-7 space-y-2.5">
+                                        <div class="pl-8 space-y-3">
                                             
                                             <!-- กรณีไม่เข้าข่าย -->
-                                            <div class="bg-white p-2.5 rounded-lg border border-orange-100 shadow-sm flex flex-col justify-center h-full">
-                                                <p class="font-bold text-emerald-700 mb-1 flex items-center gap-1.5 baseline-fix">
-                                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> กรณีไม่เข้าข่าย / อาการเล็กน้อย
+                                            <div class="bg-white p-3 rounded-lg border border-orange-100 shadow-sm flex flex-col justify-center min-h-[60px]">
+                                                <p class="font-bold text-emerald-700 mb-1.5 flex items-center gap-2 baseline-fix">
+                                                    <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 shrink-0"></i> กรณีไม่เข้าข่าย / อาการเล็กน้อย
                                                 </p>
-                                                <p class="text-muted font-medium pl-5 border-l-2 border-emerald-300 ml-1.5 leading-tight">
+                                                <p class="text-muted font-medium pl-7 border-l-2 border-emerald-300 ml-2.5 leading-tight">
                                                     ให้คำแนะนำ และส่งต่อ <span class="font-bold text-main">ทีม 3 หมอ</span>
                                                 </p>
                                             </div>
                                             
                                             <!-- กรณีเข้าข่าย -->
-                                            <div class="bg-white p-2.5 rounded-lg border border-orange-100 shadow-sm flex flex-col justify-center h-full">
-                                                <p class="font-bold text-red-700 mb-1.5 flex items-center gap-1.5 baseline-fix">
-                                                    <i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i> กรณีเข้าข่าย
+                                            <div class="bg-white p-3 rounded-lg border border-orange-100 shadow-sm flex flex-col justify-center">
+                                                <p class="font-bold text-red-700 mb-2 flex items-center gap-2 baseline-fix">
+                                                    <i data-lucide="alert-circle" class="w-5 h-5 text-red-500 shrink-0"></i> กรณีเข้าข่าย
                                                 </p>
-                                                <ul class="list-disc pl-8 space-y-1.5 text-muted font-medium ml-1">
+                                                <ul class="list-disc pl-10 space-y-2 text-muted font-medium ml-1">
                                                     <li class="baseline-fix">ส่งพบแพทย์ ตรวจ Lab</li>
                                                     <li class="baseline-fix"><span class="text-red-600 font-bold">ส่งห้องฉุกเฉิน (ER)</span> หากอาการรุนแรง</li>
-                                                    <li class="leading-snug baseline-fix">แจ้งข้อมูลผู้ป่วยที่เข้าข่ายแก่งาน<span style="color: #7e22ce; font-weight: 800;">ควบคุมโรค</span> <br/><span class="text-[11px] opacity-80 font-normal">(เพื่อให้ดำเนินการลงพื้นที่ + รายงาน สสจ.)</span></li>
+                                                    <li class="leading-snug baseline-fix mt-1">แจ้งข้อมูลผู้ป่วยที่เข้าข่ายแก่งาน<span style="color: #7e22ce; font-weight: 800;">ควบคุมโรค</span> <br/><span class="text-[11px] sm:text-[12px] opacity-80 font-normal">(เพื่อให้ดำเนินการลงพื้นที่ + รายงาน สสจ.)</span></li>
                                                 </ul>
                                             </div>
 
@@ -402,49 +399,52 @@ def render_pm25_flow():
 
                     <!-- ================= Column 3: Right (Control & Discharge) ================= -->
                     <div id="col-right" class="col-3 flow-col lg:col-span-1">
-                        <h2 class="text-[15px] sm:text-lg lg:text-[15px] xl:text-lg font-extrabold text-center c3-title py-2.5 rounded-full mx-1 shadow-sm whitespace-nowrap px-2 flex items-center justify-center">
-                            <span class="baseline-fix-inline">ควบคุมโรคและจำหน่ายผู้ป่วย</span>
-                        </h2>
+                        <div class="w-full flex justify-center">
+                            <!-- บังคับบรรทัดเดียว ไม่ให้ตกบรรทัด -->
+                            <h2 class="text-[15px] sm:text-base lg:text-[17px] font-extrabold text-center c3-title py-3 px-6 rounded-full shadow-sm whitespace-nowrap w-max min-w-full flex items-center justify-center">
+                                <span class="baseline-fix-inline">ควบคุมโรคและจำหน่ายผู้ป่วย</span>
+                            </h2>
+                        </div>
                         
-                        <div class="flex flex-col gap-4 h-full mt-2">
+                        <div class="flex flex-col gap-5 h-full mt-3">
                             <!-- 1. Disease Control -->
-                            <div class="rounded-2xl p-4 sm:p-5 box-dc shadow-sm flex-1 flex flex-col justify-center items-center relative transition-transform hover:-translate-y-1 bg-white">
-                                <h3 class="font-bold text-center mb-3 sm:mb-4 text-sm sm:text-lg box-dc-title py-1.5 px-4 rounded-full leading-tight baseline-fix w-full">
+                            <div class="rounded-2xl p-5 box-dc shadow-sm flex-1 flex flex-col justify-center items-center relative transition-transform hover:-translate-y-1 bg-white">
+                                <h3 class="font-bold text-center mb-5 text-[15px] sm:text-lg box-dc-title py-2 px-6 rounded-full leading-tight baseline-fix w-full">
                                     งานควบคุมโรค<br><span class="text-xs sm:text-sm font-normal">(Disease Control)</span>
                                 </h3>
-                                <div class="flex justify-between items-center text-center w-full h-full my-auto">
-                                    <div class="flex-1 flex flex-col items-center justify-center h-full">
-                                        <i data-lucide="shield-alert" class="w-7 h-7 sm:w-9 sm:h-9 mb-1 box-dc-icon"></i>
-                                        <p class="font-bold text-[13px] sm:text-base text-main leading-tight baseline-fix">รับแจ้งข้อมูล</p>
-                                        <p class="text-[11px] sm:text-sm text-muted font-medium leading-tight mt-1 opacity-90">ผู้ป่วยเข้าข่าย<br/>และอาการรุนแรง</p>
+                                <div class="grid grid-cols-[1fr_auto_1fr] w-full items-center text-center gap-2 h-full">
+                                    <div class="flex flex-col items-center justify-center h-full">
+                                        <i data-lucide="shield-alert" class="w-8 h-8 sm:w-10 sm:h-10 mb-2 box-dc-icon"></i>
+                                        <p class="font-bold text-[13px] sm:text-[14px] text-main leading-tight baseline-fix">รับแจ้งข้อมูล</p>
+                                        <p class="text-[11px] sm:text-[12px] text-muted font-medium leading-tight mt-1 opacity-90">ผู้ป่วยเข้าข่าย<br/>และอาการรุนแรง</p>
                                     </div>
-                                    <div class="flex items-center px-1 h-full">
+                                    <div class="flex items-center h-full">
                                         <i data-lucide="arrow-right" class="w-5 h-5 sm:w-7 sm:h-7 box-dc-icon opacity-70"></i>
                                     </div>
-                                    <div class="flex-1 flex flex-col items-center justify-center h-full">
-                                        <i data-lucide="megaphone" class="w-7 h-7 sm:w-9 sm:h-9 mb-1 box-dc-icon"></i>
-                                        <p class="font-bold text-[13px] sm:text-base text-main leading-tight baseline-fix">สอบสวน & รายงาน</p>
-                                        <p class="text-[11px] sm:text-sm text-muted font-medium mt-1 opacity-90">ลงพื้นที่สอบสวนโรค<br/>และรายงาน สสจ.</p>
+                                    <div class="flex flex-col items-center justify-center h-full">
+                                        <i data-lucide="megaphone" class="w-8 h-8 sm:w-10 sm:h-10 mb-2 box-dc-icon"></i>
+                                        <p class="font-bold text-[13px] sm:text-[14px] text-main leading-tight baseline-fix">สอบสวน & รายงาน</p>
+                                        <p class="text-[11px] sm:text-[12px] text-muted font-medium mt-1 opacity-90">ลงพื้นที่สอบสวนโรค<br/>และรายงาน สสจ.</p>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- 2. Discharge -->
-                            <div class="rounded-2xl p-4 sm:p-5 box-discharge shadow-sm flex-1 flex flex-col justify-center relative transition-transform hover:-translate-y-1 bg-white">
-                                <h3 class="font-bold text-center mb-3 sm:mb-4 text-sm sm:text-lg box-discharge-title py-1.5 px-4 rounded-full leading-tight baseline-fix w-full">
+                            <div class="rounded-2xl p-5 box-discharge shadow-sm flex-1 flex flex-col justify-center relative transition-transform hover:-translate-y-1 bg-white">
+                                <h3 class="font-bold text-center mb-5 text-[15px] sm:text-lg box-discharge-title py-2 px-6 rounded-full leading-tight baseline-fix w-full">
                                     การจำหน่ายผู้ป่วย<br><span class="text-xs sm:text-sm font-normal">(Discharge)</span>
                                 </h3>
-                                <div class="text-center space-y-2 sm:space-y-3 flex flex-col justify-center items-center h-full my-auto">
-                                    <div class="w-12 sm:w-16 h-1 bg-current opacity-30 mx-auto rounded-full" style="color: var(--dis-title-text);"></div>
-                                    <p class="text-[11px] sm:text-sm font-bold text-muted leading-relaxed opacity-90 baseline-fix">ประสานทีมเยี่ยมบ้าน<br/>ประเมินสภาพที่อยู่อาศัยไม่ให้กำเริบซ้ำ</p>
+                                <div class="text-center space-y-3 flex flex-col justify-center items-center h-full">
+                                    <div class="w-16 h-1 bg-current opacity-30 mx-auto rounded-full mb-2" style="color: var(--dis-title-text);"></div>
+                                    <p class="text-[12px] sm:text-[13px] font-bold text-muted leading-relaxed opacity-90 baseline-fix">ประสานทีมเยี่ยมบ้าน<br/>ประเมินสภาพที่อยู่อาศัยไม่ให้กำเริบซ้ำ</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Mobile view for return arrow text (Shown only on small screens) -->
-                <div id="mobile-return-label" class="lg:hidden text-center mt-8">
+                <!-- Mobile view for return arrow text -->
+                <div id="mobile-return-label" class="lg:hidden text-center mt-10">
                     <div class="inline-flex items-center justify-center bg-white px-6 py-3 rounded-full border-[2px]" style="border-color: var(--line-color);">
                         <p class="font-bold text-sm sm:text-base whitespace-nowrap baseline-fix" style="color: var(--line-color);">
                             การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
@@ -460,7 +460,6 @@ def render_pm25_flow():
                 lucide.createIcons();
             });
 
-            // ฟังก์ชันวาดเส้น SVG ข้ามคอลัมน์ (อัปเดตวาดหัวลูกศรเองในโค้ด Path)
             function drawLines(forceDesktop = false) {
                 const svg = document.getElementById('flow-svg');
                 const container = document.getElementById('main-container');
@@ -489,7 +488,6 @@ def render_pm25_flow():
                     const lmStartY = getY(colL) + (colL.height / 2);
                     const lmStartX = getX(colL) + colL.width;
                     const lmEndX = getX(colM) - 8;
-                    // วาดเส้น + วาดปีกหัวลูกศรชี้ไปทางขวาด้วยตัวเอง
                     const pathLM = `M ${lmStartX} ${lmStartY} L ${lmEndX} ${lmStartY} L ${lmEndX-8} ${lmStartY-6} M ${lmEndX} ${lmStartY} L ${lmEndX-8} ${lmStartY+6}`;
                     document.getElementById('path-lm').setAttribute('d', pathLM);
                     
@@ -497,29 +495,23 @@ def render_pm25_flow():
                     const mrStartY = getY(colM) + (colM.height / 2);
                     const mrStartX = getX(colM) + colM.width;
                     const mrEndX = getX(colR) - 8;
-                    // วาดเส้น + วาดปีกหัวลูกศรชี้ไปทางขวาด้วยตัวเอง
                     const pathMR = `M ${mrStartX} ${mrStartY} L ${mrEndX} ${mrStartY} L ${mrEndX-8} ${mrStartY-6} M ${mrEndX} ${mrStartY} L ${mrEndX-8} ${mrStartY+6}`;
                     document.getElementById('path-mr').setAttribute('d', pathMR);
                     
-                    // 3. Return Dashed Line (Right -> Left at Bottom)
+                    // 3. Return Dashed Line
                     const retStartX = getX(colR) + (colR.width / 2);
                     const retStartY = getY(colR) + colR.height;
                     const retEndX = getX(colL) + (colL.width / 2);
                     const retEndY = getY(colL) + colL.height;
                     
-                    // คำนวณจุดล่างสุดของ "ทุกคอลัมน์" เพื่อไม่ให้เส้นลากทะลุคอลัมน์กลาง
                     const maxBottom = Math.max(
                         getY(colL) + colL.height,
                         getY(colM) + colM.height,
                         getY(colR) + colR.height
                     );
                     
-                    // ขยับเส้นประลงมาให้ห่างจากขอบล่างสุดของคอลัมน์ที่ยาวที่สุด
                     const dropY = maxBottom + 140; 
-                    
-                    // คำนวณจุดปลายลูกศรชี้ขึ้นที่คอลัมน์ซ้าย
                     const rTipY = retEndY + 15;
-                    // วาดเส้นลากลง -> ซ้าย -> ขึ้น + วาดปีกหัวลูกศรชี้ขึ้นด้วยตัวเอง
                     const pathReturn = `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${rTipY} L ${retEndX-6} ${rTipY+8} M ${retEndX} ${rTipY} L ${retEndX+6} ${rTipY+8}`;
                     document.getElementById('path-return').setAttribute('d', pathReturn);
                     
@@ -545,7 +537,6 @@ def render_pm25_flow():
                 setTimeout(() => drawLines(), 500); 
             });
 
-            // ฟังก์ชันดาวน์โหลดรูป (อัปเกรดความเสถียรเต็มรูปแบบ)
             async function downloadImage() {
                 const btn = document.querySelector('button[onclick="downloadImage()"]');
                 const originalContent = btn.innerHTML;
@@ -558,34 +549,30 @@ def render_pm25_flow():
                 
                 const captureArea = document.getElementById('capture-area');
                 
-                // Backup styles เดิม
                 const origCapWidth = captureArea.style.width;
                 const origCapMinWidth = captureArea.style.minWidth;
                 
-                // กางพื้นที่ให้เต็มสัดส่วน Desktop 1400px
-                const targetWidth = 1400;
+                // กางพื้นที่ให้เต็มสัดส่วน Desktop กว้างสุดๆ (1800px) เพื่อไม่ให้กรอบบีบ
+                const targetWidth = 1800;
                 captureArea.style.width = targetWidth + 'px';
                 captureArea.style.minWidth = targetWidth + 'px';
                 
-                // บังคับให้เบราว์เซอร์รับรู้ Layout ใหม่ทันทีก่อนวาดเส้น
                 void captureArea.offsetHeight;
                 
-                // วาดเส้นแบบ Desktop บังคับ (เพิ่มเวลาหน่วงเล็กน้อยให้มั่นใจว่าตีเส้นตรง)
                 setTimeout(() => {
                     drawLines(true);
                 }, 100);
                 
                 setTimeout(() => {
                     html2canvas(captureArea, {
-                        scale: 3, // คมชัดระดับสูง
+                        scale: 2, // สเกล 2 + กว้าง 1800px = ภาพระดับ 4K โคตรชัด
                         backgroundColor: "#f8fafc", 
                         useCORS: true, 
                         scrollY: 0, 
-                        windowWidth: targetWidth, // จุดสำคัญ: หลอก html2canvas ว่าจอคอมกว้าง 1400px เสมอ
+                        windowWidth: targetWidth, 
                         windowHeight: captureArea.scrollHeight,
                         logging: false
                     }).then(canvas => {
-                        // คืนค่ารูปแบบกลับ
                         captureArea.style.width = origCapWidth;
                         captureArea.style.minWidth = origCapMinWidth;
                         window.scrollTo(0, originalScrollY);
@@ -599,22 +586,18 @@ def render_pm25_flow():
                         btn.innerHTML = originalContent;
                     }).catch(err => {
                         console.error("Error generating image:", err);
-                        
-                        // คืนค่ากลับถ้าพัง
                         captureArea.style.width = origCapWidth;
                         captureArea.style.minWidth = origCapMinWidth;
                         window.scrollTo(0, originalScrollY);
                         drawLines(); 
-                        
                         btn.innerHTML = originalContent;
                         alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
                     });
-                }, 600); // ดีเลย์เพิ่มขึ้นเพื่อให้กล่องและเส้นจัดเรียงตัวสมบูรณ์ 100%
+                }, 600); 
             }
         </script>
     </body>
     </html>
     """
     
-    # เพิ่มความสูงขึ้นอีกนิดเผื่อเส้นประด้านล่างสุดที่ขยับลงมา
     components.html(html_code, height=1550, scrolling=True)
