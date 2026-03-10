@@ -1,9 +1,8 @@
 import streamlit.components.v1 as components
 
 def render_flow():
-    # โค้ด HTML สำหรับหน้า Flow ที่ออกแบบใหม่ด้วย Grid & Flexbox ที่รัดกุม 
-    # อัปเดตล่าสุด: ย้ายกล่อง "ส่งข้อมูลให้ควบคุมโรค" ไปไว้ด้านล่างสุด 
-    # และเพิ่มเส้นลูกศรสีม่วงโยงจากกล่อง REFER ลงมารวมที่ด้านล่างอย่างเป็นระบบ
+    # โค้ด HTML สำหรับหน้า Flow 
+    # อัปเดตล่าสุด: แก้ไขเส้นสีแดงไม่ให้ทับข้อความ, เพิ่มความหนาเส้นสีม่วง, และปรับแต่งให้รองรับการปริ้น
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -56,6 +55,28 @@ def render_flow():
             }
             
             .card-text { word-wrap: break-word; hyphens: auto; }
+
+            /* =======================================
+               คำสั่งบังคับสำหรับการปริ้น (PRINT STYLES)
+               ======================================= */
+            @media print {
+                /* บังคับให้เบราว์เซอร์พิมพ์สีพื้นหลังและสีเส้น SVG ทั้งหมด */
+                body, *, .line-v, .line-h, .arrow-down, svg, path {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                /* บังคับให้แสดง SVG เสมอเมื่อปริ้น */
+                #flow-svg {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                }
+                /* ปรับแต่งกรณีมีเงาเพื่อการปริ้นที่ชัดเจนขึ้น */
+                .shadow-sm, .shadow-md {
+                    box-shadow: none !important;
+                    border: 1px solid #e2e8f0 !important;
+                }
+            }
         </style>
     </head>
     <body>
@@ -75,16 +96,17 @@ def render_flow():
                     <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
                     </marker>
-                    <marker id="arrow-purple" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <!-- ปรับขนาดหัวลูกศรสีม่วงให้สมดุลกับความหนาเส้นใหม่ -->
+                    <marker id="arrow-purple" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="#9333ea" />
                     </marker>
                 </defs>
-                <!-- เส้นพื้นหลังตัดขอบ -->
-                <path id="red-line-bg" fill="none" stroke="var(--bg-knockout)" stroke-width="10" stroke-linejoin="round" />
-                <path id="purple-line-bg" fill="none" stroke="var(--bg-knockout)" stroke-width="10" stroke-linejoin="round" />
+                
                 <!-- เส้นตัวจริง -->
+                <!-- เส้นแดง: ส่งต่ออาการรุนแรง -->
                 <path id="red-line-path" fill="none" stroke="#dc2626" stroke-width="4" stroke-linejoin="round" marker-end="url(#arrow-red)" />
-                <path id="purple-line-path" fill="none" stroke="#9333ea" stroke-width="4" stroke-linejoin="round" marker-end="url(#arrow-purple)" stroke-dasharray="6,4" />
+                <!-- เส้นม่วง: ส่งข้อมูลควบคุมโรค (ปรับ stroke-width เป็น 6 ให้หนาขึ้น) -->
+                <path id="purple-line-path" fill="none" stroke="#9333ea" stroke-width="6" stroke-linejoin="round" marker-end="url(#arrow-purple)" stroke-dasharray="8,6" />
             </svg>
 
             <!-- ================= LEFT COLUMN (ONLINE) ================= -->
@@ -259,7 +281,7 @@ def render_flow():
                         <div class="line-v flex-grow min-h-[30px] sm:min-h-[40px]"></div>
                     </div>
                     
-                    <!-- ฝั่งขวา ห้องฉุกเฉิน (จะถูกโยงเข้าควบคุมโรคด้วยเส้นสีม่วง) -->
+                    <!-- ฝั่งขวา ห้องฉุกเฉิน -->
                     <div class="flex flex-col items-center h-full w-full">
                         <div class="bg-red-500 rounded-md p-1 sm:p-2 shadow-sm text-center w-[95%] sm:w-[90%] z-10">
                             <p class="text-white font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight card-text">ส่งเข้า<br>ห้องฉุกเฉิน</p>
@@ -343,7 +365,7 @@ def render_flow():
                             </div>
                         </div>
                         
-                        <!-- NEW PLACEMENT: ส่งข้อมูลควบคุมโรค (อยู่ล่างสุด รับข้อมูลต่อจาก Post Care และ ER) -->
+                        <!-- ส่งข้อมูลควบคุมโรค (อยู่ล่างสุด รับข้อมูลต่อจาก Post Care และ ER) -->
                         <div class="line-v h-6 sm:h-8 relative z-0 mx-auto"></div>
                         <div class="arrow-down relative z-0 mx-auto"></div>
                         
@@ -372,7 +394,6 @@ def render_flow():
                     const redSrc = document.getElementById('red-source');
                     const redTgt = document.getElementById('red-target');
                     const redPath = document.getElementById('red-line-path');
-                    const redBg = document.getElementById('red-line-bg');
                     
                     if (redSrc && redTgt && redPath) {
                         const rSrcRect = redSrc.getBoundingClientRect();
@@ -383,19 +404,18 @@ def render_flow():
                         const rEndX = rTgtRect.left + (rTgtRect.width / 2) - svgRect.left;
                         const rEndY = rTgtRect.top - svgRect.top - 8;
                         
-                        const gutterX = rStartX + 25; 
-                        const safeY = rEndY - 40;
+                        // ปรับให้ลากออกทางขวาให้พ้นกล่องข้อความก่อน (บวกไป 50 px) แล้วค่อยหักศอก
+                        const gutterX = rStartX + 50; 
+                        const safeY = rEndY - 25; // ลอยอยู่เหนือกล่องเป้าหมาย
                         
                         const dRed = `M ${rStartX} ${rStartY} L ${gutterX} ${rStartY} L ${gutterX} ${safeY} L ${rEndX} ${safeY} L ${rEndX} ${rEndY}`;
                         redPath.setAttribute('d', dRed);
-                        if(redBg) redBg.setAttribute('d', dRed);
                     }
 
                     // 2. เส้นม่วง (ส่ง REFER -> แจ้งควบคุมโรค สสจ.)
                     const referBox = document.getElementById('er-refer-box');
                     const dcBox = document.getElementById('disease-control-box');
                     const pLinePath = document.getElementById('purple-line-path');
-                    const pLineBg = document.getElementById('purple-line-bg');
                     
                     if (referBox && dcBox && pLinePath) {
                         const refRect = referBox.getBoundingClientRect();
@@ -411,7 +431,6 @@ def render_flow():
                         
                         const dPurple = `M ${pStartX} ${pStartY} L ${pGutterX} ${pStartY} L ${pGutterX} ${pEndY} L ${pEndX + 8} ${pEndY}`;
                         pLinePath.setAttribute('d', dPurple);
-                        if(pLineBg) pLineBg.setAttribute('d', dPurple);
                     }
 
                 } else if (svg) {
@@ -424,6 +443,9 @@ def render_flow():
                 setTimeout(drawFlowLines, 100); 
                 setTimeout(drawFlowLines, 500);
             };
+            
+            // เรียกซ้ำก่อนสั่งปริ้นเพื่อยืนยันว่าเส้นโหลดขึ้นมาแล้ว
+            window.onbeforeprint = drawFlowLines;
         </script>
     </body>
     </html>
