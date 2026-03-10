@@ -225,7 +225,35 @@ def render_pm25_flow():
                                     </div>
                                 </div>
 
-                                <!-- Row 2: OPD -->
+                                <!-- Row 2: PCU หนองหาร / รพ.สต. -->
+                                <div class="inner-box pt-8 sm:pt-6 flex flex-wrap items-center gap-2 relative border-orange-200 shadow-sm flex-1">
+                                    <div class="tag-code">รหัส Z58.1</div>
+                                    <div class="flex items-center gap-2 w-full lg:w-auto mb-2 lg:mb-0 shrink-0">
+                                        <div class="flex shrink-0 c2-icon">
+                                            <i data-lucide="building-2" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-bold text-[13px] sm:text-sm text-main leading-tight">PCU หนองหาร<br/>& รพ.สต.</h3>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow flex items-center justify-between sm:justify-around gap-1 text-[11px] sm:text-xs">
+                                        <div class="text-center shrink-0">
+                                            <p class="font-bold text-main">คัดกรองอาการ</p>
+                                        </div>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
+                                        <div class="text-center shrink-0 w-20 sm:w-24">
+                                            <p class="font-bold text-main leading-tight">เข้าข่าย: ลง GG Sheets</p>
+                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium">+ รักษาตามอาการ</p>
+                                        </div>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
+                                        <div class="text-center shrink-0">
+                                            <p class="text-[10px] text-muted font-medium">อาการรุนแรง</p>
+                                            <p class="font-bold text-red-600">Refer รพ.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Row 3: OPD -->
                                 <div class="inner-box pt-8 sm:pt-6 flex flex-wrap items-center gap-2 relative border-orange-200 shadow-sm flex-1">
                                     <div class="tag-code">รหัส Z58.1</div>
                                     <div class="flex items-center gap-2 w-full lg:w-auto mb-2 lg:mb-0 shrink-0">
@@ -239,22 +267,21 @@ def render_pm25_flow():
                                     <div class="flex-grow flex items-center justify-between sm:justify-around gap-1 text-[11px] sm:text-xs">
                                         <div class="text-center shrink-0">
                                             <p class="font-bold text-main">คัดกรองอาการ</p>
-                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium">(PM2.5 > 37.5)</p>
+                                        </div>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
+                                        <div class="text-center shrink-0 w-20 sm:w-24">
+                                            <p class="font-bold text-main leading-tight">เข้าข่าย: ลง GG Sheets</p>
+                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium">+ รักษาตามอาการ</p>
                                         </div>
                                         <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
                                         <div class="text-center shrink-0 w-16 sm:w-20">
-                                            <p class="font-bold text-main">จ่ายยา/แนะนำ</p>
-                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium">นัดติดตาม 7 วัน</p>
-                                        </div>
-                                        <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
-                                        <div class="text-center shrink-0">
-                                            <p class="text-muted font-medium">ส่งเข้า</p>
-                                            <p class="font-bold c2-text">คลินิกมลพิษ</p>
+                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium leading-tight">นัดติดตาม ไม่ทุเลา</p>
+                                            <p class="font-bold c2-text">ส่งคลินิกมลพิษ</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Row 3: ER -->
+                                <!-- Row 4: ER -->
                                 <div class="inner-box pt-8 sm:pt-6 flex flex-wrap items-center gap-2 relative border-orange-200 shadow-sm flex-1">
                                     <div class="tag-code">รหัส Z58.1</div>
                                     <div class="flex items-center gap-2 w-full lg:w-auto mb-2 lg:mb-0 shrink-0">
@@ -281,7 +308,7 @@ def render_pm25_flow():
                                     </div>
                                 </div>
 
-                                <!-- Row 4: IPD -->
+                                <!-- Row 5: IPD -->
                                 <div class="inner-box pt-8 sm:pt-6 flex flex-wrap items-center gap-2 relative border-orange-200 shadow-sm flex-1">
                                     <div class="tag-code">รหัส Z58.1</div>
                                     <div class="flex items-center gap-2 w-full lg:w-auto mb-2 lg:mb-0 shrink-0">
@@ -296,8 +323,14 @@ def render_pm25_flow():
                                             <p class="text-[9px] sm:text-[10px] text-muted font-medium">เข้าหอผู้ป่วย</p>
                                         </div>
                                         <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
-                                        <div class="text-center shrink-0 w-20 sm:w-24">
-                                            <p class="font-bold text-main leading-tight">พยาบาล<br/>ซักประวัติเพิ่มเติม</p>
+                                        <div class="text-center shrink-0 w-24">
+                                            <p class="font-bold text-main leading-tight">ซักประวัติเพิ่มเติม</p>
+                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium">+ รักษาตามอาการ</p>
+                                        </div>
+                                        <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 sm:w-5 sm:h-5"></i>
+                                        <div class="text-center shrink-0 w-20">
+                                            <p class="text-[9px] sm:text-[10px] text-muted font-medium">เข้าข่าย</p>
+                                            <p class="font-bold c2-text leading-tight">แจ้งคลินิกมลพิษ</p>
                                         </div>
                                     </div>
                                 </div>
@@ -569,5 +602,5 @@ def render_pm25_flow():
     </html>
     """
     
-    # เพิ่ม Height เผื่อเนื้อหาคลินิกมลพิษที่เพิ่มขึ้น
-    components.html(html_code, height=1150, scrolling=True)
+    # เพิ่ม Height เผื่อเนื้อหากล่องที่เพิ่มขึ้น
+    components.html(html_code, height=1300, scrolling=True)
