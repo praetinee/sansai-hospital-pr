@@ -326,7 +326,7 @@ def render_flow():
                             </div>
                             <div class="line-v h-3 sm:h-4 my-1"></div>
                             <div id="er-refer-box" class="bg-red-500 rounded-md p-1 sm:p-2 shadow-sm text-center w-[95%] sm:w-[90%] h-full flex items-center justify-center z-10 min-h-[30px] relative">
-                                <p class="text-white font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight baseline-fix">ส่ง REFER</p>
+                                <p class="text-white font-bold text-[11px] sm:text-[12px] md:text-[13px] leading-tight baseline-fix">Admit หรือ Refer</p>
                             </div>
                         </div>
                     </div>
