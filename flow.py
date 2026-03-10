@@ -2,7 +2,7 @@ import streamlit.components.v1 as components
 
 def render_flow():
     # โค้ด HTML สำหรับหน้า Flow 
-    # อัปเดตล่าสุด: เปลี่ยนวิธีการ Freeze หน้าจอตอนดาวน์โหลด ให้ขยายเต็มที่ (1280px) เพื่อให้องค์ประกอบทุกส่วนกางออก 100%
+    # อัปเดตล่าสุด: แก้ไขตัวเลข 1 2 3 ตกขอบโดยใช้ Flexbox และถอด Animation ออกเพื่อให้เส้นสีม่วงคำนวณพิกัดได้เป๊ะ 100% ไม่ยืดทะลุกล่อง
     html_code = """
     <!DOCTYPE html>
     <html lang="th">
@@ -79,8 +79,8 @@ def render_flow():
     </head>
     <body>
         
-        <!-- เพิ่ม px อย่างมาก เพื่อเว้นขอบซ้ายขวาให้เส้นลูกศรมีพื้นที่โชว์เวลาดาวน์โหลดรูป ไม่โดนตัด -->
-        <div id="capture-area" class="w-full bg-white pb-10 pt-4 px-4 sm:px-10 md:px-24 transition-all duration-300">
+        <!-- เอา transition-all ออก เพื่อให้เวลาเปลี่ยนความกว้าง 1280px กล่องขยับทันที ไม่ต้องรอแอนิเมชัน ซึ่งจะช่วยให้เส้นคำนวณพิกัดเป๊ะ 100% -->
+        <div id="capture-area" class="w-full bg-white pb-10 pt-4 px-4 sm:px-10 md:px-24">
             <!-- Header -->
             <div class="text-center mb-8 sm:mb-12 relative">
                 <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 tracking-wide" style="color: var(--text-main);">Flow การให้บริการ รพ.สันทราย</h2>
@@ -96,29 +96,29 @@ def render_flow():
             <!-- Main Flow Container -->
             <div class="w-full max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 relative z-10" id="main-flow-container">
                 
-                <!-- Dynamic Lines Container (ใช้ Div แทน SVG เพื่อแก้ปัญหาพิกัดเบี้ยว 100%) -->
+                <!-- Dynamic Lines Container -->
                 <div id="dynamic-lines-container" class="absolute inset-0 pointer-events-none z-[100] hidden md:block">
-                    <!-- เส้นสีแดง (ผู้ป่วยอาการรุนแรง) -->
-                    <div id="red-seg-1" class="absolute bg-red-600 transition-all duration-300"></div>
-                    <div id="red-seg-2" class="absolute bg-red-600 transition-all duration-300"></div>
-                    <div id="red-seg-3" class="absolute bg-red-600 transition-all duration-300"></div>
-                    <div id="red-seg-4" class="absolute bg-red-600 transition-all duration-300"></div>
-                    <div id="red-arrow" class="absolute w-0 h-0 border-t-[10px] border-l-[6px] border-r-[6px] border-t-red-600 border-l-transparent border-r-transparent transition-all duration-300"></div>
+                    <!-- เส้นสีแดง (เอา transition ออก) -->
+                    <div id="red-seg-1" class="absolute bg-red-600"></div>
+                    <div id="red-seg-2" class="absolute bg-red-600"></div>
+                    <div id="red-seg-3" class="absolute bg-red-600"></div>
+                    <div id="red-seg-4" class="absolute bg-red-600"></div>
+                    <div id="red-arrow" class="absolute w-0 h-0 border-t-[10px] border-l-[6px] border-r-[6px] border-t-red-600 border-l-transparent border-r-transparent"></div>
 
-                    <!-- เส้นสีม่วง (แจ้งควบคุมโรค) -->
-                    <div id="purp-seg-1" class="absolute border-t-[4px] border-dashed border-purple-600 box-border transition-all duration-300"></div>
-                    <div id="purp-seg-2" class="absolute border-l-[4px] border-dashed border-purple-600 box-border transition-all duration-300"></div>
-                    <div id="purp-seg-3" class="absolute border-t-[4px] border-dashed border-purple-600 box-border transition-all duration-300"></div>
-                    <div id="purp-arrow" class="absolute w-0 h-0 border-r-[10px] border-t-[6px] border-b-[6px] border-r-purple-600 border-t-transparent border-b-transparent transition-all duration-300"></div>
+                    <!-- เส้นสีม่วง (เอา transition ออก) -->
+                    <div id="purp-seg-1" class="absolute border-t-[4px] border-dashed border-purple-600 box-border"></div>
+                    <div id="purp-seg-2" class="absolute border-l-[4px] border-dashed border-purple-600 box-border"></div>
+                    <div id="purp-seg-3" class="absolute border-t-[4px] border-dashed border-purple-600 box-border"></div>
+                    <div id="purp-arrow" class="absolute w-0 h-0 border-r-[10px] border-t-[6px] border-b-[6px] border-r-purple-600 border-t-transparent border-b-transparent"></div>
                 </div>
 
                 <!-- ================= LEFT COLUMN (ONLINE) ================= -->
                 <div class="w-full md:w-[40%] flex flex-col items-center">
                     
-                    <!-- 1. ปรึกษาออนไลน์ (แก้เลข 1 ตกขอบด้วย absolute inset-0) -->
+                    <!-- 1. ปรึกษาออนไลน์ (แก้เลขตกขอบโดยใช้ flex center แทน absolute inset-0) -->
                     <div class="flex items-center gap-3 bg-blue-50 border-2 border-blue-300 rounded-full px-4 py-2 shadow-sm relative z-10 w-fit">
-                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 shadow-inner shrink-0 relative">
-                            <span class="font-bold text-lg sm:text-xl absolute inset-0 flex items-center justify-center">1</span>
+                        <div class="bg-blue-600 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shadow-inner shrink-0">
+                            <span class="font-bold text-lg sm:text-xl leading-none">1</span>
                         </div>
                         <span class="text-blue-900 font-bold text-lg sm:text-xl pr-2">ปรึกษาออนไลน์</span>
                     </div>
@@ -183,10 +183,10 @@ def render_flow():
                         
                         <!-- ====== Col 2: Onsite ====== -->
                         <div class="flex-[0.8] flex flex-col items-center h-full">
-                            <!-- 2. เข้ารับบริการ (แก้เลขตกขอบด้วย absolute inset-0) -->
+                            <!-- 2. เข้ารับบริการ (แก้เลขตกขอบโดยใช้ flex center) -->
                             <div class="flex items-center justify-center gap-1 sm:gap-2 bg-pink-50 border-2 border-pink-200 rounded-full px-4 py-2 shadow-sm z-10 w-fit h-[55px] sm:h-[65px]">
-                                <div class="bg-pink-500 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 shadow-inner shrink-0 relative">
-                                    <span class="font-bold text-sm sm:text-lg absolute inset-0 flex items-center justify-center">2</span>
+                                <div class="bg-pink-500 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center shadow-inner shrink-0">
+                                    <span class="font-bold text-sm sm:text-lg leading-none">2</span>
                                 </div>
                                 <h3 class="text-pink-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center">เข้ารับบริการ<br>ที่รพ./รพ.สต./PCU หนองหาร</h3>
                             </div>
@@ -195,10 +195,10 @@ def render_flow():
 
                         <!-- ====== Col 3: Surveillance ====== -->
                         <div class="flex-[1.2] flex flex-col items-center h-full">
-                            <!-- 3. การเฝ้าระวัง (แก้เลขตกขอบด้วย absolute inset-0) -->
+                            <!-- 3. การเฝ้าระวัง (แก้เลขตกขอบโดยใช้ flex center) -->
                             <div class="flex items-center justify-center gap-1 sm:gap-2 bg-purple-50 border-2 border-purple-300 rounded-full px-4 py-2 shadow-sm z-10 w-fit h-[55px] sm:h-[65px]">
-                                <div class="bg-purple-600 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 shadow-inner shrink-0 relative">
-                                    <span class="font-bold text-sm sm:text-lg absolute inset-0 flex items-center justify-center">3</span>
+                                <div class="bg-purple-600 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center shadow-inner shrink-0">
+                                    <span class="font-bold text-sm sm:text-lg leading-none">3</span>
                                 </div>
                                 <h3 class="text-purple-900 font-bold text-[12px] sm:text-[14px] md:text-[15px] leading-tight text-center">การเฝ้าระวัง</h3>
                             </div>
@@ -410,7 +410,6 @@ def render_flow():
                 window.scrollTo(0, 0);
                 
                 // 3. Freeze ความกว้างแบบ "ขยายเต็มที่" (1280px) คงที่ไปเลย
-                // เพื่อให้องค์ประกอบทุกส่วนกางออก 100% ไม่บีบอัด ไม่ตกขอบ ไม่เบี้ยว
                 const captureArea = document.getElementById('capture-area');
                 
                 const origCapWidth = captureArea.style.width;
@@ -420,17 +419,20 @@ def render_flow():
                 captureArea.style.width = '1280px';
                 captureArea.style.minWidth = '1280px';
                 
+                // บังคับให้เบราว์เซอร์รับรู้ Layout ใหม่ทันทีก่อนวาดเส้น
+                void captureArea.offsetHeight;
+                
                 // วาดเส้นใหม่ให้ลงล็อคกับระยะของหน้าจอที่กางออก 1280px แล้ว
                 drawFlowLines();
                 
-                // ดีเลย์เล็กน้อยให้เบราว์เซอร์จัด Layout โค้งมนให้เสร็จสมบูรณ์
+                // ดีเลย์เล็กน้อยให้ชัวร์ว่าจัดหน้า Layout เสร็จแล้ว
                 setTimeout(() => {
                     html2canvas(captureArea, {
                         scale: 3, // เพิ่มความคมชัด
                         backgroundColor: "#ffffff",
                         useCORS: true, 
                         scrollY: 0, 
-                        windowWidth: 1280, // บอก html2canvas ว่าเราแคปไซส์นี้ จะได้ไม่ดึง CSS Media Query ผิด
+                        windowWidth: 1280, 
                         windowHeight: captureArea.scrollHeight,
                         logging: false
                     }).then(canvas => {
@@ -456,7 +458,7 @@ def render_flow():
                         btn.innerHTML = originalContent;
                         alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
                     });
-                }, 500); // ดีเลย์เพิ่มนิดนึงให้การจัดหน้าเว็บที่ 1280px นิ่งสนิท
+                }, 200); 
             }
 
             function drawFlowLines() {
