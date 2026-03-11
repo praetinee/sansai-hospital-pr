@@ -460,14 +460,15 @@ def render_roles():
                 lucide.createIcons();
             });
 
-            // ฟังก์ชันวาดเส้นสำหรับแสดงผลบนหน้าจอปกติ
-            function drawLines() {
+            // ฟังก์ชันวาดเส้นสำหรับแสดงผลบนหน้าจอปกติ หรือบังคับวาดเมื่อรับพารามิเตอร์ forceDesktop
+            function drawLines(forceDesktop = false) {
                 const svg = document.getElementById('flow-svg');
                 const container = document.getElementById('main-container');
                 const label = document.getElementById('return-label');
                 const mobileLabel = document.getElementById('mobile-return-label');
                 
-                const isDesktop = window.innerWidth >= 1024;
+                // ถ้ารับคำสั่ง forceDesktop (ตอนกดถ่ายรูป) ให้ถือว่าเป็น Desktop ทันที
+                const isDesktop = forceDesktop || window.innerWidth >= 1024;
                 
                 if (isDesktop && svg && container) { 
                     svg.classList.remove('hidden');
@@ -532,13 +533,13 @@ def render_roles():
                 }
             }
 
-            window.addEventListener('resize', drawLines);
+            window.addEventListener('resize', () => drawLines(false));
             window.addEventListener('load', () => { 
-                setTimeout(drawLines, 100); 
-                setTimeout(drawLines, 500); 
+                setTimeout(() => drawLines(false), 100); 
+                setTimeout(() => drawLines(false), 500); 
             });
 
-            // ฟังก์ชันดาวน์โหลดรูปภาพแบบใช้ onclone ช่วยคำนวณ SVG 
+            // ฟังก์ชันดาวน์โหลดภาพแบบ Bulletproof - การันตี 1600px เสมอ
             async function downloadImage() {
                 const btn = document.querySelector('button[onclick="downloadImage()"]');
                 const originalContent = btn.innerHTML;
@@ -546,85 +547,96 @@ def render_roles():
                 
                 await document.fonts.ready;
                 
+                // 1. สร้าง Loading Overlay บังหน้าจอไว้ เพื่อไม่ให้ผู้ใช้เห็นตอนเว็บขยาย 1600px (กันหน้าจอกระตุก)
+                const overlay = document.createElement('div');
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100vw';
+                overlay.style.height = '100vh';
+                overlay.style.backgroundColor = '#f8fafc';
+                overlay.style.zIndex = '9999';
+                overlay.style.display = 'flex';
+                overlay.style.flexDirection = 'column';
+                overlay.style.alignItems = 'center';
+                overlay.style.justifyContent = 'center';
+                overlay.innerHTML = `
+                    <div style="font-family: 'Sarabun', sans-serif; text-align: center;">
+                        <svg class="animate-spin mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                        <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e293b;">กำลังสร้างรูปภาพ...</h2>
+                        <p style="color: #64748b; margin-top: 0.5rem;">จัดเตรียมแผนผังให้สมบูรณ์ ไม่ว่าหน้าจอคุณจะขนาดเท่าใด</p>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+
                 const captureArea = document.getElementById('capture-area');
-                const targetWidth = 1600;
                 
-                html2canvas(captureArea, {
-                    scale: 2, 
-                    backgroundColor: "#f8fafc", 
-                    useCORS: true, 
-                    windowWidth: targetWidth, // บังคับให้ html2canvas จำลองจอ 1600px
-                    onclone: function(clonedDoc) {
-                        // โค้ดส่วนนี้จะทำงานในหน้าจอจำลองที่ถูกกางเป็น 1600px เรียบร้อยแล้ว!
-                        const svg = clonedDoc.getElementById('flow-svg');
-                        const container = clonedDoc.getElementById('main-container');
-                        const label = clonedDoc.getElementById('return-label');
-                        const mobileLabel = clonedDoc.getElementById('mobile-return-label');
-                        
-                        if (svg && container) { 
-                            // บังคับโชว์เส้นในหน้าจอจำลอง
-                            svg.classList.remove('hidden');
-                            if (label) {
-                                label.classList.remove('hidden');
-                                label.classList.add('flex');
-                            }
-                            if (mobileLabel) mobileLabel.classList.add('hidden');
+                // เก็บค่าเดิมไว้
+                const origWidth = captureArea.style.width;
+                const origMinWidth = captureArea.style.minWidth;
+                const originalScrollY = window.scrollY;
+                
+                // 2. บังคับกาง DOM จริงให้เป็น 1600px แบบเป๊ะๆ
+                captureArea.style.width = '1600px';
+                captureArea.style.minWidth = '1600px';
+                
+                // ฉีด CSS บังคับโครงสร้าง Grid Layout ให้เป็น Desktop ทันที
+                const forceStyle = document.createElement('style');
+                forceStyle.id = 'force-desktop-style';
+                forceStyle.innerHTML = `
+                    #main-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+                    #col-left { grid-column: span 1 / span 1 !important; }
+                    #col-mid { grid-column: span 2 / span 2 !important; }
+                    #col-right { grid-column: span 1 / span 1 !important; }
+                    #inner-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+                `;
+                document.head.appendChild(forceStyle);
+                
+                window.scrollTo(0, 0);
+
+                // 3. รอให้ Browser จัดเรียง Layout ใหม่เสร็จสิ้น
+                setTimeout(() => {
+                    // สั่งวาดเส้นทับลงไปบน Layout 1600px ที่กางเสร็จแล้ว โดยบังคับสถานะ Desktop (forceDesktop=true)
+                    drawLines(true);
+                    
+                    // รอให้วาดเส้นเสร็จ แล้วค่อยแคปรูป
+                    setTimeout(() => {
+                        html2canvas(captureArea, {
+                            scale: 2, 
+                            backgroundColor: "#f8fafc", 
+                            useCORS: true, 
+                            scrollY: 0, 
+                            windowWidth: 1600,
+                            logging: false
+                        }).then(canvas => {
+                            // ดาวน์โหลดรูปภาพ
+                            const link = document.createElement('a');
+                            link.download = 'PM25_Roles_Sansai_Hospital.png';
+                            link.href = canvas.toDataURL('image/png', 1.0);
+                            link.click();
                             
-                            const contRect = container.getBoundingClientRect();
-                            const colL = clonedDoc.getElementById('col-left').getBoundingClientRect();
-                            const colM = clonedDoc.getElementById('col-mid').getBoundingClientRect();
-                            const colR = clonedDoc.getElementById('col-right').getBoundingClientRect();
-                            
-                            const getX = (rect) => rect.left - contRect.left;
-                            const getY = (rect) => rect.top - contRect.top;
-                            
-                            // คำนวณพิกัดจากกล่องที่กางสมบูรณ์แล้ว
-                            const lmStartY = getY(colL) + (colL.height / 2);
-                            const lmStartX = getX(colL) + colL.width;
-                            const lmEndX = getX(colM) - 8;
-                            const pathLM = `M ${lmStartX} ${lmStartY} L ${lmEndX} ${lmStartY} L ${lmEndX-8} ${lmStartY-6} M ${lmEndX} ${lmStartY} L ${lmEndX-8} ${lmStartY+6}`;
-                            clonedDoc.getElementById('path-lm').setAttribute('d', pathLM);
-                            
-                            const mrStartY = getY(colM) + (colM.height / 2);
-                            const mrStartX = getX(colM) + colM.width;
-                            const mrEndX = getX(colR) - 8;
-                            const pathMR = `M ${mrStartX} ${mrStartY} L ${mrEndX} ${mrStartY} L ${mrEndX-8} ${mrStartY-6} M ${mrEndX} ${mrStartY} L ${mrEndX-8} ${mrStartY+6}`;
-                            clonedDoc.getElementById('path-mr').setAttribute('d', pathMR);
-                            
-                            const retStartX = getX(colR) + (colR.width / 2);
-                            const retStartY = getY(colR) + colR.height;
-                            const retEndX = getX(colL) + (colL.width / 2);
-                            const retEndY = getY(colL) + colL.height;
-                            
-                            const maxBottom = Math.max(
-                                getY(colL) + colL.height,
-                                getY(colM) + colM.height,
-                                getY(colR) + colR.height
-                            );
-                            
-                            const dropY = maxBottom + 45; 
-                            const rTipY = retEndY + 15;
-                            const pathReturn = `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${rTipY} L ${retEndX-6} ${rTipY+8} M ${retEndX} ${rTipY} L ${retEndX+6} ${rTipY+8}`;
-                            clonedDoc.getElementById('path-return').setAttribute('d', pathReturn);
-                            
-                            if (label) {
-                                label.style.top = `${dropY}px`;
-                                label.style.left = `${getX(colM) + (colM.width / 2)}px`;
-                                label.style.transform = 'translate(-50%, -50%)';
-                            }
-                        }
-                    }
-                }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = 'PM25_Roles_Sansai_Hospital.png';
-                    link.href = canvas.toDataURL('image/png', 1.0);
-                    link.click();
+                            // 4. เก็บกวาดและคืนค่าทุกอย่างกลับเป็นสภาพเดิม
+                            cleanUpAndRestore();
+                        }).catch(err => {
+                            console.error("Error generating image:", err);
+                            alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
+                            cleanUpAndRestore();
+                        });
+                    }, 150);
+                }, 150);
+                
+                // ฟังก์ชันย่อยสำหรับคืนค่า DOM เป็นเหมือนเดิม
+                function cleanUpAndRestore() {
+                    document.head.removeChild(forceStyle);
+                    captureArea.style.width = origWidth;
+                    captureArea.style.minWidth = origMinWidth;
+                    document.body.removeChild(overlay);
+                    window.scrollTo(0, originalScrollY);
+                    
+                    // สั่งวาดเส้นใหม่ให้เหมาะกับขนาดหน้าจอปัจจุบันของผู้ใช้
+                    drawLines(false); 
                     btn.innerHTML = originalContent;
-                }).catch(err => {
-                    console.error("Error generating image:", err);
-                    btn.innerHTML = originalContent;
-                    alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
-                });
+                }
             }
         </script>
     </body>
