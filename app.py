@@ -22,16 +22,16 @@ def to_float(val):
 def load_and_process_inventory(file_path, item_column_name):
     """ฟังก์ชันอ่านและดึงข้อมูลเฉพาะวันที่ล่าสุดแบบยืดหยุ่น"""
     try:
-        # อ่านข้อมูลแบบไม่มี Header เพื่อให้สแกนหาบรรทัดที่ถูกต้องได้ง่ายขึ้น
-        df_raw = pd.read_csv(file_path, header=None, encoding='utf-8-sig', dtype=str)
+        # แก้ปัญหาจำนวนลูกน้ำไม่เท่ากันในแต่ละบรรทัด โดยบังคับสร้างคอลัมน์เผื่อไว้ 100 คอลัมน์
+        df_raw = pd.read_csv(file_path, names=range(100), encoding='utf-8-sig', dtype=str)
         
         # ค้นหาแถวที่เป็น Header ของวันที่จริงๆ (มองหาชื่อย่อเดือนภาษาไทย)
         thai_months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
         header_idx = -1
         
         for i, row in df_raw.iterrows():
-            row_str = " ".join([str(x) for x in row.values])
-            # ถ้าบรรทัดไหนมีชื่อเดือน ให้ถือว่าเป็นบรรทัดหัวตารางของวันที่
+            # รวมข้อความในแถวเพื่อตรวจสอบหาชื่อเดือน
+            row_str = " ".join([str(x) for x in row.values if pd.notna(x)])
             if any(month in row_str for month in thai_months):
                 header_idx = i
                 break
@@ -39,31 +39,32 @@ def load_and_process_inventory(file_path, item_column_name):
         if header_idx == -1:
             return None, None, None
 
-        # นำบรรทัดที่เจอมาตั้งเป็นหัวตาราง (Columns)
-        columns = list(df_raw.iloc[header_idx].values)
-        columns[0] = item_column_name # บังคับให้คอลัมน์แรกเป็นชื่อรายการ (เพราะของเดิมในไฟล์มักจะเป็นช่องว่าง)
+        # ดึงบรรทัดที่เจอมาวิเคราะห์คอลัมน์
+        raw_columns = list(df_raw.iloc[header_idx].values)
         
-        # ตัดข้อมูลส่วนหัวทิ้ง เอาเฉพาะข้อมูลเวชภัณฑ์ด้านล่าง
-        df = df_raw.iloc[header_idx + 1:].copy()
-        df.columns = columns
+        # เก็บลำดับ (index) ของคอลัมน์ที่มีวันที่จริงๆ ป้องกันปัญหาคอลัมน์ว่างหรือชื่อซ้ำ
+        valid_col_indices = [0] # index 0 บังคับเป็นชื่อรายการ
+        date_columns = []
+        
+        for idx, col in enumerate(raw_columns):
+            if idx == 0: continue
+            col_str = str(col).strip()
+            if pd.notna(col) and col_str not in ['nan', 'None', '']:
+                if col not in date_columns: # ป้องกันคอลัมน์วันที่ซ้ำ
+                    date_columns.append(col)
+                    valid_col_indices.append(idx)
+
+        if not date_columns:
+            return None, None, None
+
+        # ตัดข้อมูลเฉพาะคอลัมน์ที่ใช้งาน (อ้างอิงตำแหน่ง index เดิม) และตัดส่วนหัวทิ้ง
+        df = df_raw.iloc[header_idx + 1:, valid_col_indices].copy()
+        df.columns = [item_column_name] + date_columns
             
         # ลบแถวที่ชื่อรายการเป็นค่าว่าง หรือคำว่า nan
         df = df.dropna(subset=[item_column_name])
         df = df[df[item_column_name].astype(str).str.strip().str.lower() != 'nan']
         df = df[df[item_column_name].astype(str).str.strip() != '']
-        
-        # กรองเอาเฉพาะคอลัมน์วันที่จริงๆ
-        date_columns = []
-        for col in df.columns[1:]:
-            col_str = str(col).strip()
-            if pd.notna(col) and col_str not in ['nan', 'None', '']:
-                date_columns.append(col)
-                
-        if not date_columns:
-            return None, None, None
-            
-        # เก็บเฉพาะคอลัมน์ชื่อรายการ และ คอลัมน์วันที่
-        df = df[[item_column_name] + date_columns]
         
         # หาวันที่ล่าสุดที่มีข้อมูลตัวเลขกรอกไว้จริงๆ (เช็คจากหลังมาหน้า)
         latest_date = None
