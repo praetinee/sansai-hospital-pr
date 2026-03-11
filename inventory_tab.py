@@ -174,6 +174,10 @@ def render_inventory_ui():
     """ฟังก์ชันหลักสำหรับให้ app.py ดึงไปแสดงผล"""
     st.markdown("## 🏥 ระบบรายงานเวชภัณฑ์และยาคงคลัง (PM 2.5)")
     st.markdown("ดึงข้อมูลตรงจาก **Google Sheets** โดยระบบจะประมวลผล **วันที่อัปเดตล่าสุด** และ **ยอดเปรียบเทียบจากวันก่อนหน้า** ให้โดยอัตโนมัติ")
+    
+    # เพิ่มปุ่มลิงก์ไปยัง Google Sheet สำหรับเภสัชและพัสดุ
+    st.link_button("📝 กดเพื่อกรอก/อัปเดตข้อมูลเวชภัณฑ์ (Google Sheets)", "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?usp=sharing")
+    
     st.divider()
 
     # ลิงก์จาก Google Sheet
