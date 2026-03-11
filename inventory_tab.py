@@ -96,6 +96,7 @@ def display_modern_inventory_table(df, item_col, date_columns):
 
     # สร้างชื่อคอลัมน์ให้ตรงตามเงื่อนไขที่ขอมา
     stock_col_name = f"คงคลัง ณ วันที่ {global_latest_date}"
+    change_col_name = "การเพิ่มขึ้น/ลดลง (จากข้อมูลล่าสุด)"
 
     processed_rows = []
     
@@ -123,21 +124,21 @@ def display_modern_inventory_table(df, item_col, date_columns):
                 prev_val = valid_points[-2]
                 diff = current_val - prev_val
                 
-                # จัด Format ตามที่ขอ เช่น +500, -350, 0
+                # จัด Format ให้ดูทันสมัย สวยงาม และเข้าใจง่ายขึ้น พร้อมใส่ลูกน้ำ
                 if diff > 0:
-                    delta_str = f"+{int(diff)}"
+                    delta_str = f"🔺 +{int(diff):,}"
                 elif diff < 0:
-                    delta_str = f"{int(diff)}"
+                    delta_str = f"🔻 {int(diff):,}"
                 else:
-                    delta_str = "0"
+                    delta_str = "➖ 0"
             else:
                 # เพิ่งกรอกวันแรก
-                delta_str = "0"
+                delta_str = "➖ 0"
 
         processed_rows.append({
             "ชื่อรายการ": item_name,
             stock_col_name: int(current_val) if valid_points else 0,
-            "เปลี่ยนแปลง": delta_str
+            change_col_name: delta_str
         })
 
     display_df = pd.DataFrame(processed_rows)
@@ -146,9 +147,19 @@ def display_modern_inventory_table(df, item_col, date_columns):
     st.dataframe(
         display_df,
         column_config={
-            "ชื่อรายการ": st.column_config.TextColumn("📝 ชื่อรายการ", width="large"),
-            stock_col_name: st.column_config.NumberColumn(f"📦 {stock_col_name}", format="%d"),
-            "เปลี่ยนแปลง": st.column_config.TextColumn("📊 เปลี่ยนแปลง", width="small")
+            "ชื่อรายการ": st.column_config.TextColumn(
+                "📝 ชื่อรายการ", 
+                width="large"
+            ),
+            stock_col_name: st.column_config.NumberColumn(
+                f"📦 {stock_col_name}", 
+                format="%d",
+                width="medium"
+            ),
+            change_col_name: st.column_config.TextColumn(
+                f"📊 {change_col_name}", 
+                width="medium"
+            )
         },
         hide_index=True,
         use_container_width=True
