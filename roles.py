@@ -259,7 +259,7 @@ def render_roles():
                                         </div>
                                         <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
                                         <div class="flex flex-col justify-center items-center text-center h-full px-1">
-                                            <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง GG Sheets</p>
+                                            <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง <a href="https://docs.google.com/spreadsheets/d/1fq34BEtpt6nWbxSupNacky3ZzlV7HymWNW2xv6LyIcA/edit?usp=sharing" target="_blank" class="text-blue-600 hover:text-blue-800 underline relative z-50" title="คลิกเพื่อกรอกข้อมูล">GG Sheets 🔗</a></p>
                                             <p class="text-muted font-medium leading-tight mt-1">+ รักษาตามอาการ</p>
                                         </div>
                                         <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
@@ -283,7 +283,7 @@ def render_roles():
                                         </div>
                                         <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
                                         <div class="flex flex-col justify-center items-center text-center h-full px-1">
-                                            <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง GG Sheets</p>
+                                            <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง <a href="https://docs.google.com/spreadsheets/d/1j5xpdB-LNhucSVNhQuqShKUDv-xyWCGB5xhC295J3M4/edit?usp=sharing" target="_blank" class="text-blue-600 hover:text-blue-800 underline relative z-50" title="คลิกเพื่อกรอกข้อมูล">GG Sheets 🔗</a></p>
                                             <p class="text-muted font-medium leading-tight mt-1">+ รักษาตามอาการ</p>
                                         </div>
                                         <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
@@ -313,7 +313,7 @@ def render_roles():
                                         </div>
                                         <i data-lucide="arrow-right" class="arrow-icon w-3 h-3 sm:w-4 sm:h-4 shrink-0"></i>
                                         <div class="flex flex-col justify-center items-center text-center h-full px-1">
-                                            <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง GG Sheets</p>
+                                            <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง <a href="https://docs.google.com/spreadsheets/d/1Ba-5IzHXOzEQziXY7vfdvDXzK0dOZv0VmoINAd-sNxU/edit?usp=drivesdk" target="_blank" class="text-blue-600 hover:text-blue-800 underline relative z-50" title="คลิกเพื่อกรอกข้อมูล">GG Sheets 🔗</a></p>
                                             <p class="text-muted font-medium leading-tight mt-1">+ ประเมิน Admit/กลับบ้าน</p>
                                         </div>
                                     </div>

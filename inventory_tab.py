@@ -147,9 +147,14 @@ def display_modern_inventory_table(df, item_col, date_columns):
 
     display_df = pd.DataFrame(processed_rows)
 
-    # 4. แสดงผลตารางด้วย Native Streamlit Dataframe
+    # คำนวณความสูงของตารางเพื่อให้กางเต็มพอดี (ไม่มี Scroll bar)
+    # โดยเฉลี่ยแถวละประมาณ 35px และส่วนหัวตาราง (Header) 40px
+    table_height = (len(display_df) * 35) + 40
+
+    # 4. แสดงผลตารางด้วย Native Streamlit Dataframe แบบปรับความสูง
     st.dataframe(
         display_df,
+        height=table_height,
         column_config={
             "ชื่อรายการ": st.column_config.TextColumn(
                 "📝 ชื่อรายการ", 
@@ -174,6 +179,10 @@ def render_inventory_ui():
     """ฟังก์ชันหลักสำหรับให้ app.py ดึงไปแสดงผล"""
     st.markdown("## 🏥 ระบบรายงานเวชภัณฑ์และยาคงคลัง (PM 2.5)")
     st.markdown("ดึงข้อมูลตรงจาก **Google Sheets** โดยระบบจะประมวลผล **วันที่อัปเดตล่าสุด** และ **ยอดเปรียบเทียบจากวันก่อนหน้า** ให้โดยอัตโนมัติ")
+    
+    # เพิ่มปุ่มลิงก์ไปยัง Google Sheet สำหรับเภสัชและพัสดุ
+    st.link_button("📝 กดเพื่อกรอก/อัปเดตข้อมูลเวชภัณฑ์ (Google Sheets)", "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?usp=sharing")
+    
     st.divider()
 
     # ลิงก์จาก Google Sheet
