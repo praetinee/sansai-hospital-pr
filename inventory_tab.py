@@ -28,25 +28,28 @@ def parse_value(val):
 
 @st.cache_data(ttl=300) # แคชข้อมูล 5 นาที เพื่อไม่ให้โหลด Google Sheet ถี่เกินไป
 def load_and_process_inventory(source_url, item_column_name):
-    """ฟังก์ชันอ่านข้อมูลจาก Google Sheet เจาะทะลุหาแถวที่ 2 และ 3 อัตโนมัติ"""
+    """ฟังก์ชันอ่านข้อมูลจาก Google Sheet โดยสแกนหาแถวที่มีวันที่ (แถว 3) อัตโนมัติ"""
     try:
         # แปลงลิงก์ และโหลดข้อมูลกางเป็นตารางดิบ
         csv_url = get_gsheet_csv_url(source_url)
         df_raw = pd.read_csv(csv_url, names=range(100), header=None, encoding='utf-8-sig', dtype=str)
         
-        # 1. สแกนหาแถวที่มีคำว่า "วันที่" หรือ "รายการ"
-        header_row_idx = -1
+        # 1. สแกนหาบรรทัดที่เป็น "วันที่" (แถวที่ 3) โดยเช็คจากชื่อเดือนภาษาไทย
+        thai_months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
+        date_row_idx = -1
+        
         for i, row in df_raw.iterrows():
-            row_str = " ".join([str(x) for x in row.values if pd.notna(x)])
-            if 'วันที่' in row_str or 'รายการ' in row_str or 'ยา' in row_str:
-                header_row_idx = i
+            # นับว่าบรรทัดนี้มีคอลัมน์ที่มีชื่อเดือนกี่คอลัมน์
+            month_match_count = sum(1 for cell in row.values if pd.notna(cell) and any(m in str(cell) for m in thai_months))
+            # ถ้ามีชื่อเดือนโผล่มาตั้งแต่ 2 คอลัมน์ขึ้นไป ถือว่าเป็นบรรทัดวันที่แน่นอน (แถวที่ 3)
+            if month_match_count >= 2: 
+                date_row_idx = i
                 break
                 
-        if header_row_idx == -1 or header_row_idx + 1 >= len(df_raw):
+        if date_row_idx == -1:
             return None, None
 
-        # 2. แถวถัดไป (แถวที่ 3) คือแถวที่มีข้อมูล "8 มี.ค.", "9 มี.ค." ฯลฯ
-        date_row_idx = header_row_idx + 1
+        # 2. ดึงข้อมูลจากแถววันที่เจอ (แถวที่ 3)
         dates = df_raw.iloc[date_row_idx].values
         
         valid_col_indices = [0] # บังคับเก็บคอลัมน์ 0 (รายชื่อเวชภัณฑ์) เสมอ
@@ -113,7 +116,7 @@ def display_modern_inventory_table(df, item_col, date_columns):
 
         # หากมีการกรอกข้อมูลมาแล้วอย่างน้อย 1 วัน
         if len(valid_points) > 0:
-            current_val = valid_points[-1] # ยอดล่าสุดที่มีการกรอก (แม้จะไม่ได้กรอกในวัน global_latest_date ก็ตาม)
+            current_val = valid_points[-1] # ยอดล่าสุดที่มีการกรอก
             
             # หากมีการกรอกมาแล้ว 2 วันขึ้นไป ให้เอามาเทียบส่วนต่าง
             if len(valid_points) > 1:
