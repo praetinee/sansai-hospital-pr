@@ -80,7 +80,7 @@ def load_and_process_inventory(source_url, item_column_name):
         return None, None
 
 def display_modern_inventory_table(df, item_col, date_columns):
-    """ฟังก์ชันแสดงตารางเวชภัณฑ์แบบ Custom HTML เพื่อรองรับการจัดกึ่งกลาง 100%"""
+    """ฟังก์ชันแสดงตารางเวชภัณฑ์แบบ Native Streamlit (เสถียรที่สุด)"""
     if df is None or df.empty or not date_columns:
         st.warning("ไม่พบข้อมูลที่จะแสดงผล กรุณาตรวจสอบลิงก์ Google Sheet")
         return
@@ -95,19 +95,19 @@ def display_modern_inventory_table(df, item_col, date_columns):
         st.info("ไม่มีข้อมูลการอัปเดตในตาราง")
         return
 
-    # 2. กำหนดวันล่าสุด และ วันก่อนหน้าล่าสุด
+    # 2. กำหนดวันล่าสุด และ วันก่อนหน้าล่าสุด เพื่อนำมาลบกัน
     global_latest_date = filled_dates[-1]
     global_prev_date = filled_dates[-2] if len(filled_dates) > 1 else None
 
     # สร้างชื่อคอลัมน์
     stock_col_name = f"คงคลัง ณ วันที่ {global_latest_date}"
-    change_col_name = "การเพิ่มขึ้น/ลดลง (จากข้อมูลล่าสุด)"
+    change_col_name = "การเพิ่มขึ้น/ลดลง"
 
-    html_rows = ""
+    processed_rows = []
     
     # 3. วนลูปเช็คข้อมูลทีละไอเทม
     for index, row in df.iterrows():
-        item_name = str(row[item_col]).replace('<', '&lt;').replace('>', '&gt;')
+        item_name = str(row[item_col])
         
         # ฟังก์ชันย่อยสำหรับดึง "ยอดคงเหลือล่าสุด" จนถึงวันที่กำหนด
         def get_value_up_to(target_date):
@@ -129,73 +129,46 @@ def display_modern_inventory_table(df, item_col, date_columns):
             prev_val = get_value_up_to(global_prev_date)
             diff = current_val - prev_val
             
-            # จัด Format และใส่สีสันให้เข้าใจง่าย (เขียวเพิ่ม แดงลด)
+            # จัด Format ใส่เครื่องหมาย + และลูกน้ำให้สวยงาม
             if diff > 0:
-                delta_str = f"🔺 <span style='color: #059669; font-weight: bold;'>+{int(diff):,}</span>"
+                delta_str = f"🔺 +{int(diff):,}"
             elif diff < 0:
-                delta_str = f"🔻 <span style='color: #dc2626; font-weight: bold;'>{int(diff):,}</span>"
+                delta_str = f"🔻 {int(diff):,}"
             else:
-                delta_str = f"➖ <span style='color: #64748b;'>0</span>"
+                delta_str = "0"
         else:
-            delta_str = f"➖ <span style='color: #64748b;'>0</span>"
+            delta_str = "0"
 
-        # ประกอบข้อมูลทีละบรรทัด (บังคับกึ่งกลางที่เซลล์ด้วย class="text-center")
-        html_rows += f"""
-            <tr>
-                <td>{item_name}</td>
-                <td class="text-center" style="font-weight: 500;">{int(current_val):,}</td>
-                <td class="text-center">{delta_str}</td>
-            </tr>
-        """
+        processed_rows.append({
+            "ชื่อรายการ": item_name,
+            stock_col_name: int(current_val),
+            change_col_name: delta_str
+        })
 
-    # 4. สร้างตาราง HTML สไตล์ Modern
-    help_text = f"เปรียบเทียบส่วนต่างระหว่าง {global_latest_date} กับ {global_prev_date}" if global_prev_date else "เพิ่งมีการบันทึกข้อมูลวันแรก"
-    
-    html_table = f"""
-    <style>
-        .inventory-table {{
-            width: 100%;
-            border-collapse: collapse;
-            margin: 10px 0 20px 0;
-            font-family: inherit;
-        }}
-        .inventory-table th {{
-            background-color: #f1f5f9;
-            color: #334155;
-            font-size: 1.05rem;
-            padding: 12px 15px;
-            border-bottom: 2px solid #cbd5e1;
-        }}
-        .inventory-table td {{
-            padding: 12px 15px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #1e293b;
-        }}
-        .inventory-table tr:hover td {{
-            background-color: #f8fafc;
-        }}
-        .text-center {{
-            text-align: center !important;
-        }}
-    </style>
-    <div style="overflow-x: auto; background-color: white; border-radius: 8px; border: 1px solid #e2e8f0;">
-        <table class="inventory-table">
-            <thead>
-                <tr>
-                    <th style="text-align: left;">📝 ชื่อรายการ</th>
-                    <th class="text-center" title="ข้อมูลล่าสุด">📦 {stock_col_name}</th>
-                    <th class="text-center" title="{help_text}">📊 {change_col_name}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {html_rows}
-            </tbody>
-        </table>
-    </div>
-    """
+    display_df = pd.DataFrame(processed_rows)
 
-    # แสดงผลตารางด้วยคำสั่ง Markdown แบบอนุญาตให้ใช้ HTML
-    st.markdown(html_table, unsafe_allow_html=True)
+    # 4. แสดงผลตารางด้วย Native Streamlit Dataframe
+    st.dataframe(
+        display_df,
+        column_config={
+            "ชื่อรายการ": st.column_config.TextColumn(
+                "📝 ชื่อรายการ", 
+                width="large"
+            ),
+            stock_col_name: st.column_config.NumberColumn(
+                f"📦 {stock_col_name}", 
+                format="%d",
+                width="medium"
+            ),
+            change_col_name: st.column_config.TextColumn(
+                f"📊 {change_col_name}", 
+                width="medium",
+                help=f"เปรียบเทียบส่วนต่างระหว่าง {global_latest_date} กับ {global_prev_date}" if global_prev_date else "เพิ่งมีการบันทึกข้อมูลวันแรก"
+            )
+        },
+        hide_index=True,
+        use_container_width=True
+    )
 
 def render_inventory_ui():
     """ฟังก์ชันหลักสำหรับให้ app.py ดึงไปแสดงผล"""
