@@ -147,9 +147,14 @@ def display_modern_inventory_table(df, item_col, date_columns):
 
     display_df = pd.DataFrame(processed_rows)
 
-    # 4. แสดงผลตารางด้วย Native Streamlit Dataframe
+    # คำนวณความสูงของตารางเพื่อให้กางเต็มพอดี (ไม่มี Scroll bar)
+    # โดยเฉลี่ยแถวละประมาณ 35px และส่วนหัวตาราง (Header) 40px
+    table_height = (len(display_df) * 35) + 40
+
+    # 4. แสดงผลตารางด้วย Native Streamlit Dataframe แบบปรับความสูง
     st.dataframe(
         display_df,
+        height=table_height,
         column_config={
             "ชื่อรายการ": st.column_config.TextColumn(
                 "📝 ชื่อรายการ", 
