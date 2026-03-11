@@ -1,0 +1,316 @@
+import streamlit.components.v1 as components
+from inventory_tab import load_and_process_inventory, parse_value
+
+def render_summary():
+    # 1. ดึงข้อมูลจาก Google Sheets (ใช้ฟังก์ชันและแคชเดิมจาก inventory_tab เพื่อความรวดเร็ว)
+    med_supplies_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=38922931#gid=38922931"
+    medicines_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=50246944#gid=50246944"
+
+    df_sup, cols_sup = load_and_process_inventory(med_supplies_sheet, "รายการพัสดุการแพทย์")
+    df_med, cols_med = load_and_process_inventory(medicines_sheet, "รายการยา")
+
+    # 2. คำนวณภาพรวม (Smart Summary)
+    total_sup_items = len(df_sup) if df_sup is not None else 0
+    total_med_items = len(df_med) if df_med is not None else 0
+
+    latest_date = cols_sup[-1] if cols_sup else "ล่าสุด"
+
+    sup_sum = 0
+    if df_sup is not None and cols_sup:
+        sup_sum = sum([parse_value(x) or 0 for x in df_sup[cols_sup[-1]]])
+    
+    med_sum = 0
+    if df_med is not None and cols_med:
+        med_sum = sum([parse_value(x) or 0 for x in df_med[cols_med[-1]]])
+
+    # 3. โค้ด HTML ที่ประยุกต์จากไฟล์สรุปผล ผสมผสานกับการออกแบบใหม่
+    html_code = f"""
+    <!DOCTYPE html>
+    <html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        
+        <script>
+            tailwind.config = {{
+                theme: {{
+                    extend: {{
+                        fontFamily: {{ sans: ['Sarabun', 'sans-serif'], }},
+                        colors: {{
+                            theme: {{
+                                bg: '#F0F7FF', card: '#FFFFFF', border: '#BFDBFE',
+                                primary: '#1E40AF', secondary: '#1E3A8A', accent: '#3B82F6', text: '#334155',
+                            }}
+                        }},
+                        boxShadow: {{ 'paper': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', }}
+                    }}
+                }}
+            }}
+        </script>
+        <style>
+            body {{ font-family: 'Sarabun', sans-serif; background-color: transparent; margin: 0; padding: 0.5rem; }}
+            .section-title {{ position: relative; padding-left: 1rem; margin-bottom: 0.75rem; color: #1E3A8A; font-weight: 800; font-size: 1.15rem; }}
+            .section-title::before {{ content: ''; position: absolute; left: 0; top: 0.25rem; bottom: 0.25rem; width: 4px; background-color: #3B82F6; border-radius: 2px; }}
+            .info-box {{ background-color: white; border: 1px solid #DBEAFE; border-radius: 0.75rem; padding: 1.25rem; height: 100%; display: flex; flex-direction: column; transition: all 0.3s; }}
+            .info-box:hover {{ transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }}
+            .bullet-list li {{ position: relative; padding-left: 1.25rem; margin-bottom: 0.35rem; line-height: 1.5; }}
+            .bullet-list li::before {{ content: '•'; color: #3B82F6; font-weight: bold; position: absolute; left: 0; }}
+            
+            /* Responsive fixes for text */
+            @media (min-width: 1024px) {{ .section-title {{ font-size: 1.25rem; }} }}
+        </style>
+    </head>
+    <body class="text-slate-700">
+
+        <div class="w-full max-w-[1200px] mx-auto bg-white shadow-xl rounded-3xl overflow-hidden border border-blue-100 relative">
+            <!-- Background Pattern -->
+            <div class="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-blue-50 rounded-bl-full z-0 opacity-50"></div>
+
+            <!-- Header -->
+            <header class="bg-gradient-to-r from-theme-primary to-theme-secondary text-white p-6 md:p-8 relative z-10">
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
+                    <div class="bg-white/10 p-3 md:p-4 rounded-2xl backdrop-blur-sm border border-white/20 shrink-0">
+                        <span class="text-4xl md:text-5xl lg:text-6xl">🏥</span>
+                    </div>
+                    <div>
+                        <h2 class="text-lg md:text-xl text-blue-200 font-medium mb-1">สรุปผลการดำเนินงาน ปี 2569</h2>
+                        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">การบริหารจัดการปัญหาฝุ่นละอองขนาดเล็ก (PM2.5)</h1>
+                        <p class="text-blue-100 mt-2 text-base md:text-lg opacity-90">โรงพยาบาลสันทรายและเครือข่ายสุขภาพ อำเภอสันทราย</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Body -->
+            <div class="p-4 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10 bg-slate-50/50">
+
+                <!-- Col 1: Surveillance & Communication -->
+                <div class="col-span-1 flex flex-col gap-6">
+                    <!-- 1. Surveillance -->
+                    <div class="info-box shadow-paper">
+                        <h3 class="section-title">1. ระบบเฝ้าระวังอัจฉริยะ<br><span class="text-sm font-normal text-gray-500">(Smart Surveillance System)</span></h3>
+                        <div class="flex items-center gap-3 mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                            <span class="text-2xl md:text-3xl">📊</span>
+                            <div class="text-sm font-semibold text-theme-primary">Real-time Monitoring Dashboard</div>
+                        </div>
+                        <ul class="bullet-list text-sm">
+                            <li><strong>สำหรับผู้บริหาร:</strong> ติดตามสถานการณ์ฝุ่นเทียบกับจำนวนผู้ป่วยโรคที่เกี่ยวข้องกับการสัมผัสฝุ่น PM2.5</li>
+                            <li><strong>แหล่งข้อมูลแม่นยำ:</strong> เชื่อมโยงข้อมูลจากเครื่อง <strong>DustBoy</strong> และ Smog-epinorth (Backup)</li>
+                        </ul>
+                    </div>
+
+                    <!-- 2. Risk Comm -->
+                    <div class="info-box shadow-paper">
+                        <h3 class="section-title">2. การสื่อสารความเสี่ยง<br><span class="text-sm font-normal text-gray-500">(Risk Communication)</span></h3>
+                        <div class="space-y-3">
+                            <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                <strong class="text-theme-primary block text-sm mb-1">เชิงรุกถึงหน้าบ้าน (Offline)</strong>
+                                <p class="text-sm text-gray-600">อสม. เคาะประตูบ้าน ให้ความรู้กลุ่มเปราะบางรายครัวเรือน</p>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                <strong class="text-theme-primary block text-sm mb-1">ช่องทางดิจิทัล (Online)</strong>
+                                <p class="text-sm text-gray-600">แจ้งรายงานค่าฝุ่นและแนวทางปฏิบัติตัวผ่าน LINE Official และ Webpage สาธารณะ</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Environment -->
+                    <div class="info-box shadow-paper flex-grow">
+                        <h3 class="section-title">3. การจัดการสิ่งแวดล้อม<br><span class="text-sm font-normal text-gray-500">(Environmental Health)</span></h3>
+                        <ul class="bullet-list text-sm">
+                            <li><strong>ในหน่วยงาน (รพ.สันทราย):</strong> ตรวจวัดระดับ PM2.5</li>
+                            <li><strong>ภาคประชาชน:</strong> ดำเนินการคัดกรองสุขภาพ พร้อมสนับสนุน <strong>"มุ้งสู้ฝุ่น"</strong> และหน้ากากอนามัย</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Col 2: Facilities & Service -->
+                <div class="col-span-1 flex flex-col gap-6">
+                    <!-- 4. Facility Management -->
+                    <div class="info-box shadow-paper">
+                        <h3 class="section-title">4. พื้นที่ปลอดภัย<br><span class="text-sm font-normal text-gray-500">(Clean Room & Safety Zone)</span></h3>
+                        
+                        <!-- Stats -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-green-50 p-3 rounded-lg text-center border border-green-100">
+                                <div class="text-2xl font-bold text-green-700">26</div>
+                                <div class="text-xs text-green-800 font-medium">ห้องปลอดฝุ่น<br>(กรมอนามัย)</div>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-lg text-center border border-blue-100">
+                                <div class="text-2xl font-bold text-blue-700">22</div>
+                                <div class="text-xs text-blue-800 font-medium">ห้องลดฝุ่น<br>(สสจ. 1-3 ดาว)</div>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Coverage (3 Zones) -->
+                        <div class="space-y-2">
+                            <!-- Zone 1: OPD -->
+                            <div class="bg-blue-50 rounded-lg p-2.5 border border-blue-100">
+                                <h4 class="text-xs font-bold text-blue-800 mb-1.5 flex items-center gap-1">
+                                    <span class="text-blue-600">🏥</span> โซนผู้ป่วยนอก (OPD)
+                                </h4>
+                                <ul class="grid grid-cols-2 gap-x-1 gap-y-1 text-xs text-gray-700">
+                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>OPD (3 ชั้น)</li>
+                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>ห้องฟัน</li>
+                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>ฝากครรภ์ (ANC)</li>
+                                </ul>
+                            </div>
+
+                            <!-- Zone 2: IPD -->
+                            <div class="bg-green-50 rounded-lg p-2.5 border border-green-100">
+                                <h4 class="text-xs font-bold text-green-800 mb-1.5 flex items-center gap-1">
+                                    <span class="text-green-600">🛌</span> โซนผู้ป่วยใน (IPD)
+                                </h4>
+                                <ul class="grid grid-cols-1 gap-x-1 gap-y-1 text-xs text-gray-700">
+                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>กุมารเวชกรรม</li>
+                                </ul>
+                            </div>
+
+                            <!-- Zone 3: Critical & Specialized -->
+                            <div class="bg-red-50 rounded-lg p-2.5 border border-red-100">
+                                <h4 class="text-xs font-bold text-red-800 mb-1.5 flex items-center gap-1">
+                                    <span class="text-red-600">🚨</span> เฉพาะทางและวิกฤต (Critical)
+                                </h4>
+                                <ul class="grid grid-cols-2 gap-x-1 gap-y-1 text-xs text-gray-700">
+                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>ER (ฉุกเฉิน)</li>
+                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>ICU (วิกฤต)</li>
+                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>NICU (ทารก)</li>
+                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>LR (ห้องคลอด)</li>
+                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>หน่วยฟอกไต</li>
+                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>ห้องส่องกล้อง</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Medical Service -->
+                    <div class="info-box shadow-paper flex-grow">
+                        <h3 class="section-title">5. การบริการทางการแพทย์<br><span class="text-sm font-normal text-gray-500">(Pollution Clinic)</span></h3>
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="bg-blue-100 text-blue-600 p-2 rounded-lg text-xl md:text-2xl">🏥</div>
+                            <div>
+                                <h4 class="font-bold text-theme-primary">คลินิกมลพิษ</h4>
+                                <p class="text-sm text-gray-600">เปิดให้บริการทุกวันในเวลาราชการ</p>
+                            </div>
+                        </div>
+                        <ul class="bullet-list text-sm mb-4">
+                            <li>นัดหมายล่วงหน้าผ่าน <strong>"หมอพร้อม"</strong></li>
+                            <li>รองรับผู้ป่วย <strong>Walk-in</strong></li>
+                        </ul>
+                        
+                        <hr class="border-dashed border-gray-300 my-3">
+                        
+                        <h3 class="section-title !text-base !mb-2">การดูแลกลุ่มเฉพาะ (Hero Care)</h3>
+                        <div class="bg-orange-50 border border-orange-100 p-3 rounded-lg flex items-center justify-between">
+                            <div>
+                                <div class="text-xs text-orange-800 font-bold">อาสาดับไฟป่า</div>
+                                <div class="text-xs text-orange-700">คัดกรองก่อน-หลังภารกิจ</div>
+                            </div>
+                            <div class="text-2xl md:text-3xl font-bold text-orange-600">177 <span class="text-sm font-normal">ราย</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 3: Epidemiology & Inventory -->
+                <div class="col-span-1 flex flex-col gap-6">
+                    
+                    <!-- 6. Epi Investigation -->
+                    <div class="info-box shadow-paper bg-gradient-to-b from-white to-blue-50 border-blue-200">
+                        <h3 class="section-title">6. เฝ้าระวังทางระบาดวิทยา<br><span class="text-sm font-normal text-gray-500">(Epidemiological Surveillance)</span></h3>
+                        
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-700 mb-2"><strong>มาตรการ:</strong> ประสาน ER และ OPD เพื่อเฝ้าระวัง สอบสวนโรค และรายงาน สสจ.เชียงใหม่</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 bg-blue-100 text-blue-700 text-[11px] rounded font-bold">COPD</span>
+                                <span class="px-2 py-1 bg-blue-100 text-blue-700 text-[11px] rounded font-bold">Asthma</span>
+                                <span class="px-2 py-1 bg-blue-100 text-blue-700 text-[11px] rounded font-bold">Z58.1 (สัมผัสมลพิษ)</span>
+                            </div>
+                        </div>
+
+                        <div class="relative py-2">
+                            <div class="absolute left-4 top-2 bottom-2 w-0.5 bg-blue-200"></div>
+                            
+                            <!-- Stat 1 -->
+                            <div class="relative pl-10 mb-4">
+                                <div class="absolute left-2 top-1.5 w-4 h-4 bg-blue-500 rounded-full border-4 border-white shadow"></div>
+                                <div class="text-sm text-gray-500 font-medium">ผู้ป่วยเฝ้าระวังสะสม</div>
+                                <div class="text-3xl font-extrabold text-theme-primary">105 <span class="text-sm font-normal text-gray-500">ราย</span></div>
+                            </div>
+
+                            <!-- Stat 2 -->
+                            <div class="relative pl-10 mb-4">
+                                <div class="absolute left-2 top-1.5 w-4 h-4 bg-orange-400 rounded-full border-4 border-white shadow"></div>
+                                <div class="text-sm text-gray-500 font-medium">ผลการวินิจฉัยเบื้องต้น</div>
+                                <div class="bg-white p-2 rounded shadow-sm border border-gray-100 text-xs text-gray-600 mt-1 leading-snug">
+                                    ไม่พบความสัมพันธ์ที่มีนัยสำคัญทางคลินิกกับหมอกควันโดยตรง
+                                </div>
+                            </div>
+
+                            <!-- Stat 3 -->
+                            <div class="relative pl-10">
+                                <div class="absolute left-2 top-1.5 w-4 h-4 bg-green-500 rounded-full border-4 border-white shadow"></div>
+                                <div class="text-sm text-gray-500 font-medium">ยืนยันผลกระทบจากฝุ่น</div>
+                                <div class="text-3xl font-extrabold text-green-600">0 <span class="text-sm font-normal text-gray-500">ราย</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. Smart Inventory (NEW INJECTION) -->
+                    <div class="info-box shadow-paper bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200 flex-grow">
+                        <h3 class="section-title !text-emerald-800 before:bg-emerald-500">7. คลังเวชภัณฑ์อัจฉริยะ<br><span class="text-sm font-normal text-emerald-600">(Smart Inventory)</span></h3>
+                        
+                        <div class="flex flex-col gap-3 mt-2 flex-grow justify-center">
+                            <!-- Supplies -->
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-emerald-100 flex items-center gap-3 relative overflow-hidden">
+                                <div class="absolute right-[-10px] top-[-5px] opacity-[0.03] text-5xl">📦</div>
+                                <div class="bg-blue-100 p-3 rounded-full text-blue-600 text-lg shrink-0">📦</div>
+                                <div>
+                                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wide">พัสดุการแพทย์พร้อมใช้</p>
+                                    <div class="flex items-baseline gap-1 -mt-1">
+                                        <span class="text-2xl font-extrabold text-blue-700">{int(sup_sum):,}</span>
+                                        <span class="text-xs text-gray-600">ชิ้น</span>
+                                    </div>
+                                    <p class="text-[10px] text-blue-600 font-medium mt-0.5">✓ จัดการ {total_sup_items} รายการ</p>
+                                </div>
+                            </div>
+
+                            <!-- Medicines -->
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-emerald-100 flex items-center gap-3 relative overflow-hidden">
+                                <div class="absolute right-[-10px] top-[-5px] opacity-[0.03] text-5xl">💊</div>
+                                <div class="bg-emerald-100 p-3 rounded-full text-emerald-600 text-lg shrink-0">💊</div>
+                                <div>
+                                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wide">เวชภัณฑ์ยาพร้อมใช้</p>
+                                    <div class="flex items-baseline gap-1 -mt-1">
+                                        <span class="text-2xl font-extrabold text-emerald-700">{int(med_sum):,}</span>
+                                        <span class="text-xs text-gray-600">หน่วย</span>
+                                    </div>
+                                    <p class="text-[10px] text-emerald-600 font-medium mt-0.5">✓ จัดการ {total_med_items} รายการ</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Status Bar -->
+                        <div class="mt-4 flex flex-col sm:flex-row justify-between items-center bg-white/60 p-2 rounded-lg text-[10px] sm:text-xs font-medium text-gray-600 gap-1 text-center">
+                            <span class="flex items-center justify-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> 
+                                อัปเดตล่าสุด: {latest_date}
+                            </span>
+                            <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded font-bold">สถานะ: เพียงพอ</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="bg-theme-primary text-white/80 p-4 text-center text-sm md:text-base">
+                <p>กลุ่มงานอาชีวเวชกรรม โรงพยาบาลสันทราย</p>
+            </footer>
+        </div>
+    </body>
+    </html>
+    """
+    
+    # ปรับความสูงให้เหมาะสมกับเนื้อหา
+    components.html(html_code, height=1300, scrolling=True)
