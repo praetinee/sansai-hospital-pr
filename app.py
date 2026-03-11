@@ -5,14 +5,14 @@ from flow import render_flow
 from roles import render_roles
 
 # ------------------------------------------------------------------
-# ฟังก์ชันระบบจัดการเวชภัณฑ์คงคลัง (เพิ่มใหม่ตามคำขอ)
+# ฟังก์ชันระบบจัดการเวชภัณฑ์คงคลัง
 # ------------------------------------------------------------------
 def to_float(val):
     """ฟังก์ชันช่วยแปลงค่าในตารางให้เป็นตัวเลข (ป้องกัน error จากลูกน้ำหรือช่องว่าง)"""
     if pd.isna(val): 
         return 0.0
     val_str = str(val).strip().replace(',', '')
-    if val_str == '' or val_str == '-': 
+    if val_str.lower() in ['', '-', 'nan', 'none']: 
         return 0.0
     try:
         return float(val_str)
@@ -22,62 +22,69 @@ def to_float(val):
 def load_and_process_inventory(file_path, item_column_name):
     """ฟังก์ชันอ่านและดึงข้อมูลเฉพาะวันที่ล่าสุดแบบยืดหยุ่น"""
     try:
-        # ใช้ names=range(40) เพื่อป้องกัน ParserError กรณีจำนวนคอลัมน์ไม่เท่ากัน
-        df_raw = pd.read_csv(file_path, names=list(range(40)), encoding='utf-8-sig', dtype=str)
+        # อ่านข้อมูลแบบไม่มี Header เพื่อให้สแกนหาบรรทัดที่ถูกต้องได้ง่ายขึ้น
+        df_raw = pd.read_csv(file_path, header=None, encoding='utf-8-sig', dtype=str)
         
-        # ค้นหาแถวที่เป็น Header ของวันที่อัตโนมัติ (ข้ามข้อความคำอธิบายด้านบน)
+        # ค้นหาแถวที่เป็น Header ของวันที่จริงๆ (มองหาชื่อย่อเดือนภาษาไทย)
+        thai_months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
         header_idx = -1
-        for i, row in df_raw.iterrows():
-            val0 = str(row[0]).strip()
-            val1 = str(row[1]).strip()
-            if val0 in ['รายการ', 'ยา'] or 'วันที่' in val1:
-                header_idx = i + 1  # แถวถัดไปจะเป็นแถววันที่
-                break
-                
-        if header_idx == -1:
-            # สำรองการค้นหา: ลองหาแบบที่สอง เผื่อไม่เจอคำว่า "รายการ"
-            for i, row in df_raw.iterrows():
-                if 'มี.ค.' in str(row[1]).strip():
-                    header_idx = i
-                    break
-
-        if header_idx != -1 and header_idx < len(df_raw):
-            columns = list(df_raw.iloc[header_idx].values)
-            columns[0] = item_column_name # แทนที่ช่องแรกด้วยชื่อคอลัมน์
-            df = df_raw.iloc[header_idx + 1:].copy()
-            df.columns = columns
-        else:
-            return None, None, None
-            
-        # ลบแถวที่ชื่อรายการเป็นค่าว่าง
-        df = df.dropna(subset=[item_column_name])
         
-        # กรองเอาเฉพาะคอลัมน์วันที่จริงๆ (ทิ้งคอลัมน์ที่ว่างหรือทะลุไปถึง 40)
-        valid_cols = []
-        for col in df.columns:
+        for i, row in df_raw.iterrows():
+            row_str = " ".join([str(x) for x in row.values])
+            # ถ้าบรรทัดไหนมีชื่อเดือน ให้ถือว่าเป็นบรรทัดหัวตารางของวันที่
+            if any(month in row_str for month in thai_months):
+                header_idx = i
+                break
+
+        if header_idx == -1:
+            return None, None, None
+
+        # นำบรรทัดที่เจอมาตั้งเป็นหัวตาราง (Columns)
+        columns = list(df_raw.iloc[header_idx].values)
+        columns[0] = item_column_name # บังคับให้คอลัมน์แรกเป็นชื่อรายการ (เพราะของเดิมในไฟล์มักจะเป็นช่องว่าง)
+        
+        # ตัดข้อมูลส่วนหัวทิ้ง เอาเฉพาะข้อมูลเวชภัณฑ์ด้านล่าง
+        df = df_raw.iloc[header_idx + 1:].copy()
+        df.columns = columns
+            
+        # ลบแถวที่ชื่อรายการเป็นค่าว่าง หรือคำว่า nan
+        df = df.dropna(subset=[item_column_name])
+        df = df[df[item_column_name].astype(str).str.strip().str.lower() != 'nan']
+        df = df[df[item_column_name].astype(str).str.strip() != '']
+        
+        # กรองเอาเฉพาะคอลัมน์วันที่จริงๆ
+        date_columns = []
+        for col in df.columns[1:]:
             col_str = str(col).strip()
             if pd.notna(col) and col_str not in ['nan', 'None', '']:
-                valid_cols.append(col)
+                date_columns.append(col)
                 
-        df = df[valid_cols]
-        date_columns = df.columns[1:]
+        if not date_columns:
+            return None, None, None
+            
+        # เก็บเฉพาะคอลัมน์ชื่อรายการ และ คอลัมน์วันที่
+        df = df[[item_column_name] + date_columns]
         
-        # หาวันที่ล่าสุดที่มีข้อมูลตัวเลขกรอกไว้จริงๆ
-        latest_date = date_columns[0] if len(date_columns) > 0 else None
+        # หาวันที่ล่าสุดที่มีข้อมูลตัวเลขกรอกไว้จริงๆ (เช็คจากหลังมาหน้า)
+        latest_date = None
         valid_date_cols = []
         
         for col in reversed(date_columns):
             has_data = False
             for val in df[col]:
-                if pd.notna(val):
-                    val_str = str(val).strip().replace(',', '')
-                    if val_str and val_str != '-':
+                val_str = str(val).strip().replace(',', '')
+                if pd.notna(val) and val_str not in ['', 'nan', 'None', '-']:
+                    try:
+                        float(val_str) # ถ้าแปลงเป็นตัวเลขได้ แปลว่ามีการกรอกข้อมูลแล้ว
                         has_data = True
                         break
+                    except ValueError:
+                        pass
             if has_data:
                 latest_date = col
                 break
                 
+        # ถ้ารู้วันที่ล่าสุดแล้ว ให้เก็บเฉพาะวันที่ตั้งแต่เริ่มต้นจนถึงวันล่าสุดเพื่อทำกราฟ
         if latest_date:
             for col in date_columns:
                 valid_date_cols.append(col)
@@ -96,7 +103,7 @@ def load_and_process_inventory(file_path, item_column_name):
 def display_modern_inventory_table(df, item_col, latest_date, valid_date_cols):
     """ฟังก์ชันแสดงตารางเวชภัณฑ์แบบมีกราฟเส้น (Sparkline)"""
     if df is None or df.empty or not latest_date:
-        st.warning("ไม่พบข้อมูลที่จะแสดงผล")
+        st.warning("ไม่พบข้อมูลที่จะแสดงผล กรุณาตรวจสอบรูปแบบไฟล์ CSV")
         return
 
     display_df = pd.DataFrame()
