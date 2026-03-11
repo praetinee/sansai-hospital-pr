@@ -14,43 +14,33 @@ def to_float(val):
         return 0.0
 
 def load_and_process_inventory(file_path, item_column_name):
-    """ฟังก์ชันอ่านและดึงข้อมูลเฉพาะวันที่ล่าสุดแบบยืดหยุ่น"""
+    """ฟังก์ชันอ่านข้อมูล อ้างอิงจากโครงสร้าง: แถว 1=คำอธิบาย, แถว 2-3=หัวตาราง"""
     try:
-        # แก้ปัญหาจำนวนลูกน้ำไม่เท่ากันในแต่ละบรรทัด โดยบังคับสร้างคอลัมน์เผื่อไว้ 100 คอลัมน์
-        df_raw = pd.read_csv(file_path, names=range(100), encoding='utf-8-sig', dtype=str)
+        # ใช้ header=[1, 2] เพื่อกำหนดให้ดึงหัวตารางจากแถวที่ 2 และ 3 (index 1 และ 2)
+        # Pandas จะทำการข้ามแถวแรกที่เป็น Instruction ไปโดยอัตโนมัติ
+        df_raw = pd.read_csv(file_path, header=[1, 2], encoding='utf-8-sig', dtype=str)
         
-        # ค้นหาแถวที่เป็น Header ของวันที่จริงๆ (มองหาชื่อย่อเดือนภาษาไทย)
-        thai_months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
-        header_idx = -1
-        
-        for i, row in df_raw.iterrows():
-            row_str = " ".join([str(x) for x in row.values if pd.notna(x)])
-            if any(month in row_str for month in thai_months):
-                header_idx = i
-                break
-
-        if header_idx == -1:
-            return None, None, None
-
-        raw_columns = list(df_raw.iloc[header_idx].values)
+        # คอลัมน์ที่ 1 เป็นต้นไป (Level 1) คือข้อมูลของวันที่
+        raw_dates = df_raw.columns.get_level_values(1)[1:]
         
         valid_col_indices = [0] # index 0 บังคับเป็นชื่อรายการ
         date_columns = []
         
-        for idx, col in enumerate(raw_columns):
-            if idx == 0: continue
+        for i, col in enumerate(raw_dates):
             col_str = str(col).strip()
-            if pd.notna(col) and col_str not in ['nan', 'None', '']:
-                if col not in date_columns:
-                    date_columns.append(col)
-                    valid_col_indices.append(idx)
+            # กรองเฉพาะชื่อคอลัมน์ที่ใช้งานได้
+            if pd.notna(col) and not col_str.startswith('Unnamed'):
+                date_columns.append(col_str)
+                valid_col_indices.append(i + 1)
 
         if not date_columns:
             return None, None, None
 
-        df = df_raw.iloc[header_idx + 1:, valid_col_indices].copy()
+        # ตัดข้อมูลมาเฉพาะคอลัมน์ชื่อรายการ + วันที่
+        df = df_raw.iloc[:, valid_col_indices].copy()
         df.columns = [item_column_name] + date_columns
             
+        # ลบแถวที่ชื่อรายการเป็นค่าว่าง
         df = df.dropna(subset=[item_column_name])
         df = df[df[item_column_name].astype(str).str.strip().str.lower() != 'nan']
         df = df[df[item_column_name].astype(str).str.strip() != '']
@@ -58,6 +48,7 @@ def load_and_process_inventory(file_path, item_column_name):
         latest_date = None
         valid_date_cols = []
         
+        # หาวันที่ล่าสุดที่มีข้อมูลตัวเลขกรอกไว้จริงๆ (เช็คจากหลังมาหน้า)
         for col in reversed(date_columns):
             has_data = False
             for val in df[col]:
@@ -73,6 +64,7 @@ def load_and_process_inventory(file_path, item_column_name):
                 latest_date = col
                 break
                 
+        # หากพบวันที่ล่าสุด จะเก็บข้อมูลตั้งแต่วันแรกถึงวันล่าสุดเพื่อใช้สร้างกราฟเส้น
         if latest_date:
             for col in date_columns:
                 valid_date_cols.append(col)
@@ -91,11 +83,13 @@ def load_and_process_inventory(file_path, item_column_name):
 def display_modern_inventory_table(df, item_col, latest_date, valid_date_cols):
     """ฟังก์ชันแสดงตารางเวชภัณฑ์แบบมีกราฟเส้น (Sparkline)"""
     if df is None or df.empty or not latest_date:
-        st.warning("ไม่พบข้อมูลที่จะแสดงผล กรุณาตรวจสอบรูปแบบไฟล์ CSV")
+        st.warning("ไม่พบข้อมูลที่จะแสดงผล กรุณาตรวจสอบการตั้งค่าไฟล์ CSV")
         return
 
     display_df = pd.DataFrame()
     display_df['รายการ'] = df[item_col]
+    
+    # แปลงข้อมูลวันล่าสุดเป็นตัวเลขเพื่อแสดงผล
     display_df['คงเหลือล่าสุด'] = df[latest_date].apply(to_float).astype(int)
     
     history_data = []
@@ -132,6 +126,7 @@ def render_inventory_ui():
     med_supplies_file = "ลงข้อมูลคลังเวชภัณฑ์รพ.สันทรายPM2.5 - พัสดุการแพทย์.csv"
     medicines_file = "ลงข้อมูลคลังเวชภัณฑ์รพ.สันทรายPM2.5 - ยา.csv"
 
+    # ประมวลผลแต่ละไฟล์
     df_sup, latest_date_sup, valid_cols_sup = load_and_process_inventory(med_supplies_file, "รายการพัสดุการแพทย์")
     df_med, latest_date_med, valid_cols_med = load_and_process_inventory(medicines_file, "รายการยา")
 
