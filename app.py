@@ -1,7 +1,9 @@
 import streamlit as st
+import pandas as pd
 from dashboard import render_dashboard
 from flow import render_flow
 from roles import render_roles
+import inventory_tab # นำเข้าโมดูลเวชภัณฑ์ที่แยกไฟล์ไว้อย่างเป็นระเบียบ
 
 # 1. ตั้งค่าหน้าเว็บ Streamlit ให้เป็นแบบกว้างสุด (Wide)
 st.set_page_config(
@@ -61,11 +63,12 @@ hide_streamlit_style = """
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-# 3. จัดการแสดงผล Tabs และเรียกใช้โมดูล (อัปเดต: ลบแท็บกระบวนการทำงานออก)
-tab1, tab2, tab3 = st.tabs([
+# 3. จัดการแสดงผล Tabs และเรียกใช้โมดูล
+tab1, tab2, tab3, tab4 = st.tabs([
     "📊 แผนการดำเนินงาน", 
     "🔄 ขั้นตอนการให้บริการ", 
-    "🗺️ บทบาทของแต่ละหน่วยงาน"
+    "🗺️ บทบาทของแต่ละหน่วยงาน",
+    "📦 เวชภัณฑ์คงคลัง"
 ])
 
 with tab1:
@@ -77,5 +80,9 @@ with tab2:
     render_flow()
 
 with tab3:
-    # เรียกใช้ฟังก์ชันจากไฟล์ pm25_flow.py 
+    # เรียกใช้ฟังก์ชันจากไฟล์ roles.py 
     render_roles()
+
+with tab4:
+    # เรียกใช้งานฟังก์ชันจากไฟล์ inventory_tab.py โค้ดในนี้จะสะอาดและเป็นระเบียบ
+    inventory_tab.render_inventory_ui()
