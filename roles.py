@@ -165,7 +165,7 @@ def render_roles():
                             </div>
 
                             <!-- ================= Column 1: Left (Community) ================= -->
-                            <div id="col-left" class="col-1 flow-col col-span-1">
+                            <div id="col-left" class="col-1 flow-col col-span-1 min-w-0">
                                 
                                 <!-- ลูกศรเชื่อมจาก Column 1 ไป Column 2 (HTML CSS แท้ 100%) -->
                                 <div class="block absolute top-1/2 -right-[2rem] w-[2rem] -translate-y-1/2 z-20 pointer-events-none">
@@ -217,7 +217,7 @@ def render_roles():
                             </div>
 
                             <!-- ================= Column 2: Middle (Clinic & ER) ================= -->
-                            <div id="col-mid" class="col-2 flow-col col-span-2">
+                            <div id="col-mid" class="col-2 flow-col col-span-2 min-w-0">
                                 
                                 <!-- ลูกศรเชื่อมจาก Column 2 ไป Column 3 (HTML CSS แท้ 100%) -->
                                 <div class="block absolute top-1/2 -right-[2rem] w-[2rem] -translate-y-1/2 z-20 pointer-events-none">
@@ -231,28 +231,29 @@ def render_roles():
                                     </h2>
                                 </div>
                                 
-                                <div id="inner-grid" class="grid grid-cols-2 gap-5 h-full mt-3">
+                                <!-- แก้ไขพื้นที่ด้วย min-w-0 และปรับอัตราส่วน grid-cols เพื่อไม่ให้ล้น -->
+                                <div id="inner-grid" class="grid grid-cols-[1.05fr_0.95fr] gap-4 h-full mt-3 min-w-0">
                                     
                                     <!-- Left Sub-column (4 original rows) -->
-                                    <div class="space-y-4 flex flex-col justify-between h-full">
+                                    <div class="space-y-4 flex flex-col justify-between h-full min-w-0">
                                         
                                         <!-- Row 1: Online -->
-                                        <div class="inner-box flex flex-col gap-2 relative border-orange-200 shadow-sm flex-1 p-4">
+                                        <div class="inner-box flex flex-col gap-2 relative border-orange-200 shadow-sm flex-1 p-4 min-w-0">
                                             <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-2">
                                                 <i data-lucide="smartphone" class="w-6 h-6 c2-icon shrink-0"></i>
                                                 <h3 class="font-bold text-main text-[15px] baseline-fix whitespace-nowrap">ระบบก่อนถึง รพ. และออนไลน์</h3>
                                                 
-                                                <!-- ป้ายคลินิกมลพิษ: ล็อกขนาด ห้ามหด ห้ามตัดคำ -->
+                                                <!-- ป้ายคลินิกมลพิษ -->
                                                 <div class="bg-orange-500 text-white text-[12px] px-3 py-1 rounded-full font-bold ml-auto shrink-0 min-w-max shadow-sm flex items-center justify-center">
                                                     <span class="baseline-fix-inline whitespace-nowrap">คลินิกมลพิษ</span>
                                                 </div>
                                             </div>
-                                            <div class="grid grid-cols-[1fr_auto_1fr] w-full gap-2 items-center h-full min-h-[40px]">
-                                                <div class="flex flex-col justify-center h-full">
-                                                    <p class="text-muted font-medium leading-tight text-[12px]">ผ่าน Line OA หรือ หมอพร้อม</p>
+                                            <div class="grid grid-cols-[1fr_auto_1fr] w-full gap-2 items-center h-full min-h-[40px] min-w-0">
+                                                <div class="flex flex-col justify-center h-full min-w-0">
+                                                    <p class="text-muted font-medium leading-tight text-[12px] truncate">ผ่าน Line OA หรือ หมอพร้อม</p>
                                                 </div>
                                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 shrink-0"></i>
-                                                <div class="flex flex-col justify-center items-end text-right h-full">
+                                                <div class="flex flex-col justify-center items-end text-right h-full min-w-0">
                                                     <p class="font-bold c2-text leading-tight baseline-fix text-[13px]">ประเมินเบื้องต้น</p>
                                                     <p class="text-muted font-medium leading-tight mt-1 text-[12px]">& Telemedicine</p>
                                                 </div>
@@ -260,19 +261,19 @@ def render_roles():
                                         </div>
 
                                         <!-- Row 2: PCU หนองหาร / รพ.สต. -->
-                                        <div class="inner-box flex flex-col gap-2 relative border-orange-200 shadow-sm flex-1 p-4 pt-7">
+                                        <div class="inner-box flex flex-col gap-2 relative border-orange-200 shadow-sm flex-1 p-4 pt-7 min-w-0">
                                             <div class="tag-code"><span class="baseline-fix-inline">รหัส Z58.1</span></div>
                                             <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-2">
                                                 <i data-lucide="building-2" class="w-6 h-6 c2-icon shrink-0"></i>
                                                 <h3 class="font-bold text-[15px] text-main leading-tight baseline-fix whitespace-nowrap">PCU หนองหาร & รพ.สต.</h3>
                                             </div>
-                                            <div class="grid grid-cols-[1fr_auto_1.4fr_auto_0.8fr] w-full gap-2 h-full min-h-[50px] items-center text-[12px]">
+                                            <div class="grid grid-cols-[0.8fr_auto_1.2fr_auto_1fr] w-full gap-2 h-full min-h-[50px] items-center text-[12px] min-w-0">
                                                 <div class="flex flex-col justify-center items-center text-center h-full px-1">
                                                     <p class="font-bold text-main leading-tight baseline-fix">คัดกรองอาการ</p>
                                                 </div>
                                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 shrink-0"></i>
-                                                <div class="flex flex-col justify-center items-center text-center h-full px-1">
-                                                    <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง <a href="https://docs.google.com/spreadsheets/d/1fq34BEtpt6nWbxSupNacky3ZzlV7HymWNW2xv6LyIcA/edit?usp=sharing" target="_blank" class="text-blue-600 hover:text-blue-800 underline relative z-50" title="คลิกเพื่อกรอกข้อมูล">GG Sheets 🔗</a></p>
+                                                <div class="flex flex-col justify-center items-center text-center h-full px-1 min-w-0">
+                                                    <p class="font-bold text-main leading-tight baseline-fix break-words">เข้าข่าย: ลง <a href="https://docs.google.com/spreadsheets/d/1fq34BEtpt6nWbxSupNacky3ZzlV7HymWNW2xv6LyIcA/edit?usp=sharing" target="_blank" class="text-blue-600 hover:text-blue-800 underline relative z-50 whitespace-nowrap" title="คลิกเพื่อกรอกข้อมูล">GG Sheets 🔗</a></p>
                                                     <p class="text-muted font-medium leading-tight mt-1">+ รักษาตามอาการ</p>
                                                 </div>
                                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 shrink-0"></i>
@@ -284,19 +285,19 @@ def render_roles():
                                         </div>
 
                                         <!-- Row 3: OPD -->
-                                        <div class="inner-box flex flex-col gap-2 relative border-orange-200 shadow-sm flex-1 p-4 pt-7">
+                                        <div class="inner-box flex flex-col gap-2 relative border-orange-200 shadow-sm flex-1 p-4 pt-7 min-w-0">
                                             <div class="tag-code"><span class="baseline-fix-inline">รหัส Z58.1</span></div>
                                             <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-2">
                                                 <i data-lucide="eye" class="w-6 h-6 c2-icon shrink-0"></i>
                                                 <h3 class="font-bold text-[15px] text-main leading-tight baseline-fix whitespace-nowrap">ผู้ป่วยนอก (OPD)</h3>
                                             </div>
-                                            <div class="grid grid-cols-[0.8fr_auto_1.4fr_auto_1fr] w-full gap-2 h-full min-h-[50px] items-center text-[12px]">
+                                            <div class="grid grid-cols-[0.8fr_auto_1.2fr_auto_1fr] w-full gap-2 h-full min-h-[50px] items-center text-[12px] min-w-0">
                                                 <div class="flex flex-col justify-center items-center text-center h-full px-1">
                                                     <p class="font-bold text-main leading-tight baseline-fix">คัดกรองอาการ</p>
                                                 </div>
                                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 shrink-0"></i>
-                                                <div class="flex flex-col justify-center items-center text-center h-full px-1">
-                                                    <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง <a href="https://docs.google.com/spreadsheets/d/1j5xpdB-LNhucSVNhQuqShKUDv-xyWCGB5xhC295J3M4/edit?usp=sharing" target="_blank" class="text-blue-600 hover:text-blue-800 underline relative z-50" title="คลิกเพื่อกรอกข้อมูล">GG Sheets 🔗</a></p>
+                                                <div class="flex flex-col justify-center items-center text-center h-full px-1 min-w-0">
+                                                    <p class="font-bold text-main leading-tight baseline-fix break-words">เข้าข่าย: ลง <a href="https://docs.google.com/spreadsheets/d/1j5xpdB-LNhucSVNhQuqShKUDv-xyWCGB5xhC295J3M4/edit?usp=sharing" target="_blank" class="text-blue-600 hover:text-blue-800 underline relative z-50 whitespace-nowrap" title="คลิกเพื่อกรอกข้อมูล">GG Sheets 🔗</a></p>
                                                     <p class="text-muted font-medium leading-tight mt-1">+ รักษาตามอาการ</p>
                                                 </div>
                                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 shrink-0"></i>
@@ -308,16 +309,16 @@ def render_roles():
                                         </div>
 
                                         <!-- Row 4: ER -->
-                                        <div class="inner-box flex flex-col gap-2 relative border-orange-200 shadow-sm flex-1 p-4 pt-7">
+                                        <div class="inner-box flex flex-col gap-2 relative border-orange-200 shadow-sm flex-1 p-4 pt-7 min-w-0">
                                             <div class="tag-code"><span class="baseline-fix-inline">รหัส Z58.1</span></div>
                                             <div class="flex items-center gap-2 w-full border-b border-orange-100 pb-2">
                                                 <i data-lucide="ambulance" class="w-6 h-6 text-red-500 shrink-0"></i>
                                                 <h3 class="font-bold text-[15px] text-main leading-tight baseline-fix whitespace-nowrap">ผู้ป่วยฉุกเฉิน (ER) & 1669</h3>
                                             </div>
-                                            <div class="grid grid-cols-[1fr_auto_0.8fr_auto_1.4fr] w-full gap-2 h-full min-h-[50px] items-center text-[12px]">
-                                                <div class="flex flex-col justify-center items-center text-center h-full px-1">
-                                                    <p class="font-bold text-main leading-tight baseline-fix">อาการรุนแรง</p>
-                                                    <p class="text-muted font-medium leading-tight mt-1 whitespace-nowrap">(หอบหืด, COPD..)</p>
+                                            <div class="grid grid-cols-[1fr_auto_0.8fr_auto_1.4fr] w-full gap-2 h-full min-h-[50px] items-center text-[12px] min-w-0">
+                                                <div class="flex flex-col justify-center items-center text-center h-full px-1 min-w-0">
+                                                    <p class="font-bold text-main leading-tight baseline-fix break-words">อาการรุนแรง</p>
+                                                    <p class="text-muted font-medium leading-tight mt-1 truncate">(หอบหืด, COPD..)</p>
                                                 </div>
                                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 shrink-0"></i>
                                                 <div class="flex flex-col justify-center items-center text-center h-full px-1">
@@ -325,8 +326,8 @@ def render_roles():
                                                     <p class="text-muted font-medium leading-tight mt-1">รับเข้า ER</p>
                                                 </div>
                                                 <i data-lucide="arrow-right" class="arrow-icon w-4 h-4 shrink-0"></i>
-                                                <div class="flex flex-col justify-center items-center text-center h-full px-1">
-                                                    <p class="font-bold text-main leading-tight baseline-fix">เข้าข่าย: ลง <a href="https://docs.google.com/spreadsheets/d/1Ba-5IzHXOzEQziXY7vfdvDXzK0dOZv0VmoINAd-sNxU/edit?usp=drivesdk" target="_blank" class="text-blue-600 hover:text-blue-800 underline relative z-50" title="คลิกเพื่อกรอกข้อมูล">GG Sheets 🔗</a></p>
+                                                <div class="flex flex-col justify-center items-center text-center h-full px-1 min-w-0">
+                                                    <p class="font-bold text-main leading-tight baseline-fix break-words">เข้าข่าย: ลง <a href="https://docs.google.com/spreadsheets/d/1Ba-5IzHXOzEQziXY7vfdvDXzK0dOZv0VmoINAd-sNxU/edit?usp=drivesdk" target="_blank" class="text-blue-600 hover:text-blue-800 underline relative z-50 whitespace-nowrap" title="คลิกเพื่อกรอกข้อมูล">GG Sheets 🔗</a></p>
                                                     <p class="text-muted font-medium leading-tight mt-1">+ ประเมิน Admit/กลับบ้าน</p>
                                                 </div>
                                             </div>
@@ -334,7 +335,7 @@ def render_roles():
                                     </div>
 
                                     <!-- Right Sub-column (Pollution Clinic Box) -->
-                                    <div class="inner-box border-orange-400 bg-[#fff2e5] p-5 flex flex-col h-full relative shadow-md">
+                                    <div class="inner-box border-orange-400 bg-[#fff2e5] p-4 flex flex-col h-full relative shadow-md min-w-0">
                                         
                                         <!-- หัวข้อ "คลินิกมลพิษ" จัดเรียงแบบ Flex ธรรมดา ป้องกันปัญหาตัดคำ 100% -->
                                         <div class="flex items-center justify-center gap-3 border-b-2 border-orange-200 pb-3 mb-5 w-full">
@@ -344,7 +345,7 @@ def render_roles():
                                             </h3>
                                         </div>
 
-                                        <div class="space-y-5 flex-grow text-[14px] text-main">
+                                        <div class="space-y-5 flex-grow text-[14px] text-main min-w-0">
                                             
                                             <!-- 1. จัดการนัดหมาย -->
                                             <div>
@@ -365,7 +366,7 @@ def render_roles():
                                                     </div>
                                                     <span class="baseline-fix-inline mt-[2px]">เฝ้าระวัง (การเข้ารับการรักษาของผู้ป่วย)</span>
                                                 </div>
-                                                <ul class="list-disc pl-12 space-y-2 text-muted font-medium">
+                                                <ul class="list-disc pl-12 space-y-2 text-muted font-medium break-words">
                                                     <li>ตรวจสอบรหัส ICD-10 ที่เกี่ยวข้องกับการสัมผัส PM2.5 ในระบบ HosOS</li>
                                                     <li>ตรวจสอบผู้ป่วยที่เข้ารับการรักษาในวันที่ฝุ่นสูง (> 37.5) GG sheets ของ OPD/ER/PCU หนองหาร</li>
                                                 </ul>
@@ -379,24 +380,24 @@ def render_roles():
                                                     </div>
                                                     <span class="baseline-fix-inline mt-[2px]">คัดกรอง ซักประวัติ สอบสวนโรค</span>
                                                 </div>
-                                                <div class="pl-8 space-y-3">
+                                                <div class="pl-8 space-y-3 min-w-0">
                                                     
                                                     <!-- กรณีไม่เข้าข่าย -->
                                                     <div class="bg-white p-3 rounded-lg border border-orange-100 shadow-sm flex flex-col justify-center min-h-[60px]">
                                                         <p class="font-bold text-emerald-700 mb-1.5 flex items-center gap-2 baseline-fix">
                                                             <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 shrink-0"></i> กรณีไม่เข้าข่าย / อาการเล็กน้อย
                                                         </p>
-                                                        <p class="text-muted font-medium pl-7 border-l-2 border-emerald-300 ml-2.5 leading-tight">
+                                                        <p class="text-muted font-medium pl-7 border-l-2 border-emerald-300 ml-2.5 leading-tight break-words">
                                                             ให้คำแนะนำ และส่งต่อ <span class="font-bold text-main">ทีม 3 หมอ</span>
                                                         </p>
                                                     </div>
                                                     
                                                     <!-- กรณีเข้าข่าย -->
-                                                    <div class="bg-white p-3 rounded-lg border border-orange-100 shadow-sm flex flex-col justify-center">
+                                                    <div class="bg-white p-3 rounded-lg border border-orange-100 shadow-sm flex flex-col justify-center min-w-0">
                                                         <p class="font-bold text-red-700 mb-2 flex items-center gap-2 baseline-fix">
                                                             <i data-lucide="alert-circle" class="w-5 h-5 text-red-500 shrink-0"></i> กรณีเข้าข่าย
                                                         </p>
-                                                        <ul class="list-disc pl-10 space-y-2 text-muted font-medium ml-1">
+                                                        <ul class="list-disc pl-10 space-y-2 text-muted font-medium ml-1 break-words">
                                                             <li class="baseline-fix">ส่งพบแพทย์ ตรวจ Lab</li>
                                                             <li class="baseline-fix"><span class="text-red-600 font-bold">ส่งห้องฉุกเฉิน (ER)</span> หากอาการรุนแรง</li>
                                                             <li class="leading-snug baseline-fix mt-1">แจ้งข้อมูลผู้ป่วยที่เข้าข่ายแก่งาน<span style="color: #7e22ce; font-weight: 800;">ควบคุมโรค</span> <br/><span class="text-[12px] opacity-80 font-normal">(เพื่อให้ดำเนินการลงพื้นที่ + รายงาน สสจ.)</span></li>
@@ -411,7 +412,7 @@ def render_roles():
                             </div>
 
                             <!-- ================= Column 3: Right (Control & Discharge) ================= -->
-                            <div id="col-right" class="col-3 flow-col col-span-1">
+                            <div id="col-right" class="col-3 flow-col col-span-1 min-w-0">
 
                                 <!-- เส้นตั้งทิ้งตัวลงมาด้านล่าง (Return Path) -->
                                 <div class="block absolute -bottom-[45px] left-1/2 w-0 h-[45px] border-l-[3px] border-dashed -translate-x-1/2 z-0 pointer-events-none" style="border-color: var(--line-color);"></div>
@@ -508,7 +509,6 @@ def render_roles():
                     #col-left { grid-column: span 1 / span 1 !important; }
                     #col-mid { grid-column: span 2 / span 2 !important; }
                     #col-right { grid-column: span 1 / span 1 !important; }
-                    #inner-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
                     
                     /* บังคับโชว์ลูกศร CSS ทันทีเมื่อถูกสั่งพิมพ์ แม้หน้าจอจริงจะย่ออยู่ก็ตาม */
                     .lg\\:block { display: block !important; }
@@ -555,4 +555,5 @@ def render_roles():
     </html>
     """
     
+    # ปรับความสูงของ Iframe ให้พอดี ไม่เหลือขอบขาวด้านล่างมากเกินไป
     components.html(html_code, height=1350, scrolling=True)
