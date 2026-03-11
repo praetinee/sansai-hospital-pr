@@ -101,7 +101,7 @@ def display_modern_inventory_table(df, item_col, date_columns):
 
     # สร้างชื่อคอลัมน์ให้ตรงตามเงื่อนไขที่ขอมา
     stock_col_name = f"คงคลัง ณ วันที่ {global_latest_date}"
-    change_col_name = "การเพิ่มขึ้น/ลดลง"
+    change_col_name = "การรับเข้าคลัง/จ่ายออกไปจากคลัง"
 
     processed_rows = []
     
