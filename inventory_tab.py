@@ -146,8 +146,8 @@ def render_inventory_ui():
     # นำ URL จากที่คุณส่งมาใส่ไว้ให้ทำงานได้ทันที!
     med_supplies_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=38922931#gid=38922931"
     
-    # หากรายการยาอยู่ชีตอื่น สามารถเปลี่ยนเลข gid=... ด้านหลังได้เลยครับ
-    medicines_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=0#gid=0"
+    # อัปเดตชีตยาเป็นลิงก์ล่าสุด
+    medicines_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=50246944#gid=50246944"
 
     # ประมวลผลแต่ละไฟล์
     df_sup, latest_date_sup, valid_cols_sup = load_and_process_inventory(med_supplies_sheet, "รายการพัสดุการแพทย์")
