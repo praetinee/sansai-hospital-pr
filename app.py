@@ -7,30 +7,83 @@ from roles import render_roles
 # ------------------------------------------------------------------
 # ฟังก์ชันระบบจัดการเวชภัณฑ์คงคลัง (เพิ่มใหม่ตามคำขอ)
 # ------------------------------------------------------------------
-def load_and_process_inventory(file_path, item_column_name):
-    """ฟังก์ชันอ่านและดึงข้อมูลเฉพาะวันที่ล่าสุด"""
+def to_float(val):
+    """ฟังก์ชันช่วยแปลงค่าในตารางให้เป็นตัวเลข (ป้องกัน error จากลูกน้ำหรือช่องว่าง)"""
+    if pd.isna(val): 
+        return 0.0
+    val_str = str(val).strip().replace(',', '')
+    if val_str == '' or val_str == '-': 
+        return 0.0
     try:
-        # อ่านไฟล์ CSV ข้าม 2 บรรทัดแรกที่เป็นคำอธิบาย
-        df = pd.read_csv(file_path, skiprows=2, encoding='utf-8-sig')
-        df.rename(columns={df.columns[0]: item_column_name}, inplace=True)
+        return float(val_str)
+    except ValueError:
+        return 0.0
+
+def load_and_process_inventory(file_path, item_column_name):
+    """ฟังก์ชันอ่านและดึงข้อมูลเฉพาะวันที่ล่าสุดแบบยืดหยุ่น"""
+    try:
+        # ใช้ names=range(40) เพื่อป้องกัน ParserError กรณีจำนวนคอลัมน์ไม่เท่ากัน
+        df_raw = pd.read_csv(file_path, names=list(range(40)), encoding='utf-8-sig', dtype=str)
+        
+        # ค้นหาแถวที่เป็น Header ของวันที่อัตโนมัติ (ข้ามข้อความคำอธิบายด้านบน)
+        header_idx = -1
+        for i, row in df_raw.iterrows():
+            val0 = str(row[0]).strip()
+            val1 = str(row[1]).strip()
+            if val0 in ['รายการ', 'ยา'] or 'วันที่' in val1:
+                header_idx = i + 1  # แถวถัดไปจะเป็นแถววันที่
+                break
+                
+        if header_idx == -1:
+            # สำรองการค้นหา: ลองหาแบบที่สอง เผื่อไม่เจอคำว่า "รายการ"
+            for i, row in df_raw.iterrows():
+                if 'มี.ค.' in str(row[1]).strip():
+                    header_idx = i
+                    break
+
+        if header_idx != -1 and header_idx < len(df_raw):
+            columns = list(df_raw.iloc[header_idx].values)
+            columns[0] = item_column_name # แทนที่ช่องแรกด้วยชื่อคอลัมน์
+            df = df_raw.iloc[header_idx + 1:].copy()
+            df.columns = columns
+        else:
+            return None, None, None
+            
+        # ลบแถวที่ชื่อรายการเป็นค่าว่าง
         df = df.dropna(subset=[item_column_name])
         
+        # กรองเอาเฉพาะคอลัมน์วันที่จริงๆ (ทิ้งคอลัมน์ที่ว่างหรือทะลุไปถึง 40)
+        valid_cols = []
+        for col in df.columns:
+            col_str = str(col).strip()
+            if pd.notna(col) and col_str not in ['nan', 'None', '']:
+                valid_cols.append(col)
+                
+        df = df[valid_cols]
         date_columns = df.columns[1:]
         
-        # หาวันที่ล่าสุดที่มีข้อมูลกรอกไว้
-        latest_date = date_columns[0]
+        # หาวันที่ล่าสุดที่มีข้อมูลตัวเลขกรอกไว้จริงๆ
+        latest_date = date_columns[0] if len(date_columns) > 0 else None
         valid_date_cols = []
         
         for col in reversed(date_columns):
-            if df[col].notna().any():
+            has_data = False
+            for val in df[col]:
+                if pd.notna(val):
+                    val_str = str(val).strip().replace(',', '')
+                    if val_str and val_str != '-':
+                        has_data = True
+                        break
+            if has_data:
                 latest_date = col
                 break
                 
-        for col in date_columns:
-            valid_date_cols.append(col)
-            if col == latest_date:
-                break
-                
+        if latest_date:
+            for col in date_columns:
+                valid_date_cols.append(col)
+                if col == latest_date:
+                    break
+                    
         return df, latest_date, valid_date_cols
         
     except FileNotFoundError:
@@ -42,17 +95,20 @@ def load_and_process_inventory(file_path, item_column_name):
 
 def display_modern_inventory_table(df, item_col, latest_date, valid_date_cols):
     """ฟังก์ชันแสดงตารางเวชภัณฑ์แบบมีกราฟเส้น (Sparkline)"""
-    if df is None or df.empty:
+    if df is None or df.empty or not latest_date:
+        st.warning("ไม่พบข้อมูลที่จะแสดงผล")
         return
 
     display_df = pd.DataFrame()
     display_df['รายการ'] = df[item_col]
-    display_df['คงเหลือล่าสุด'] = df[latest_date].fillna(0).astype(int)
+    
+    # ดึงข้อมูลคงเหลือล่าสุดแปลงเป็นตัวเลขอย่างปลอดภัย
+    display_df['คงเหลือล่าสุด'] = df[latest_date].apply(to_float).astype(int)
     
     # สร้างประวัติย้อนหลังเป็น List สำหรับแสดงเป็นกราฟ
     history_data = []
     for index, row in df.iterrows():
-        hist = [float(x) if pd.notna(x) else 0.0 for x in row[valid_date_cols].values]
+        hist = [to_float(x) for x in row[valid_date_cols].values]
         history_data.append(hist)
         
     display_df['ประวัติย้อนหลัง'] = history_data
