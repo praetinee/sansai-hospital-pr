@@ -110,7 +110,6 @@ def display_modern_inventory_table(df, item_col, date_columns):
         item_name = row[item_col]
         
         # ฟังก์ชันย่อยสำหรับดึง "ยอดคงเหลือล่าสุด" จนถึงวันที่กำหนด
-        # (ถ้าวันนั้นว่าง ระบบจะดึงยอดของวันก่อนหน้ามาใช้อัตโนมัติ)
         def get_value_up_to(target_date):
             last_val = 0
             for col in date_columns:
@@ -148,9 +147,15 @@ def display_modern_inventory_table(df, item_col, date_columns):
 
     display_df = pd.DataFrame(processed_rows)
 
+    # นำ Pandas Styler มาใช้เพื่อจัดข้อความให้อยู่กึ่งกลางเซลล์แทนพารามิเตอร์ที่ไม่มีอยู่จริง
+    styled_df = display_df.style.set_properties(
+        subset=[stock_col_name, change_col_name], 
+        **{'text-align': 'center'}
+    )
+
     # 4. แสดงผลตาราง 
     st.dataframe(
-        display_df,
+        styled_df,
         column_config={
             "ชื่อรายการ": st.column_config.TextColumn(
                 "📝 ชื่อรายการ", 
@@ -159,14 +164,11 @@ def display_modern_inventory_table(df, item_col, date_columns):
             stock_col_name: st.column_config.NumberColumn(
                 f"📦 {stock_col_name}", 
                 format="%d",
-                width="medium",
-                alignment="center"
+                width="medium"
             ),
             change_col_name: st.column_config.TextColumn(
                 f"📊 {change_col_name}", 
                 width="medium",
-                alignment="center",
-                # แอบซ่อนข้อความ Help ไว้ เผื่อเอาเมาส์ไปชี้ที่หัวคอลัมน์จะได้รู้ว่ากำลังเทียบกับวันไหน
                 help=f"เปรียบเทียบส่วนต่างระหว่าง {global_latest_date} กับ {global_prev_date}" if global_prev_date else "เพิ่งมีการบันทึกข้อมูลวันแรก"
             )
         },
