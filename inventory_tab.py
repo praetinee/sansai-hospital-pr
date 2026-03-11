@@ -101,7 +101,7 @@ def display_modern_inventory_table(df, item_col, date_columns):
 
     # สร้างชื่อคอลัมน์ให้ตรงตามเงื่อนไขที่ขอมา
     stock_col_name = f"คงคลัง ณ วันที่ {global_latest_date}"
-    change_col_name = "การรับเข้าคลัง/จ่ายออกไปจากคลัง"
+    change_col_name = "การเพิ่มขึ้น/ลดลง (จากข้อมูลล่าสุด)"
 
     processed_rows = []
     
@@ -159,11 +159,13 @@ def display_modern_inventory_table(df, item_col, date_columns):
             stock_col_name: st.column_config.NumberColumn(
                 f"📦 {stock_col_name}", 
                 format="%d",
-                width="medium"
+                width="medium",
+                alignment="center"
             ),
             change_col_name: st.column_config.TextColumn(
                 f"📊 {change_col_name}", 
                 width="medium",
+                alignment="center",
                 # แอบซ่อนข้อความ Help ไว้ เผื่อเอาเมาส์ไปชี้ที่หัวคอลัมน์จะได้รู้ว่ากำลังเทียบกับวันไหน
                 help=f"เปรียบเทียบส่วนต่างระหว่าง {global_latest_date} กับ {global_prev_date}" if global_prev_date else "เพิ่งมีการบันทึกข้อมูลวันแรก"
             )
