@@ -15,7 +15,6 @@ def get_gsheet_csv_url(url_or_path):
 
 def parse_value(val):
     """ฟังก์ชันแปลงค่าเป็นตัวเลข (แยกระหว่างช่องว่าง กับเลข 0)"""
-    # ถ้าไม่ได้กรอก (ช่องว่าง) ให้คืนค่า None เพื่อใช้ในการเช็ควันล่าสุด
     if pd.isna(val): 
         return None
     val_str = str(val).strip().replace(',', '')
@@ -86,13 +85,19 @@ def display_modern_inventory_table(df, item_col, date_columns):
         st.warning("ไม่พบข้อมูลที่จะแสดงผล กรุณาตรวจสอบลิงก์ Google Sheet")
         return
 
-    # 1. หาวันที่ล่าสุดจากภาพรวมของทั้งตาราง (เพื่อใช้ตั้งชื่อคอลัมน์ Header)
-    global_latest_date = date_columns[-1] if date_columns else "ล่าสุด"
-    for col in reversed(date_columns):
-        # เช็คว่ามีใครกรอกข้อมูลในคอลัมน์นี้บ้างไหม ถ้ามีให้ใช้วันนี้เป็นวันล่าสุด
+    # 1. หาวันที่ที่มีการกรอกข้อมูลระดับภาพรวม (Global Filled Dates)
+    filled_dates = []
+    for col in date_columns:
         if any(parse_value(val) is not None for val in df[col]):
-            global_latest_date = col
-            break
+            filled_dates.append(col)
+            
+    if not filled_dates:
+        st.info("ไม่มีข้อมูลการอัปเดตในตาราง")
+        return
+
+    # 2. กำหนดวันล่าสุด และ วันก่อนหน้าล่าสุด
+    global_latest_date = filled_dates[-1]
+    global_prev_date = filled_dates[-2] if len(filled_dates) > 1 else None
 
     # สร้างชื่อคอลัมน์ให้ตรงตามเงื่อนไขที่ขอมา
     stock_col_name = f"คงคลัง ณ วันที่ {global_latest_date}"
@@ -100,50 +105,50 @@ def display_modern_inventory_table(df, item_col, date_columns):
 
     processed_rows = []
     
-    # 2. วนลูปเช็คข้อมูลทีละไอเทม
+    # 3. วนลูปเช็คข้อมูลทีละไอเทม
     for index, row in df.iterrows():
         item_name = row[item_col]
         
-        valid_points = []
-        
-        # เก็บเฉพาะค่าตัวเลขที่ถูกกรอกไว้จริงของไอเทมนั้นๆ
-        for col in date_columns:
-            val = parse_value(row[col])
-            if val is not None:
-                valid_points.append(val)
+        # ฟังก์ชันย่อยสำหรับดึง "ยอดคงเหลือล่าสุด" จนถึงวันที่กำหนด
+        # (ถ้าวันนั้นว่าง ระบบจะดึงยอดของวันก่อนหน้ามาใช้อัตโนมัติ)
+        def get_value_up_to(target_date):
+            last_val = 0
+            for col in date_columns:
+                val = parse_value(row[col])
+                if val is not None:
+                    last_val = val
+                if col == target_date:
+                    break
+            return last_val
 
-        current_val = 0
+        # ดึงยอดล่าสุด ณ วันที่กำหนด
+        current_val = get_value_up_to(global_latest_date)
         delta_str = "-"
 
-        # หากมีการกรอกข้อมูลมาแล้วอย่างน้อย 1 วัน
-        if len(valid_points) > 0:
-            current_val = valid_points[-1] # ยอดล่าสุดที่มีการกรอก
+        # ดึงยอดของวันก่อนหน้า และหาผลต่าง
+        if global_prev_date:
+            prev_val = get_value_up_to(global_prev_date)
+            diff = current_val - prev_val
             
-            # หากมีการกรอกมาแล้ว 2 วันขึ้นไป ให้เอามาเทียบส่วนต่าง
-            if len(valid_points) > 1:
-                prev_val = valid_points[-2]
-                diff = current_val - prev_val
-                
-                # จัด Format ให้ดูทันสมัย สวยงาม และเข้าใจง่ายขึ้น พร้อมใส่ลูกน้ำ
-                if diff > 0:
-                    delta_str = f"🔺 +{int(diff):,}"
-                elif diff < 0:
-                    delta_str = f"🔻 {int(diff):,}"
-                else:
-                    delta_str = "➖ 0"
+            # จัด Format ให้ดูทันสมัย สวยงาม และเข้าใจง่ายขึ้น
+            if diff > 0:
+                delta_str = f"🔺 +{int(diff):,}"
+            elif diff < 0:
+                delta_str = f"🔻 {int(diff):,}"
             else:
-                # เพิ่งกรอกวันแรก
                 delta_str = "➖ 0"
+        else:
+            delta_str = "➖ 0"
 
         processed_rows.append({
             "ชื่อรายการ": item_name,
-            stock_col_name: int(current_val) if valid_points else 0,
+            stock_col_name: int(current_val),
             change_col_name: delta_str
         })
 
     display_df = pd.DataFrame(processed_rows)
 
-    # 3. แสดงผลตาราง (ใช้ 3 คอลัมน์หลักตามที่กำหนดเป๊ะ)
+    # 4. แสดงผลตาราง 
     st.dataframe(
         display_df,
         column_config={
@@ -158,7 +163,9 @@ def display_modern_inventory_table(df, item_col, date_columns):
             ),
             change_col_name: st.column_config.TextColumn(
                 f"📊 {change_col_name}", 
-                width="medium"
+                width="medium",
+                # แอบซ่อนข้อความ Help ไว้ เผื่อเอาเมาส์ไปชี้ที่หัวคอลัมน์จะได้รู้ว่ากำลังเทียบกับวันไหน
+                help=f"เปรียบเทียบส่วนต่างระหว่าง {global_latest_date} กับ {global_prev_date}" if global_prev_date else "เพิ่งมีการบันทึกข้อมูลวันแรก"
             )
         },
         hide_index=True,
