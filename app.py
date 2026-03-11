@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from summary import render_summary
 from dashboard import render_dashboard
 from flow import render_flow
 from roles import render_roles
@@ -63,8 +64,9 @@ hide_streamlit_style = """
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-# 3. จัดการแสดงผล Tabs และเรียกใช้โมดูล
-tab1, tab2, tab3, tab4 = st.tabs([
+# 3. จัดการแสดงผล Tabs ใหม่ (เอาสรุปผลภาพรวมขึ้นก่อน)
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    "📑 สรุปผลภาพรวม",
     "📊 แผนการดำเนินงาน", 
     "🔄 ขั้นตอนการให้บริการ", 
     "🗺️ บทบาทของแต่ละหน่วยงาน",
@@ -72,17 +74,21 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 with tab1:
+    # หน้าใหม่! สรุปผลการดำเนินงานและ Dashboard คลังอัจฉริยะ
+    render_summary()
+
+with tab2:
     # เรียกใช้ฟังก์ชันจากไฟล์ dashboard.py
     render_dashboard()
     
-with tab2:
+with tab3:
     # เรียกใช้ฟังก์ชันจากไฟล์ flow.py
     render_flow()
 
-with tab3:
+with tab4:
     # เรียกใช้ฟังก์ชันจากไฟล์ roles.py 
     render_roles()
 
-with tab4:
+with tab5:
     # เรียกใช้งานฟังก์ชันจากไฟล์ inventory_tab.py โค้ดในนี้จะสะอาดและเป็นระเบียบ
     inventory_tab.render_inventory_ui()
