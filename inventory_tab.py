@@ -78,73 +78,74 @@ def load_and_process_inventory(source_url, item_column_name):
         return None, None
 
 def display_modern_inventory_table(df, item_col, date_columns):
-    """ฟังก์ชันแสดงตารางเวชภัณฑ์แบบคำนวณรายบรรทัด (เข้าใจง่าย + มีประวัติ)"""
+    """ฟังก์ชันแสดงตารางเวชภัณฑ์แบบ 3 คอลัมน์ที่กระชับและเข้าใจง่าย"""
     if df is None or df.empty or not date_columns:
         st.warning("ไม่พบข้อมูลที่จะแสดงผล กรุณาตรวจสอบลิงก์ Google Sheet")
         return
 
+    # 1. หาวันที่ล่าสุดจากภาพรวมของทั้งตาราง (เพื่อใช้ตั้งชื่อคอลัมน์ Header)
+    global_latest_date = date_columns[-1] if date_columns else "ล่าสุด"
+    for col in reversed(date_columns):
+        # เช็คว่ามีใครกรอกข้อมูลในคอลัมน์นี้บ้างไหม ถ้ามีให้ใช้วันนี้เป็นวันล่าสุด
+        if any(parse_value(val) is not None for val in df[col]):
+            global_latest_date = col
+            break
+
+    # สร้างชื่อคอลัมน์ให้ตรงตามเงื่อนไขที่ขอมา
+    stock_col_name = f"คงคลัง ณ วันที่ {global_latest_date}"
+
     processed_rows = []
     
-    # วนลูปเช็คข้อมูล "ทีละบรรทัด (ทีละไอเทม)"
+    # 2. วนลูปเช็คข้อมูลทีละไอเทม
     for index, row in df.iterrows():
         item_name = row[item_col]
         
         valid_points = []
-        all_points = []
         
-        # สแกนหาวันที่กรอกข้อมูลของไอเทมนี้
-        last_valid_val = 0
+        # เก็บเฉพาะค่าตัวเลขที่ถูกกรอกไว้จริงของไอเทมนั้นๆ
         for col in date_columns:
             val = parse_value(row[col])
             if val is not None:
-                valid_points.append((col, val))
-                last_valid_val = val
-                all_points.append(val)
-            else:
-                # กรณีไม่ได้กรอกในวันนั้น ให้ใช้ค่ายอดคงเหลือจากวันก่อนหน้า (Forward fill)
-                all_points.append(last_valid_val)
+                valid_points.append(val)
 
-        current_date = "ยังไม่มีข้อมูล"
         current_val = 0
         delta_str = "-"
 
-        # หากมีการกรอกข้อมูลอย่างน้อย 1 วัน
+        # หากมีการกรอกข้อมูลมาแล้วอย่างน้อย 1 วัน
         if len(valid_points) > 0:
-            current_date, current_val = valid_points[-1] # วันล่าสุดที่มีการกรอก
+            current_val = valid_points[-1] # ยอดล่าสุดที่มีการกรอก (แม้จะไม่ได้กรอกในวัน global_latest_date ก็ตาม)
             
-            # หากมีการกรอกข้อมูลอย่างน้อย 2 วัน (เพื่อนำมาเทียบความต่าง)
+            # หากมีการกรอกมาแล้ว 2 วันขึ้นไป ให้เอามาเทียบส่วนต่าง
             if len(valid_points) > 1:
-                prev_date, prev_val = valid_points[-2] # วันก่อนหน้าที่มีการกรอก
+                prev_val = valid_points[-2]
                 diff = current_val - prev_val
                 
+                # จัด Format ตามที่ขอ เช่น +500, -350, 0
                 if diff > 0:
-                    delta_str = f"🔺 เพิ่มขึ้น {int(diff)} (เทียบ {prev_date})"
+                    delta_str = f"+{int(diff)}"
                 elif diff < 0:
-                    delta_str = f"🔻 ลดลง {abs(int(diff))} (เทียบ {prev_date})"
+                    delta_str = f"{int(diff)}"
                 else:
-                    delta_str = f"➖ คงที่ (เทียบ {prev_date})"
+                    delta_str = "0"
             else:
-                delta_str = f"เริ่มบันทึก (ข้อมูลแรก)"
+                # เพิ่งกรอกวันแรก
+                delta_str = "0"
 
         processed_rows.append({
-            "รายการ": item_name,
-            "อัปเดตล่าสุด": current_date,
-            "คงเหลือ": int(current_val),
-            "การเปลี่ยนแปลง": delta_str,
-            "แนวโน้ม": all_points
+            "ชื่อรายการ": item_name,
+            stock_col_name: int(current_val) if valid_points else 0,
+            "เปลี่ยนแปลง": delta_str
         })
 
     display_df = pd.DataFrame(processed_rows)
 
-    # ตกแต่ง UI ตารางให้สวยงามและอ่านง่าย
+    # 3. แสดงผลตาราง (ใช้ 3 คอลัมน์หลักตามที่กำหนดเป๊ะ)
     st.dataframe(
         display_df,
         column_config={
-            "รายการ": st.column_config.TextColumn("📝 ชื่อรายการ", width="large"),
-            "อัปเดตล่าสุด": st.column_config.TextColumn("📅 อัปเดตล่าสุด", width="medium"),
-            "คงเหลือ": st.column_config.NumberColumn("📦 คงเหลือ", format="%d"),
-            "การเปลี่ยนแปลง": st.column_config.TextColumn("📊 เปลี่ยนแปลง (เทียบวันก่อนหน้า)", width="medium"),
-            "แนวโน้ม": st.column_config.LineChartColumn("📈 แนวโน้มยอดคงคลัง")
+            "ชื่อรายการ": st.column_config.TextColumn("📝 ชื่อรายการ", width="large"),
+            stock_col_name: st.column_config.NumberColumn(f"📦 {stock_col_name}", format="%d"),
+            "เปลี่ยนแปลง": st.column_config.TextColumn("📊 เปลี่ยนแปลง", width="small")
         },
         hide_index=True,
         use_container_width=True
@@ -153,7 +154,7 @@ def display_modern_inventory_table(df, item_col, date_columns):
 def render_inventory_ui():
     """ฟังก์ชันหลักสำหรับให้ app.py ดึงไปแสดงผล"""
     st.markdown("## 🏥 ระบบรายงานเวชภัณฑ์และยาคงคลัง (PM 2.5)")
-    st.markdown("ดึงข้อมูลตรงจาก **Google Sheets** โดยระบบจะประมวลผล **วันที่อัปเดตล่าสุด** และ **ยอดเปรียบเทียบจากวันก่อนหน้า** ให้เป็นรายไอเทมโดยอัตโนมัติ")
+    st.markdown("ดึงข้อมูลตรงจาก **Google Sheets** โดยระบบจะประมวลผล **วันที่อัปเดตล่าสุด** และ **ยอดเปรียบเทียบจากวันก่อนหน้า** ให้โดยอัตโนมัติ")
     st.divider()
 
     # ลิงก์จาก Google Sheet
