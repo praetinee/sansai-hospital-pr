@@ -62,7 +62,8 @@ def render_roles():
             .text-main { color: var(--text-main); }
             .text-muted { color: var(--text-muted); }
 
-            .flow-col { border-width: 3px; border-radius: 2rem; padding: 1.25rem; display: flex; flex-direction: column; gap: 1.25rem; position: relative; height: 100%; transition: all 0.3s; }
+            /* เพิ่ม z-index ให้กล่อง เพื่อบังส่วนของเส้นที่อาจทะลุเข้าไป */
+            .flow-col { border-width: 3px; border-radius: 2rem; padding: 1.25rem; display: flex; flex-direction: column; gap: 1.25rem; position: relative; height: 100%; transition: all 0.3s; z-index: 10; }
             
             .inner-box { background-color: var(--bg-card); border: 1px solid var(--border-card); border-radius: 0.75rem; padding: 1rem; box-shadow: var(--shadow-box); transition: all 0.3s; }
             .inner-box:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
@@ -113,11 +114,6 @@ def render_roles():
                     -webkit-print-color-adjust: exact !important;
                     print-color-adjust: exact !important;
                 }
-                #flow-svg {
-                    display: block !important;
-                    visibility: visible !important;
-                    opacity: 1 !important;
-                }
                 .shadow-sm, .shadow-md, .shadow-lg {
                     box-shadow: none !important;
                     border: 1px solid #e2e8f0 !important;
@@ -127,7 +123,7 @@ def render_roles():
     </head>
     <body class="bg-transparent antialiased">
         
-        <!-- พื้นที่สำหรับ Capture (เติม min-h-screen เพื่อความยืดหยุ่นหน้าจอ) -->
+        <!-- พื้นที่สำหรับ Capture -->
         <div id="capture-area" class="w-full min-h-screen bg-slate-50 pb-10 pt-6 px-4 sm:px-8 lg:px-12 transition-all duration-300">
             
             <!-- Header & Download Button -->
@@ -142,7 +138,7 @@ def render_roles():
                 </button>
             </div>
 
-            <!-- ขยาย Main Container ให้เป็น 1600px เพื่อไม่ให้กรอบบีบตัวหนังสือ -->
+            <!-- ขยาย Main Container ให้กว้างพอดี -->
             <div id="main-container" class="max-w-[1600px] w-full mx-auto relative pb-24 sm:pb-28 lg:pb-32 z-10 px-2 sm:px-4">
                 
                 <!-- Alert Box -->
@@ -152,25 +148,32 @@ def render_roles():
                     </div>
                 </div>
 
-                <!-- SVG Overlay for Dynamic Line Drawing -->
-                <svg id="flow-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none hidden z-0" style="overflow: visible;">
-                    <path id="path-lm" fill="none" stroke="var(--line-color)" stroke-width="3" stroke-dasharray="6,5" stroke-linecap="round" stroke-linejoin="round" />
-                    <path id="path-mr" fill="none" stroke="var(--line-color)" stroke-width="3" stroke-dasharray="6,5" stroke-linecap="round" stroke-linejoin="round" />
-                    <path id="path-return" fill="none" stroke="var(--line-color)" stroke-width="3" stroke-dasharray="6,5" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-
-                <!-- Return Label -->
-                <div id="return-label" class="absolute hidden items-center justify-center bg-white px-8 py-2.5 rounded-full z-10 border-[2px] shadow-sm" style="border-color: var(--line-color);">
-                    <p class="font-bold text-base whitespace-nowrap text-main baseline-fix" style="color: var(--line-color);">
-                        การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
-                    </p>
-                </div>
-
-                <!-- 4 Columns Grid (ขยายสัดส่วนอัตโนมัติตามเนื้อหา) -->
+                <!-- 4 Columns Grid: เปลี่ยนเป็น CSS วาดเส้น 100% -->
                 <div id="main-grid" class="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10 items-stretch">
+
+                    <!-- ================= เส้นเชื่อมแนวนอนด้านล่าง (Return Bridge) ================= -->
+                    <div class="hidden lg:flex absolute -bottom-[45px] h-0 border-t-[3px] border-dashed z-0 items-center justify-center pointer-events-none" style="left: calc(12.5% - 1rem); right: calc(12.5% - 1rem); border-color: var(--line-color);">
+                        <div class="bg-white px-6 py-2.5 rounded-full border-[2px] shadow-sm z-10 flex items-center justify-center pointer-events-auto" style="border-color: var(--line-color); transform: translateY(-1.5px);">
+                            <p class="font-bold text-[15px] whitespace-nowrap baseline-fix" style="color: var(--line-color);">
+                                การดูแลต่อเนื่องป้องกันการกำเริบซ้ำ
+                            </p>
+                        </div>
+                    </div>
 
                     <!-- ================= Column 1: Left (Community) ================= -->
                     <div id="col-left" class="col-1 flow-col lg:col-span-1">
+                        
+                        <!-- ลูกศรเชื่อมจาก Column 1 ไป Column 2 (HTML CSS แท้ 100%) -->
+                        <div class="hidden lg:block absolute top-1/2 -right-[2rem] w-[2rem] -translate-y-1/2 z-20 pointer-events-none">
+                            <div class="w-full h-0 border-t-[3px] border-dashed" style="border-color: var(--line-color);"></div>
+                            <div class="absolute right-[2px] top-1/2 -translate-y-1/2 w-0 h-0 border-y-[6px] border-l-[8px] border-y-transparent" style="border-left-color: var(--line-color);"></div>
+                        </div>
+
+                        <!-- เส้นตั้งดันขึ้นจากด้านล่าง (Return Path) -->
+                        <div class="hidden lg:block absolute -bottom-[45px] left-1/2 w-0 h-[45px] border-l-[3px] border-dashed -translate-x-1/2 z-0 pointer-events-none" style="border-color: var(--line-color);">
+                            <div class="absolute -top-[2px] left-1/2 -translate-x-1/2 w-0 h-0 border-x-[6px] border-b-[8px] border-x-transparent" style="border-bottom-color: var(--line-color);"></div>
+                        </div>
+
                         <!-- บังคับบรรทัดเดียว ไม่ให้ตกบรรทัด -->
                         <div class="w-full flex justify-center">
                             <h2 class="text-[15px] sm:text-base lg:text-[17px] font-extrabold text-center c1-title py-3 px-6 rounded-full shadow-sm whitespace-nowrap w-max min-w-full flex items-center justify-center">
@@ -211,6 +214,13 @@ def render_roles():
 
                     <!-- ================= Column 2: Middle (Clinic & ER) ================= -->
                     <div id="col-mid" class="col-2 flow-col lg:col-span-2">
+                        
+                        <!-- ลูกศรเชื่อมจาก Column 2 ไป Column 3 (HTML CSS แท้ 100%) -->
+                        <div class="hidden lg:block absolute top-1/2 -right-[2rem] w-[2rem] -translate-y-1/2 z-20 pointer-events-none">
+                            <div class="w-full h-0 border-t-[3px] border-dashed" style="border-color: var(--line-color);"></div>
+                            <div class="absolute right-[2px] top-1/2 -translate-y-1/2 w-0 h-0 border-y-[6px] border-l-[8px] border-y-transparent" style="border-left-color: var(--line-color);"></div>
+                        </div>
+
                         <div class="w-full flex justify-center">
                             <h2 class="text-[15px] sm:text-base lg:text-[17px] font-extrabold text-center c2-title py-3 px-6 rounded-full shadow-sm flex items-center justify-center whitespace-nowrap w-max min-w-[70%]">
                                 <span class="baseline-fix-inline">การรับผู้ป่วยและดูแลรักษา (รับ)</span>
@@ -252,7 +262,6 @@ def render_roles():
                                         <i data-lucide="building-2" class="w-5 h-5 sm:w-6 sm:h-6 c2-icon shrink-0"></i>
                                         <h3 class="font-bold text-[14px] sm:text-[15px] text-main leading-tight baseline-fix whitespace-nowrap">PCU หนองหาร & รพ.สต.</h3>
                                     </div>
-                                    <!-- ใช้ CSS Grid แบบแข็งแรง แบ่งสัดส่วนคอลัมน์ชัดเจน -->
                                     <div class="grid grid-cols-[1fr_auto_1.4fr_auto_0.8fr] w-full gap-1 sm:gap-2 h-full min-h-[50px] items-center text-[11px] sm:text-[12px]">
                                         <div class="flex flex-col justify-center items-center text-center h-full px-1">
                                             <p class="font-bold text-main leading-tight baseline-fix">คัดกรองอาการ</p>
@@ -399,6 +408,10 @@ def render_roles():
 
                     <!-- ================= Column 3: Right (Control & Discharge) ================= -->
                     <div id="col-right" class="col-3 flow-col lg:col-span-1">
+
+                        <!-- เส้นตั้งทิ้งตัวลงมาด้านล่าง (Return Path) -->
+                        <div class="hidden lg:block absolute -bottom-[45px] left-1/2 w-0 h-[45px] border-l-[3px] border-dashed -translate-x-1/2 z-0 pointer-events-none" style="border-color: var(--line-color);"></div>
+
                         <div class="w-full flex justify-center">
                             <!-- บังคับบรรทัดเดียว ไม่ให้ตกบรรทัด -->
                             <h2 class="text-[15px] sm:text-base lg:text-[17px] font-extrabold text-center c3-title py-3 px-6 rounded-full shadow-sm whitespace-nowrap w-max min-w-full flex items-center justify-center">
@@ -460,86 +473,8 @@ def render_roles():
                 lucide.createIcons();
             });
 
-            // ฟังก์ชันวาดเส้นสำหรับแสดงผลบนหน้าจอปกติ หรือบังคับวาดเมื่อรับพารามิเตอร์ forceDesktop
-            function drawLines(forceDesktop = false) {
-                const svg = document.getElementById('flow-svg');
-                const container = document.getElementById('main-container');
-                const label = document.getElementById('return-label');
-                const mobileLabel = document.getElementById('mobile-return-label');
-                
-                // ถ้ารับคำสั่ง forceDesktop (ตอนกดถ่ายรูป) ให้ถือว่าเป็น Desktop ทันที
-                const isDesktop = forceDesktop || window.innerWidth >= 1024;
-                
-                if (isDesktop && svg && container) { 
-                    svg.classList.remove('hidden');
-                    if (label) {
-                        label.classList.remove('hidden');
-                        label.classList.add('flex');
-                    }
-                    if (mobileLabel) mobileLabel.classList.add('hidden');
-                    
-                    const contRect = container.getBoundingClientRect();
-                    const colL = document.getElementById('col-left').getBoundingClientRect();
-                    const colM = document.getElementById('col-mid').getBoundingClientRect();
-                    const colR = document.getElementById('col-right').getBoundingClientRect();
-                    
-                    const getX = (rect) => rect.left - contRect.left;
-                    const getY = (rect) => rect.top - contRect.top;
-                    
-                    // 1. Line Left -> Middle
-                    const lmStartY = getY(colL) + (colL.height / 2);
-                    const lmStartX = getX(colL) + colL.width;
-                    const lmEndX = getX(colM) - 8;
-                    const pathLM = `M ${lmStartX} ${lmStartY} L ${lmEndX} ${lmStartY} L ${lmEndX-8} ${lmStartY-6} M ${lmEndX} ${lmStartY} L ${lmEndX-8} ${lmStartY+6}`;
-                    document.getElementById('path-lm').setAttribute('d', pathLM);
-                    
-                    // 2. Line Middle -> Right
-                    const mrStartY = getY(colM) + (colM.height / 2);
-                    const mrStartX = getX(colM) + colM.width;
-                    const mrEndX = getX(colR) - 8;
-                    const pathMR = `M ${mrStartX} ${mrStartY} L ${mrEndX} ${mrStartY} L ${mrEndX-8} ${mrStartY-6} M ${mrEndX} ${mrStartY} L ${mrEndX-8} ${mrStartY+6}`;
-                    document.getElementById('path-mr').setAttribute('d', pathMR);
-                    
-                    // 3. Return Dashed Line
-                    const retStartX = getX(colR) + (colR.width / 2);
-                    const retStartY = getY(colR) + colR.height;
-                    const retEndX = getX(colL) + (colL.width / 2);
-                    const retEndY = getY(colL) + colL.height;
-                    
-                    const maxBottom = Math.max(
-                        getY(colL) + colL.height,
-                        getY(colM) + colM.height,
-                        getY(colR) + colR.height
-                    );
-                    
-                    const dropY = maxBottom + 45; 
-                    const rTipY = retEndY + 15;
-                    const pathReturn = `M ${retStartX} ${retStartY} L ${retStartX} ${dropY} L ${retEndX} ${dropY} L ${retEndX} ${rTipY} L ${retEndX-6} ${rTipY+8} M ${retEndX} ${rTipY} L ${retEndX+6} ${rTipY+8}`;
-                    document.getElementById('path-return').setAttribute('d', pathReturn);
-                    
-                    if (label) {
-                        label.style.top = `${dropY}px`;
-                        label.style.left = `${getX(colM) + (colM.width / 2)}px`;
-                        label.style.transform = 'translate(-50%, -50%)';
-                    }
-                    
-                } else {
-                    if (svg) svg.classList.add('hidden');
-                    if (label) {
-                        label.classList.add('hidden');
-                        label.classList.remove('flex');
-                    }
-                    if (mobileLabel) mobileLabel.classList.remove('hidden');
-                }
-            }
-
-            window.addEventListener('resize', () => drawLines(false));
-            window.addEventListener('load', () => { 
-                setTimeout(() => drawLines(false), 100); 
-                setTimeout(() => drawLines(false), 500); 
-            });
-
-            // ฟังก์ชันดาวน์โหลดภาพแบบ Bulletproof - การันตี 1600px เสมอ
+            // ปล่อยให้ CSS จัดการวาดเส้นทั้งหมด 100% ไม่ต้องใช้ JS คำนวณแกน X Y อีกต่อไป!
+            
             async function downloadImage() {
                 const btn = document.querySelector('button[onclick="downloadImage()"]');
                 const originalContent = btn.innerHTML;
@@ -547,40 +482,28 @@ def render_roles():
                 
                 await document.fonts.ready;
                 
-                // 1. สร้าง Loading Overlay บังหน้าจอไว้ เพื่อไม่ให้ผู้ใช้เห็นตอนเว็บขยาย 1600px (กันหน้าจอกระตุก)
+                // ใส่ Loading บังตาไว้กันหน้าจอกระตุกตอนกางเป็น 1600px
                 const overlay = document.createElement('div');
-                overlay.style.position = 'fixed';
-                overlay.style.top = '0';
-                overlay.style.left = '0';
-                overlay.style.width = '100vw';
-                overlay.style.height = '100vh';
-                overlay.style.backgroundColor = '#f8fafc';
-                overlay.style.zIndex = '9999';
-                overlay.style.display = 'flex';
-                overlay.style.flexDirection = 'column';
-                overlay.style.alignItems = 'center';
-                overlay.style.justifyContent = 'center';
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#f8fafc;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;';
                 overlay.innerHTML = `
                     <div style="font-family: 'Sarabun', sans-serif; text-align: center;">
                         <svg class="animate-spin mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
                         <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e293b;">กำลังสร้างรูปภาพ...</h2>
-                        <p style="color: #64748b; margin-top: 0.5rem;">จัดเตรียมแผนผังให้สมบูรณ์ ไม่ว่าหน้าจอคุณจะขนาดเท่าใด</p>
+                        <p style="color: #64748b; margin-top: 0.5rem;">จัดเตรียมแผนผังให้สมบูรณ์</p>
                     </div>
                 `;
                 document.body.appendChild(overlay);
 
                 const captureArea = document.getElementById('capture-area');
-                
-                // เก็บค่าเดิมไว้
                 const origWidth = captureArea.style.width;
                 const origMinWidth = captureArea.style.minWidth;
                 const originalScrollY = window.scrollY;
                 
-                // 2. บังคับกาง DOM จริงให้เป็น 1600px แบบเป๊ะๆ
+                // บังคับกางเป็น 1600px
                 captureArea.style.width = '1600px';
                 captureArea.style.minWidth = '1600px';
                 
-                // ฉีด CSS บังคับโครงสร้าง Grid Layout ให้เป็น Desktop ทันที
+                // ฉีด CSS บังคับโครงสร้าง Grid + บังคับเปิดเส้นลูกศรทั้งหมดของ CSS
                 const forceStyle = document.createElement('style');
                 forceStyle.id = 'force-desktop-style';
                 forceStyle.innerHTML = `
@@ -589,52 +512,44 @@ def render_roles():
                     #col-mid { grid-column: span 2 / span 2 !important; }
                     #col-right { grid-column: span 1 / span 1 !important; }
                     #inner-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+                    
+                    /* บังคับโชว์ลูกศร CSS ทันทีเมื่อถูกสั่งพิมพ์ แม้หน้าจอจริงจะย่ออยู่ก็ตาม */
+                    .lg\\:block { display: block !important; }
+                    .lg\\:flex { display: flex !important; }
+                    .lg\\:hidden { display: none !important; }
                 `;
                 document.head.appendChild(forceStyle);
                 
                 window.scrollTo(0, 0);
 
-                // 3. รอให้ Browser จัดเรียง Layout ใหม่เสร็จสิ้น
+                // รอให้ CSS โหลดเสร็จ แล้วกดถ่ายรูปได้เลย!
                 setTimeout(() => {
-                    // สั่งวาดเส้นทับลงไปบน Layout 1600px ที่กางเสร็จแล้ว โดยบังคับสถานะ Desktop (forceDesktop=true)
-                    drawLines(true);
-                    
-                    // รอให้วาดเส้นเสร็จ แล้วค่อยแคปรูป
-                    setTimeout(() => {
-                        html2canvas(captureArea, {
-                            scale: 2, 
-                            backgroundColor: "#f8fafc", 
-                            useCORS: true, 
-                            scrollY: 0, 
-                            windowWidth: 1600,
-                            logging: false
-                        }).then(canvas => {
-                            // ดาวน์โหลดรูปภาพ
-                            const link = document.createElement('a');
-                            link.download = 'PM25_Roles_Sansai_Hospital.png';
-                            link.href = canvas.toDataURL('image/png', 1.0);
-                            link.click();
-                            
-                            // 4. เก็บกวาดและคืนค่าทุกอย่างกลับเป็นสภาพเดิม
-                            cleanUpAndRestore();
-                        }).catch(err => {
-                            console.error("Error generating image:", err);
-                            alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
-                            cleanUpAndRestore();
-                        });
-                    }, 150);
-                }, 150);
+                    html2canvas(captureArea, {
+                        scale: 2, 
+                        backgroundColor: "#f8fafc", 
+                        useCORS: true, 
+                        scrollY: 0, 
+                        windowWidth: 1600,
+                        logging: false
+                    }).then(canvas => {
+                        cleanUpAndRestore();
+                        const link = document.createElement('a');
+                        link.download = 'PM25_Roles_Sansai_Hospital.png';
+                        link.href = canvas.toDataURL('image/png', 1.0);
+                        link.click();
+                    }).catch(err => {
+                        console.error("Error generating image:", err);
+                        cleanUpAndRestore();
+                        alert("เกิดข้อผิดพลาดในการบันทึกรูปภาพ กรุณาลองใหม่อีกครั้ง");
+                    });
+                }, 300);
                 
-                // ฟังก์ชันย่อยสำหรับคืนค่า DOM เป็นเหมือนเดิม
                 function cleanUpAndRestore() {
                     document.head.removeChild(forceStyle);
                     captureArea.style.width = origWidth;
                     captureArea.style.minWidth = origMinWidth;
                     document.body.removeChild(overlay);
                     window.scrollTo(0, originalScrollY);
-                    
-                    // สั่งวาดเส้นใหม่ให้เหมาะกับขนาดหน้าจอปัจจุบันของผู้ใช้
-                    drawLines(false); 
                     btn.innerHTML = originalContent;
                 }
             }
@@ -643,5 +558,4 @@ def render_roles():
     </html>
     """
     
-    # ปรับความสูงของ Iframe ให้พอดี ไม่เหลือขอบขาวด้านล่างมากเกินไป
     components.html(html_code, height=1350, scrolling=True)
