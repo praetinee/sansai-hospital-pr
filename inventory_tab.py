@@ -1,5 +1,17 @@
 import streamlit as st
 import pandas as pd
+import re
+
+def get_gsheet_csv_url(url_or_path):
+    """แปลง URL ของ Google Sheet เป็นลิงก์ดาวน์โหลด CSV อัตโนมัติ"""
+    if isinstance(url_or_path, str) and "docs.google.com/spreadsheets" in url_or_path:
+        match = re.search(r'/d/([a-zA-Z0-9-_]+)', url_or_path)
+        gid_match = re.search(r'gid=([0-9]+)', url_or_path)
+        if match:
+            sheet_id = match.group(1)
+            gid = gid_match.group(1) if gid_match else "0"
+            return f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid}"
+    return url_or_path
 
 def to_float(val):
     """ฟังก์ชันช่วยแปลงค่าในตารางให้เป็นตัวเลข (ป้องกัน error จากลูกน้ำหรือช่องว่าง)"""
@@ -13,62 +25,55 @@ def to_float(val):
     except ValueError:
         return 0.0
 
-def load_and_process_inventory(file_path, item_column_name):
-    """ฟังก์ชันอ่านข้อมูลแบบ Manual Parsing ป้องกันปัญหาโครงสร้าง CSV เหลื่อมล้ำ"""
+@st.cache_data(ttl=300) # แคชข้อมูล 5 นาที เพื่อไม่ให้โหลด Google Sheet ถี่เกินไป
+def load_and_process_inventory(source_url, item_column_name):
+    """ฟังก์ชันอ่านข้อมูลจาก Google Sheet เจาะทะลุหาแถวที่ 2 และ 3 อัตโนมัติ"""
     try:
-        # 1. ใช้ names=range(100) กางข้อมูลทั้งหมดเป็นตารางดิบๆ ตัดปัญหา Error ตอนโหลด
-        df_raw = pd.read_csv(file_path, names=range(100), encoding='utf-8-sig', dtype=str)
+        # แปลงลิงก์ และโหลดข้อมูลกางเป็นตารางดิบ
+        csv_url = get_gsheet_csv_url(source_url)
+        df_raw = pd.read_csv(csv_url, names=range(100), header=None, encoding='utf-8-sig', dtype=str)
         
-        # 2. ค้นหาบรรทัดที่เป็น "วันที่" (แถวที่ 2 ในภาพของคุณ)
-        date_row_idx = -1
+        # 1. สแกนหาแถวที่มีคำว่า "วันที่" หรือ "รายการ" (ซึ่งก็คือแถวที่ 2 ในภาพของคุณ)
+        header_row_idx = -1
         for i, row in df_raw.iterrows():
             row_str = " ".join([str(x) for x in row.values if pd.notna(x)])
-            if 'วันที่' in row_str:
-                # ถ้าเจอบรรทัดคำว่า "วันที่" แปลว่าบรรทัด 'ถัดไป' คือ 8 มี.ค., 9 มี.ค.
-                date_row_idx = i + 1 
+            if 'วันที่' in row_str or 'รายการ' in row_str or 'ยา' in row_str:
+                header_row_idx = i
                 break
                 
-        # หากไม่เจอ ให้ใช้วิธีสำรอง สแกนหาชื่อเดือน
-        if date_row_idx == -1:
-            thai_months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
-            for i, row in df_raw.iterrows():
-                row_str = " ".join([str(x) for x in row.values if pd.notna(x)])
-                if any(month in row_str for month in thai_months):
-                    date_row_idx = i
-                    break
-
-        if date_row_idx == -1 or date_row_idx >= len(df_raw):
+        if header_row_idx == -1 or header_row_idx + 1 >= len(df_raw):
             return None, None, None
 
-        # 3. ดึงบรรทัดที่มีวันที่จริงๆ ออกมาใช้งาน (บรรทัดที่ 3)
-        raw_dates = df_raw.iloc[date_row_idx]
+        # 2. แถวถัดไป (แถวที่ 3) คือแถวที่มีข้อมูล "8 มี.ค.", "9 มี.ค." ฯลฯ
+        date_row_idx = header_row_idx + 1
+        dates = df_raw.iloc[date_row_idx].values
         
-        valid_col_indices = [0] # index 0 บังคับเป็นชื่อรายการเสมอ
+        valid_col_indices = [0] # บังคับเก็บคอลัมน์ 0 (รายชื่อเวชภัณฑ์) เสมอ
         date_columns = []
         
-        # วนลูปเก็บเฉพาะคอลัมน์ที่มีวันที่ (ข้ามคอลัมน์แรกที่เป็นชื่อรายการ/ช่องว่าง)
-        for i in range(1, len(raw_dates)):
-            col_val = str(raw_dates[i]).strip()
-            if pd.notna(raw_dates[i]) and col_val.lower() not in ['nan', 'none', '']:
-                date_columns.append(col_val)
+        # วนลูปเก็บเฉพาะคอลัมน์ที่มีข้อมูลวันที่จริงๆ (ข้ามช่องว่าง)
+        for i in range(1, len(dates)):
+            val = str(dates[i]).strip()
+            if pd.notna(dates[i]) and val.lower() not in ['nan', 'none', '']:
+                date_columns.append(val)
                 valid_col_indices.append(i)
 
         if not date_columns:
             return None, None, None
 
-        # 4. ตัดเฉพาะข้อมูลรายการและวันที่ โดยเริ่มเอาตั้งแต่บรรทัด "ใต้" วันที่ลงไป
+        # 3. ตัดเอาเฉพาะข้อมูลส่วนล่างสุด (ตั้งแต่บรรทัดที่ 4 เป็นต้นไป)
         df = df_raw.iloc[date_row_idx + 1:, valid_col_indices].copy()
         df.columns = [item_column_name] + date_columns
             
-        # 5. ทำความสะอาดข้อมูล: ลบแถวที่ชื่อรายการเป็นค่าว่าง
+        # ทำความสะอาดแถวว่าง
         df = df.dropna(subset=[item_column_name])
         df = df[df[item_column_name].astype(str).str.strip().str.lower() != 'nan']
         df = df[df[item_column_name].astype(str).str.strip() != '']
         
+        # 4. หาวันที่ล่าสุดที่มีคนพิมพ์ตัวเลขลงไป
         latest_date = None
         valid_date_cols = []
         
-        # 6. หาวันที่ล่าสุดที่มีข้อมูลตัวเลขกรอกไว้ (สแกนจากขวามาซ้าย)
         for col in reversed(date_columns):
             has_data = False
             for val in df[col]:
@@ -84,7 +89,6 @@ def load_and_process_inventory(file_path, item_column_name):
                 latest_date = col
                 break
                 
-        # หากพบวันที่ล่าสุด จะเก็บข้อมูลตั้งแต่วันแรกถึงวันล่าสุดเพื่อใช้สร้างกราฟ
         if latest_date:
             for col in date_columns:
                 valid_date_cols.append(col)
@@ -93,23 +97,19 @@ def load_and_process_inventory(file_path, item_column_name):
                     
         return df, latest_date, valid_date_cols
         
-    except FileNotFoundError:
-        st.error(f"⚠️ ไม่พบไฟล์: {file_path}")
-        return None, None, None
     except Exception as e:
-        st.error(f"⚠️ เกิดข้อผิดพลาดในการอ่านข้อมูล: {e}")
+        st.error(f"⚠️ เกิดข้อผิดพลาดในการดึงข้อมูลจาก Google Sheet: {e}")
         return None, None, None
 
 def display_modern_inventory_table(df, item_col, latest_date, valid_date_cols):
     """ฟังก์ชันแสดงตารางเวชภัณฑ์แบบมีกราฟเส้น (Sparkline)"""
     if df is None or df.empty or not latest_date:
-        st.warning("ไม่พบข้อมูลที่จะแสดงผล กรุณาตรวจสอบการตั้งค่าไฟล์ CSV")
+        st.warning("ไม่พบข้อมูลที่จะแสดงผล กรุณาตรวจสอบลิงก์ Google Sheet")
         return
 
     display_df = pd.DataFrame()
     display_df['รายการ'] = df[item_col]
     
-    # แปลงข้อมูลวันล่าสุดเป็นตัวเลขเพื่อแสดงผล
     display_df['คงเหลือล่าสุด'] = df[latest_date].apply(to_float).astype(int)
     
     history_data = []
@@ -140,15 +140,18 @@ def display_modern_inventory_table(df, item_col, latest_date, valid_date_cols):
 def render_inventory_ui():
     """ฟังก์ชันหลักสำหรับให้ app.py ดึงไปแสดงผล"""
     st.markdown("## 🏥 ระบบรายงานเวชภัณฑ์และยาคงคลัง (PM 2.5)")
-    st.markdown("แสดงข้อมูลจำนวนคงคลัง **เฉพาะข้อมูลล่าสุด** พร้อมกราฟแนวโน้มย้อนหลังเพื่อให้ดูง่ายและสบายตา")
+    st.markdown("ดึงข้อมูลตรงจาก **Google Sheets** แสดงเฉพาะยอดล่าสุดพร้อมกราฟย้อนหลัง")
     st.divider()
 
-    med_supplies_file = "ลงข้อมูลคลังเวชภัณฑ์รพ.สันทรายPM2.5 - พัสดุการแพทย์.csv"
-    medicines_file = "ลงข้อมูลคลังเวชภัณฑ์รพ.สันทรายPM2.5 - ยา.csv"
+    # นำ URL จากที่คุณส่งมาใส่ไว้ให้ทำงานได้ทันที!
+    med_supplies_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=38922931#gid=38922931"
+    
+    # หากรายการยาอยู่ชีตอื่น สามารถเปลี่ยนเลข gid=... ด้านหลังได้เลยครับ
+    medicines_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=0#gid=0"
 
     # ประมวลผลแต่ละไฟล์
-    df_sup, latest_date_sup, valid_cols_sup = load_and_process_inventory(med_supplies_file, "รายการพัสดุการแพทย์")
-    df_med, latest_date_med, valid_cols_med = load_and_process_inventory(medicines_file, "รายการยา")
+    df_sup, latest_date_sup, valid_cols_sup = load_and_process_inventory(med_supplies_sheet, "รายการพัสดุการแพทย์")
+    df_med, latest_date_med, valid_cols_med = load_and_process_inventory(medicines_sheet, "รายการยา")
 
     latest_update = latest_date_sup if latest_date_sup else "ไม่มีข้อมูล"
     st.info(f"🔄 **อัปเดตข้อมูลล่าสุดเมื่อ:** {latest_update}")
