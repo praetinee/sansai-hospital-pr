@@ -132,38 +132,36 @@ def render_summary():
                         <h3 class="section-title">4. พื้นที่ปลอดภัย<br><span class="text-sm font-normal text-gray-500">(Clean Room & Safety Zone)</span></h3>
                         
                         <!-- Stats -->
-                        <div class="grid grid-cols-2 gap-3 mb-4">
-                            <div class="bg-green-50 p-3 rounded-lg text-center border border-green-100">
-                                <div class="text-2xl font-bold text-green-700">26</div>
-                                <div class="text-xs text-green-800 font-medium">ห้องปลอดฝุ่น<br>(กรมอนามัย)</div>
-                            </div>
-                            <div class="bg-blue-50 p-3 rounded-lg text-center border border-blue-100">
-                                <div class="text-2xl font-bold text-blue-700">22</div>
-                                <div class="text-xs text-blue-800 font-medium">ห้องลดฝุ่น<br>(สสจ. 1-3 ดาว)</div>
+                        <div class="mb-4">
+                            <div class="bg-green-50 p-3 rounded-lg text-center border border-green-200">
+                                <div class="text-3xl font-bold text-green-700">30</div>
+                                <div class="text-sm text-green-800 font-bold mt-1">ห้องปลอดฝุ่น (มาตรฐานกรมอนามัย)</div>
                             </div>
                         </div>
 
                         <!-- Detailed Coverage (3 Zones) -->
                         <div class="space-y-2">
-                            <!-- Zone 1: OPD -->
+                            <!-- Zone 1: OPD & Public -->
                             <div class="bg-blue-50 rounded-lg p-2.5 border border-blue-100">
                                 <h4 class="text-xs font-bold text-blue-800 mb-1.5 flex items-center gap-1">
-                                    <span class="text-blue-600">🏥</span> โซนผู้ป่วยนอก (OPD)
+                                    <span class="text-blue-600">🏥</span> พื้นที่บริการและส่วนกลาง
                                 </h4>
-                                <ul class="grid grid-cols-2 gap-x-1 gap-y-1 text-xs text-gray-700">
-                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>OPD (3 ชั้น)</li>
-                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>ห้องฟัน</li>
-                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>ฝากครรภ์ (ANC)</li>
+                                <ul class="grid grid-cols-2 gap-x-1 gap-y-1 text-[11px] text-gray-700">
+                                    <li class="flex items-start gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1 shrink-0"></span>OPD (ทั้ง 3 ชั้น)</li>
+                                    <li class="flex items-start gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1 shrink-0"></span>ห้องฟัน (6 ห้อง)</li>
+                                    <li class="flex items-start gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1 shrink-0"></span>ห้องฝากครรภ์</li>
+                                    <li class="flex items-start gap-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1 shrink-0"></span>คลินิกมลพิษ</li>
+                                    <li class="flex items-start gap-1 col-span-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1 shrink-0"></span>ห้องประชุม (สุธรรมนุสิฐ, รวงผึ้ง, CR Room)</li>
                                 </ul>
                             </div>
 
                             <!-- Zone 2: IPD -->
                             <div class="bg-green-50 rounded-lg p-2.5 border border-green-100">
                                 <h4 class="text-xs font-bold text-green-800 mb-1.5 flex items-center gap-1">
-                                    <span class="text-green-600">🛌</span> โซนผู้ป่วยใน (IPD)
+                                    <span class="text-green-600">🛌</span> หอผู้ป่วยใน (IPD)
                                 </h4>
-                                <ul class="grid grid-cols-1 gap-x-1 gap-y-1 text-xs text-gray-700">
-                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>กุมารเวชกรรม</li>
+                                <ul class="grid grid-cols-1 gap-x-1 gap-y-1 text-[11px] text-gray-700">
+                                    <li class="flex items-start gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-400 mt-1 shrink-0"></span>กุมารเวชกรรม (4 ห้อง)</li>
                                 </ul>
                             </div>
 
@@ -172,13 +170,13 @@ def render_summary():
                                 <h4 class="text-xs font-bold text-red-800 mb-1.5 flex items-center gap-1">
                                     <span class="text-red-600">🚨</span> เฉพาะทางและวิกฤต (Critical)
                                 </h4>
-                                <ul class="grid grid-cols-2 gap-x-1 gap-y-1 text-xs text-gray-700">
-                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>ER (ฉุกเฉิน)</li>
-                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>ICU (วิกฤต)</li>
-                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>NICU (ทารก)</li>
-                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>LR (ห้องคลอด)</li>
-                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>หน่วยฟอกไต</li>
-                                    <li class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>ห้องส่องกล้อง</li>
+                                <ul class="grid grid-cols-2 gap-x-1 gap-y-1 text-[11px] text-gray-700">
+                                    <li class="flex items-start gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 mt-1 shrink-0"></span>ห้องฉุกเฉิน (ER)</li>
+                                    <li class="flex items-start gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 mt-1 shrink-0"></span>ห้อง ICU</li>
+                                    <li class="flex items-start gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 mt-1 shrink-0"></span>NICU (3 ห้อง)</li>
+                                    <li class="flex items-start gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 mt-1 shrink-0"></span>ห้องคลอด / รอคลอด</li>
+                                    <li class="flex items-start gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 mt-1 shrink-0"></span>ห้องฟอกไต (4 ห้อง)</li>
+                                    <li class="flex items-start gap-1"><span class="w-1.5 h-1.5 rounded-full bg-red-400 mt-1 shrink-0"></span>ห้องส่องกล้อง</li>
                                 </ul>
                             </div>
                         </div>
@@ -199,16 +197,45 @@ def render_summary():
                             <li>รองรับผู้ป่วย <strong>Walk-in</strong></li>
                         </ul>
                         
-                        <hr class="border-dashed border-gray-300 my-3">
+                        <hr class="border-dashed border-gray-300 my-4">
                         
-                        <h3 class="section-title !text-base !mb-2">การดูแลกลุ่มเฉพาะ (Hero Care)</h3>
-                        <div class="bg-orange-50 border border-orange-100 p-3 rounded-lg flex items-center justify-between">
-                            <div>
-                                <div class="text-xs text-orange-800 font-bold">อาสาดับไฟป่า</div>
-                                <div class="text-xs text-orange-700">คัดกรองก่อน-หลังภารกิจ</div>
+                        <!-- Hero Care Update -->
+                        <h3 class="section-title !text-[14px] !mb-3">การตรวจสุขภาพอาสาดับไฟป่า ก่อนเริ่มภารกิจ</h3>
+                        
+                        <div class="space-y-3">
+                            <!-- Location 1 -->
+                            <div class="bg-orange-50 border border-orange-200 p-3 rounded-lg">
+                                <div class="text-[11px] text-orange-800 font-bold mb-2 border-b border-orange-100 pb-1.5 leading-snug">📍 ที่ว่าการอำเภอสันทราย (โดย สสอ.สันทราย และ รพ.)</div>
+                                <div class="flex justify-between items-center px-2">
+                                    <div class="text-center">
+                                        <div class="text-[10px] text-gray-500 mb-0.5">ตรวจทั้งหมด</div>
+                                        <div class="text-lg font-extrabold text-orange-600 leading-none">128 <span class="font-medium text-[10px] text-orange-700">คน</span></div>
+                                    </div>
+                                    <div class="h-8 w-px bg-orange-200"></div>
+                                    <div class="text-center">
+                                        <div class="text-[10px] text-gray-500 mb-0.5">เหมาะเป็นด่านหน้า</div>
+                                        <div class="text-lg font-extrabold text-green-600 leading-none">68 <span class="font-medium text-[10px] text-green-700">คน</span></div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="text-2xl md:text-3xl font-bold text-orange-600">177 <span class="text-sm font-normal">ราย</span></div>
+
+                            <!-- Location 2 -->
+                            <div class="bg-orange-50 border border-orange-200 p-3 rounded-lg">
+                                <div class="text-[11px] text-orange-800 font-bold mb-2 border-b border-orange-100 pb-1.5 leading-snug">📍 รพ.สต. ในเขตอำเภอสันทราย</div>
+                                <div class="flex justify-between items-center px-2">
+                                    <div class="text-center">
+                                        <div class="text-[10px] text-gray-500 mb-0.5">ตรวจทั้งหมด</div>
+                                        <div class="text-lg font-extrabold text-orange-600 leading-none">25 <span class="font-medium text-[10px] text-orange-700">คน</span></div>
+                                    </div>
+                                    <div class="h-8 w-px bg-orange-200"></div>
+                                    <div class="text-center">
+                                        <div class="text-[10px] text-gray-500 mb-0.5">เหมาะเป็นด่านหน้า</div>
+                                        <div class="text-lg font-extrabold text-green-600 leading-none">16 <span class="font-medium text-[10px] text-green-700">คน</span></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -312,5 +339,5 @@ def render_summary():
     </html>
     """
     
-    # ปรับความสูงให้เหมาะสมกับเนื้อหา
-    components.html(html_code, height=1300, scrolling=True)
+    # ปรับความสูงให้เหมาะสมกับเนื้อหาที่เพิ่มขึ้น
+    components.html(html_code, height=1380, scrolling=True)
