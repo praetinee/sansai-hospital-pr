@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from summary import render_summary
 from dashboard import render_dashboard
-from flow import render_flow
 from roles import render_roles
 import inventory_tab # นำเข้าโมดูลเวชภัณฑ์ที่แยกไฟล์ไว้อย่างเป็นระเบียบ
 
@@ -67,7 +66,6 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # 3. จัดการแสดงผล Tabs ใหม่ (เอาสรุปผลภาพรวมขึ้นก่อน)
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📑 สรุปผลภาพรวม",
-    "📊 แผนการดำเนินงาน", 
     "🔄 ขั้นตอนการให้บริการ", 
     "🗺️ บทบาทของแต่ละหน่วยงาน",
     "📦 เวชภัณฑ์คงคลัง"
@@ -80,15 +78,11 @@ with tab1:
 with tab2:
     # เรียกใช้ฟังก์ชันจากไฟล์ dashboard.py
     render_dashboard()
-    
-with tab3:
-    # เรียกใช้ฟังก์ชันจากไฟล์ flow.py
-    render_flow()
 
-with tab4:
+with tab3:
     # เรียกใช้ฟังก์ชันจากไฟล์ roles.py 
     render_roles()
 
-with tab5:
+with tab4:
     # เรียกใช้งานฟังก์ชันจากไฟล์ inventory_tab.py โค้ดในนี้จะสะอาดและเป็นระเบียบ
     inventory_tab.render_inventory_ui()
