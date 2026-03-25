@@ -188,18 +188,18 @@ def render_summary():
                         <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">การบริหารจัดการปัญหาฝุ่นละอองขนาดเล็ก (PM2.5)</h1>
                         <p class="text-blue-100 mt-2 text-base md:text-lg opacity-90">โรงพยาบาลสันทรายและเครือข่ายสุขภาพ อำเภอสันทราย</p>
                         
-                        <!-- PHEOC Information Box -->
-                        <div class="mt-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 inline-block text-left">
-                            <div class="flex items-center gap-2 mb-1.5">
-                                <span class="text-red-400 animate-pulse text-lg">🚨</span> 
-                                <strong class="text-white text-sm">การเปิดศูนย์ปฏิบัติการฉุกเฉิน (PHEOC)</strong>
+                        <!-- PHEOC Information (ปรับรูปแบบใหม่ ไร้กรอบ) -->
+                        <div class="mt-3 text-left">
+                            <div class="flex items-center justify-center md:justify-start gap-1.5 mb-1 text-white">
+                                <span class="text-red-400 animate-pulse text-sm">🚨</span> 
+                                <strong class="text-sm font-semibold tracking-wide">การเปิดศูนย์ปฏิบัติการฉุกเฉิน (PHEOC)</strong>
                             </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-[13px] text-blue-50 pl-1">
-                                <div class="flex items-center gap-1.5">
+                            <div class="flex flex-col sm:flex-row justify-center md:justify-start sm:gap-6 gap-1 text-[13px] text-blue-100 md:pl-6 opacity-90">
+                                <div class="flex items-center justify-center md:justify-start gap-1.5">
                                     <span class="w-1.5 h-1.5 bg-blue-300 rounded-full"></span> 
                                     <strong>จังหวัดเชียงใหม่:</strong> 12 มกราคม 2569
                                 </div>
-                                <div class="flex items-center gap-1.5">
+                                <div class="flex items-center justify-center md:justify-start gap-1.5">
                                     <span class="w-1.5 h-1.5 bg-blue-300 rounded-full"></span> 
                                     <strong>เขตสุขภาพที่ 1:</strong> 4 มีนาคม 2569
                                 </div>
@@ -316,7 +316,7 @@ def render_summary():
                         </div>
                     </div>
                     
-                    <!-- Thumbnail Image (ปรับย่อขนาดลงและใช้ object-contain) -->
+                    <!-- Thumbnail Image -->
                     <div class="mb-3 rounded-lg overflow-hidden border border-slate-200 cursor-pointer group relative bg-slate-50 flex justify-center p-1" onclick="openModal('clinicModal')">
                         <img src="{CLINIC_IMAGE_URL}" alt="คลินิกมลพิษ" class="h-20 w-auto max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
                         <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -341,7 +341,7 @@ def render_summary():
                     <hr class="border-dashed border-slate-200 my-3">
                     
                     <!-- Hero Care Update -->
-                    <h3 class="section-title !text-[13px] !mb-2">การตรวจสุขภาพอาสาดับไฟป่า</h3>
+                    <h3 class="section-title !text-[13px] !mb-2">การตรวจสุขภาพอาสาดับไฟป่า <br><span class="font-normal text-slate-500 text-[11px]">(ก่อนเริ่มภารกิจ)</span></h3>
                     
                     <div class="space-y-2 flex-grow">
                         <!-- Location 1 -->
