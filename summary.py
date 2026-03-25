@@ -318,7 +318,12 @@ def render_summary():
                         <h3 class="section-title">6. เฝ้าระวังทางระบาดวิทยา<br><span class="text-sm font-normal text-gray-500">(Epidemiological Surveillance)</span></h3>
                         
                         <div class="mb-4">
-                            <p class="text-sm text-gray-700 mb-2"><strong>มาตรการ:</strong> ประสาน ER และ OPD เพื่อเฝ้าระวัง สอบสวนโรค และรายงาน สสจ.เชียงใหม่</p>
+                            <p class="text-sm text-gray-700 mb-2 leading-relaxed"><strong>มาตรการ:</strong> ประสาน 
+                                <a href="https://docs.google.com/spreadsheets/d/1Ba-5IzHXOzEQziXY7vfdvDXzK0dOZv0VmoINAd-sNxU/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline font-semibold transition-colors">ER</a>, 
+                                <a href="https://docs.google.com/spreadsheets/d/1j5xpdB-LNhucSVNhQuqShKUDv-xyWCGB5xhC295J3M4/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline font-semibold transition-colors">OPD</a> และ 
+                                <a href="https://docs.google.com/spreadsheets/d/1fq34BEtpt6nWbxSupNacky3ZzlV7HymWNW2xv6LyIcA/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline font-semibold transition-colors">PCU หนองหาร</a> 
+                                เพื่อเฝ้าระวัง สอบสวนโรค และรายงาน สสจ.เชียงใหม่
+                            </p>
                             <div class="flex flex-wrap gap-2">
                                 <span class="px-2 py-1 bg-blue-100 text-blue-700 text-[11px] rounded font-bold">COPD</span>
                                 <span class="px-2 py-1 bg-blue-100 text-blue-700 text-[11px] rounded font-bold">Asthma</span>
@@ -333,7 +338,7 @@ def render_summary():
                             <div class="relative pl-10 mb-4">
                                 <div class="absolute left-2 top-1.5 w-4 h-4 bg-blue-500 rounded-full border-4 border-white shadow"></div>
                                 <div class="text-sm text-gray-500 font-medium">ผู้ป่วยเฝ้าระวังสะสม</div>
-                                <div class="text-3xl font-extrabold text-theme-primary">105 <span class="text-sm font-normal text-gray-500">ราย</span></div>
+                                <div class="text-3xl font-extrabold text-gray-400 mt-1">- <span class="text-sm font-normal text-gray-400">ราย</span></div>
                             </div>
 
                             <!-- Stat 2 -->
@@ -366,10 +371,9 @@ def render_summary():
                                     <div class="bg-blue-100 p-2.5 rounded-full text-blue-600 text-lg shrink-0">📦</div>
                                     <div>
                                         <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wide">พัสดุการแพทย์</p>
-                                        <div class="flex items-baseline gap-1 -mt-1">
-                                            <span class="text-2xl font-extrabold text-blue-700">{int(sup_sum):,}</span>
-                                            <span class="text-xs text-gray-600">ชิ้น</span>
-                                        </div>
+                                        <a href="#" onclick="window.parent.document.querySelectorAll('[data-baseweb=\\'tab\\']')[4].click(); return false;" class="inline-flex items-center gap-1 mt-0.5 text-[12px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
+                                            คลิกดูรายละเอียด/จำนวนคงเหลือ ➔
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="mt-2 border-t border-gray-100 pt-2">
@@ -391,10 +395,9 @@ def render_summary():
                                     <div class="bg-emerald-100 p-2.5 rounded-full text-emerald-600 text-lg shrink-0">💊</div>
                                     <div>
                                         <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wide">เวชภัณฑ์ยา</p>
-                                        <div class="flex items-baseline gap-1 -mt-1">
-                                            <span class="text-2xl font-extrabold text-emerald-700">{int(med_sum):,}</span>
-                                            <span class="text-xs text-gray-600">หน่วย</span>
-                                        </div>
+                                        <a href="#" onclick="window.parent.document.querySelectorAll('[data-baseweb=\\'tab\\']')[4].click(); return false;" class="inline-flex items-center gap-1 mt-0.5 text-[12px] font-bold text-emerald-600 hover:text-emerald-800 underline transition-colors">
+                                            คลิกดูรายละเอียด/จำนวนคงเหลือ ➔
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="mt-2 border-t border-gray-100 pt-2">
