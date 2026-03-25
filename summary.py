@@ -1,6 +1,49 @@
 import streamlit.components.v1 as components
 from inventory_tab import load_and_process_inventory, parse_value
 
+def get_current_inventory_status(df, item_col, date_columns):
+    """ฟังก์ชันคำนวณยอดคงเหลือที่แท้จริง โดยอิงโลจิกเดียวกับ inventory_tab"""
+    in_stock = []
+    out_stock = []
+    total_sum = 0
+    latest_date = "ล่าสุด"
+
+    if df is None or df.empty or not date_columns:
+        return in_stock, out_stock, total_sum, latest_date
+
+    # 1. หาวันที่ที่มีการกรอกข้อมูลล่าสุด
+    filled_dates = []
+    for col in date_columns:
+        if any(parse_value(val) is not None for val in df[col]):
+            filled_dates.append(col)
+            
+    if not filled_dates:
+        return in_stock, out_stock, total_sum, latest_date
+
+    latest_date = filled_dates[-1]
+
+    # 2. คำนวณยอดปัจจุบันของแต่ละรายการ (ดึงยอดย้อนหลังถ้าช่องล่าสุดว่าง)
+    for index, row in df.iterrows():
+        item_name = str(row[item_col])
+        current_val = 0
+        
+        for col in date_columns:
+            val = parse_value(row[col])
+            if val is not None:
+                current_val = val
+            if col == latest_date:
+                break
+        
+        total_sum += current_val
+        
+        # จัดกลุ่มว่ามีของ หรือของขาด
+        if current_val > 0:
+            in_stock.append(item_name)
+        else:
+            out_stock.append(item_name)
+
+    return in_stock, out_stock, total_sum, latest_date
+
 def render_summary():
     # 1. ดึงข้อมูลจาก Google Sheets (ใช้ฟังก์ชันและแคชเดิมจาก inventory_tab เพื่อความรวดเร็ว)
     med_supplies_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=38922931#gid=38922931"
@@ -9,71 +52,49 @@ def render_summary():
     df_sup, cols_sup = load_and_process_inventory(med_supplies_sheet, "รายการพัสดุการแพทย์")
     df_med, cols_med = load_and_process_inventory(medicines_sheet, "รายการยา")
 
-    # 2. คำนวณภาพรวม (Smart Summary)
+    # 2. คำนวณภาพรวม (Smart Summary) โดยใช้โลจิกที่ถูกต้อง
     total_sup_items = len(df_sup) if df_sup is not None else 0
     total_med_items = len(df_med) if df_med is not None else 0
 
-    latest_date = cols_sup[-1] if cols_sup else "ล่าสุด"
+    sup_in, sup_out, sup_sum, sup_date = get_current_inventory_status(df_sup, "รายการพัสดุการแพทย์", cols_sup)
+    med_in, med_out, med_sum, med_date = get_current_inventory_status(df_med, "รายการยา", cols_med)
 
-    sup_sum = 0
-    if df_sup is not None and cols_sup:
-        sup_sum = sum([parse_value(x) or 0 for x in df_sup[cols_sup[-1]]])
-    
-    med_sum = 0
-    if df_med is not None and cols_med:
-        med_sum = sum([parse_value(x) or 0 for x in df_med[cols_med[-1]]])
+    # ใช้วันที่อัปเดตล่าสุดของอันไหนก็ได้ที่ใหม่กว่า (หรือใช้ของพัสดุเป็นหลัก)
+    latest_date = sup_date if sup_date != "ล่าสุด" else med_date
 
-    # 3. จัดกลุ่มรายการ ว่าอันไหนมี (In Stock) และ อันไหนขาด (Out of Stock)
+    # 3. สร้าง Badges สำหรับแสดงผลรายชื่อ
     def get_badges(items, is_success=True):
         if not items:
             return '<span class="text-[10px] text-gray-400 font-medium">- ไม่มี -</span>'
+        
         if is_success:
             classes = "bg-emerald-50 text-emerald-600 border-emerald-200"
-            display_items = items[:10] # แสดงรายชื่อสูงสุด 10 รายการเพื่อไม่ให้ล้น
+            display_items = items[:10] # แสดงแค่ 10 อันแรกให้หน้าเว็บไม่ล้น
             remainder = len(items) - 10
         else:
             classes = "bg-red-50 text-red-600 border-red-200"
-            display_items = items # แสดงรายการที่ขาดแคลนทั้งหมด
+            display_items = items # ของขาดให้แสดงทั้งหมด
             remainder = 0
             
         badges = [f'<span class="inline-block px-1.5 py-0.5 text-[10px] font-bold rounded border {classes} mb-1 mr-1">{item}</span>' for item in display_items]
         
         if remainder > 0:
             badges.append(f'<span class="inline-block px-1.5 py-0.5 text-[10px] font-bold rounded border bg-gray-50 text-gray-500 border-gray-200 mb-1 mr-1">+{remainder} อื่นๆ</span>')
+        
         return "".join(badges)
 
-    sup_in_stock, sup_out_stock = [], []
-    if df_sup is not None and cols_sup:
-        for _, row in df_sup.iterrows():
-            item_name = str(row["รายการพัสดุการแพทย์"])
-            val = parse_value(row[cols_sup[-1]])
-            if val is not None and val > 0:
-                sup_in_stock.append(item_name)
-            else:
-                sup_out_stock.append(item_name)
-
-    med_in_stock, med_out_stock = [], []
-    if df_med is not None and cols_med:
-        for _, row in df_med.iterrows():
-            item_name = str(row["รายการยา"])
-            val = parse_value(row[cols_med[-1]])
-            if val is not None and val > 0:
-                med_in_stock.append(item_name)
-            else:
-                med_out_stock.append(item_name)
-
-    sup_in_badges = get_badges(sup_in_stock, True)
-    sup_out_badges = get_badges(sup_out_stock, False)
-    med_in_badges = get_badges(med_in_stock, True)
-    med_out_badges = get_badges(med_out_stock, False)
+    sup_in_badges = get_badges(sup_in, True)
+    sup_out_badges = get_badges(sup_out, False)
+    med_in_badges = get_badges(med_in, True)
+    med_out_badges = get_badges(med_out, False)
     
     # กำหนดสถานะภาพรวม
-    if len(sup_out_stock) > 0 or len(med_out_stock) > 0:
+    if len(sup_out) > 0 or len(med_out) > 0:
         status_html = '<span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded font-bold border border-orange-200">สถานะ: มีรายการขาดแคลน</span>'
     else:
         status_html = '<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded font-bold border border-green-200">สถานะ: เพียงพอ</span>'
 
-    # 4. โค้ด HTML ที่ประยุกต์จากไฟล์สรุปผล ผสมผสานกับการออกแบบใหม่
+    # 4. โค้ด HTML สำหรับแสดงผล
     html_code = f"""
     <!DOCTYPE html>
     <html lang="th">
