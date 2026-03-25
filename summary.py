@@ -197,6 +197,7 @@ def render_summary():
                     </div>
                     <ul class="bullet-list text-[13px]">
                         <li><a href="https://sshos-pm25-surveillance-gkw9z3865puvrk29g3qep2.streamlit.app/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline transition-colors"><strong>สำหรับผู้บริหาร:</strong></a> ติดตามสถานการณ์ฝุ่นเทียบกับจำนวนผู้ป่วยโรคที่เกี่ยวข้อง</li>
+                        <li><a href="https://pm25-sansai-dashboard-tuc6yczy4hhl8vbmxdyxcp.streamlit.app/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline transition-colors"><strong>สำหรับประชาชน:</strong></a> ติดตามสถานการณ์ฝุ่นละอองในพื้นที่</li>
                         <li><strong>แหล่งข้อมูลแม่นยำ:</strong> เชื่อมโยงข้อมูลจากเครื่อง DustBoy และ Smog-epinorth</li>
                     </ul>
                 </div>
