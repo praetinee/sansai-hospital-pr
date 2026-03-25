@@ -126,8 +126,8 @@ def render_summary():
     sup_status_html = '<span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200">สถานะ: มีรายการขาด</span>' if len(sup_out) > 0 else '<span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-200">สถานะ: เพียงพอ</span>'
     med_status_html = '<span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200">สถานะ: มีรายการขาด</span>' if len(med_out) > 0 else '<span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-200">สถานะ: เพียงพอ</span>'
 
-    # URL ของรูปภาพคลินิกมลพิษ (เปลี่ยน URL ตรงนี้ได้เลย)
-    CLINIC_IMAGE_URL = "https://placehold.co/800x1200/1E3A8A/FFFFFF/png?text=Pollution+Clinic+Poster"
+    # URL ของรูปภาพคลินิกมลพิษ
+    CLINIC_IMAGE_URL = "https://i.postimg.cc/R0DP1WxQ/หมอพร_อม.png"
 
     # 4. โค้ด HTML สำหรับแสดงผล
     html_code = f"""
