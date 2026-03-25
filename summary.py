@@ -95,7 +95,7 @@ def render_summary():
                             <div class="text-sm font-semibold text-theme-primary">Real-time Monitoring Dashboard</div>
                         </div>
                         <ul class="bullet-list text-sm">
-                            <li><strong>สำหรับผู้บริหาร:</strong> ติดตามสถานการณ์ฝุ่นเทียบกับจำนวนผู้ป่วยโรคที่เกี่ยวข้องกับการสัมผัสฝุ่น PM2.5</li>
+                            <li><a href="https://sshos-pm25-surveillance-gkw9z3865puvrk29g3qep2.streamlit.app/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline transition-colors"><strong>สำหรับผู้บริหาร:</strong></a> ติดตามสถานการณ์ฝุ่นเทียบกับจำนวนผู้ป่วยโรคที่เกี่ยวข้องกับการสัมผัสฝุ่น PM2.5</li>
                             <li><strong>แหล่งข้อมูลแม่นยำ:</strong> เชื่อมโยงข้อมูลจากเครื่อง <strong>DustBoy</strong> และ Smog-epinorth (Backup)</li>
                         </ul>
                     </div>
