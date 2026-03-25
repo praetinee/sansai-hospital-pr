@@ -316,7 +316,7 @@ def render_summary():
                         </div>
                     </div>
                     
-                    <!-- Thumbnail Image -->
+                    <!-- Thumbnail Image (ปรับย่อขนาดลงและใช้ object-contain) -->
                     <div class="mb-3 rounded-lg overflow-hidden border border-slate-200 cursor-pointer group relative bg-slate-50 flex justify-center p-1" onclick="openModal('clinicModal')">
                         <img src="{CLINIC_IMAGE_URL}" alt="คลินิกมลพิษ" class="h-20 w-auto max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
                         <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -433,7 +433,7 @@ def render_summary():
                             <span class="text-2xl md:text-3xl">📦</span>
                             <div>
                                 <div class="text-[13px] font-semibold text-theme-primary">พัสดุการแพทย์</div>
-                                <a href="#" onclick="window.parent.document.querySelectorAll('[data-baseweb=\\'tab\\']')[4].click(); return false;" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
+                                <a href="#" onclick="window.parent.document.querySelectorAll('[data-baseweb=\\'tab\\']')[3].click(); return false;" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
                                     คลิกดูจำนวนคงเหลือ ➔
                                 </a>
                             </div>
@@ -469,7 +469,7 @@ def render_summary():
                             <span class="text-2xl md:text-3xl">💊</span>
                             <div>
                                 <div class="text-[13px] font-semibold text-theme-primary">เวชภัณฑ์ยา</div>
-                                <a href="#" onclick="window.parent.document.querySelectorAll('[data-baseweb=\\'tab\\']')[4].click(); return false;" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
+                                <a href="#" onclick="window.parent.document.querySelectorAll('[data-baseweb=\\'tab\\']')[3].click(); return false;" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
                                     คลิกดูจำนวนคงเหลือ ➔
                                 </a>
                             </div>
