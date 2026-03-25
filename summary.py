@@ -23,7 +23,57 @@ def render_summary():
     if df_med is not None and cols_med:
         med_sum = sum([parse_value(x) or 0 for x in df_med[cols_med[-1]]])
 
-    # 3. โค้ด HTML ที่ประยุกต์จากไฟล์สรุปผล ผสมผสานกับการออกแบบใหม่
+    # 3. จัดกลุ่มรายการ ว่าอันไหนมี (In Stock) และ อันไหนขาด (Out of Stock)
+    def get_badges(items, is_success=True):
+        if not items:
+            return '<span class="text-[10px] text-gray-400 font-medium">- ไม่มี -</span>'
+        if is_success:
+            classes = "bg-emerald-50 text-emerald-600 border-emerald-200"
+            display_items = items[:10] # แสดงรายชื่อสูงสุด 10 รายการเพื่อไม่ให้ล้น
+            remainder = len(items) - 10
+        else:
+            classes = "bg-red-50 text-red-600 border-red-200"
+            display_items = items # แสดงรายการที่ขาดแคลนทั้งหมด
+            remainder = 0
+            
+        badges = [f'<span class="inline-block px-1.5 py-0.5 text-[10px] font-bold rounded border {classes} mb-1 mr-1">{item}</span>' for item in display_items]
+        
+        if remainder > 0:
+            badges.append(f'<span class="inline-block px-1.5 py-0.5 text-[10px] font-bold rounded border bg-gray-50 text-gray-500 border-gray-200 mb-1 mr-1">+{remainder} อื่นๆ</span>')
+        return "".join(badges)
+
+    sup_in_stock, sup_out_stock = [], []
+    if df_sup is not None and cols_sup:
+        for _, row in df_sup.iterrows():
+            item_name = str(row["รายการพัสดุการแพทย์"])
+            val = parse_value(row[cols_sup[-1]])
+            if val is not None and val > 0:
+                sup_in_stock.append(item_name)
+            else:
+                sup_out_stock.append(item_name)
+
+    med_in_stock, med_out_stock = [], []
+    if df_med is not None and cols_med:
+        for _, row in df_med.iterrows():
+            item_name = str(row["รายการยา"])
+            val = parse_value(row[cols_med[-1]])
+            if val is not None and val > 0:
+                med_in_stock.append(item_name)
+            else:
+                med_out_stock.append(item_name)
+
+    sup_in_badges = get_badges(sup_in_stock, True)
+    sup_out_badges = get_badges(sup_out_stock, False)
+    med_in_badges = get_badges(med_in_stock, True)
+    med_out_badges = get_badges(med_out_stock, False)
+    
+    # กำหนดสถานะภาพรวม
+    if len(sup_out_stock) > 0 or len(med_out_stock) > 0:
+        status_html = '<span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded font-bold border border-orange-200">สถานะ: มีรายการขาดแคลน</span>'
+    else:
+        status_html = '<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded font-bold border border-green-200">สถานะ: เพียงพอ</span>'
+
+    # 4. โค้ด HTML ที่ประยุกต์จากไฟล์สรุปผล ผสมผสานกับการออกแบบใหม่
     html_code = f"""
     <!DOCTYPE html>
     <html lang="th">
@@ -289,41 +339,63 @@ def render_summary():
                         
                         <div class="flex flex-col gap-3 mt-2 flex-grow justify-center">
                             <!-- Supplies -->
-                            <div class="bg-white p-3 rounded-xl shadow-sm border border-emerald-100 flex items-center gap-3 relative overflow-hidden">
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-emerald-100 relative overflow-hidden">
                                 <div class="absolute right-[-10px] top-[-5px] opacity-[0.03] text-5xl">📦</div>
-                                <div class="bg-blue-100 p-3 rounded-full text-blue-600 text-lg shrink-0">📦</div>
-                                <div>
-                                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wide">พัสดุการแพทย์พร้อมใช้</p>
-                                    <div class="flex items-baseline gap-1 -mt-1">
-                                        <span class="text-2xl font-extrabold text-blue-700">{int(sup_sum):,}</span>
-                                        <span class="text-xs text-gray-600">ชิ้น</span>
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="bg-blue-100 p-2.5 rounded-full text-blue-600 text-lg shrink-0">📦</div>
+                                    <div>
+                                        <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wide">พัสดุการแพทย์</p>
+                                        <div class="flex items-baseline gap-1 -mt-1">
+                                            <span class="text-2xl font-extrabold text-blue-700">{int(sup_sum):,}</span>
+                                            <span class="text-xs text-gray-600">ชิ้น</span>
+                                        </div>
                                     </div>
-                                    <p class="text-[10px] text-blue-600 font-medium mt-0.5">✓ จัดการ {total_sup_items} รายการ</p>
+                                </div>
+                                <div class="mt-2 border-t border-gray-100 pt-2">
+                                    <div class="mb-2">
+                                        <span class="text-[10px] font-bold text-red-600 flex items-center gap-1 mb-1.5">🚨 รายการที่ขาดแคลน/หมด:</span>
+                                        <div class="pl-1">{sup_out_badges}</div>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] font-bold text-emerald-600 flex items-center gap-1 mb-1.5">✅ รายการที่มีพร้อมใช้:</span>
+                                        <div class="pl-1">{sup_in_badges}</div>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Medicines -->
-                            <div class="bg-white p-3 rounded-xl shadow-sm border border-emerald-100 flex items-center gap-3 relative overflow-hidden">
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-emerald-100 relative overflow-hidden">
                                 <div class="absolute right-[-10px] top-[-5px] opacity-[0.03] text-5xl">💊</div>
-                                <div class="bg-emerald-100 p-3 rounded-full text-emerald-600 text-lg shrink-0">💊</div>
-                                <div>
-                                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wide">เวชภัณฑ์ยาพร้อมใช้</p>
-                                    <div class="flex items-baseline gap-1 -mt-1">
-                                        <span class="text-2xl font-extrabold text-emerald-700">{int(med_sum):,}</span>
-                                        <span class="text-xs text-gray-600">หน่วย</span>
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="bg-emerald-100 p-2.5 rounded-full text-emerald-600 text-lg shrink-0">💊</div>
+                                    <div>
+                                        <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wide">เวชภัณฑ์ยา</p>
+                                        <div class="flex items-baseline gap-1 -mt-1">
+                                            <span class="text-2xl font-extrabold text-emerald-700">{int(med_sum):,}</span>
+                                            <span class="text-xs text-gray-600">หน่วย</span>
+                                        </div>
                                     </div>
-                                    <p class="text-[10px] text-emerald-600 font-medium mt-0.5">✓ จัดการ {total_med_items} รายการ</p>
+                                </div>
+                                <div class="mt-2 border-t border-gray-100 pt-2">
+                                    <div class="mb-2">
+                                        <span class="text-[10px] font-bold text-red-600 flex items-center gap-1 mb-1.5">🚨 รายการที่ขาดแคลน/หมด:</span>
+                                        <div class="pl-1">{med_out_badges}</div>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] font-bold text-emerald-600 flex items-center gap-1 mb-1.5">✅ รายการที่มีพร้อมใช้:</span>
+                                        <div class="pl-1">{med_in_badges}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Status Bar -->
-                        <div class="mt-4 flex flex-col sm:flex-row justify-between items-center bg-white/60 p-2 rounded-lg text-[10px] sm:text-xs font-medium text-gray-600 gap-1 text-center">
+                        <div class="mt-4 flex flex-col sm:flex-row justify-between items-center bg-white/60 p-2 rounded-lg text-[10px] sm:text-xs font-medium text-gray-600 gap-2 text-center">
                             <span class="flex items-center justify-center gap-1.5">
                                 <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> 
                                 อัปเดตล่าสุด: {latest_date}
                             </span>
-                            <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded font-bold">สถานะ: เพียงพอ</span>
+                            {status_html}
                         </div>
                     </div>
 
@@ -339,5 +411,5 @@ def render_summary():
     </html>
     """
     
-    # ปรับความสูงให้เหมาะสมกับเนื้อหาที่เพิ่มขึ้น
-    components.html(html_code, height=1380, scrolling=True)
+    # ขยายความสูงให้รองรับกล่องข้อความที่มีรายชื่อยาวๆ
+    components.html(html_code, height=1600, scrolling=True)
