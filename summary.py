@@ -316,9 +316,9 @@ def render_summary():
                         </div>
                     </div>
                     
-                    <!-- Thumbnail Image -->
-                    <div class="mb-3 rounded-lg overflow-hidden border border-slate-200 cursor-pointer group relative" onclick="openModal('clinicModal')">
-                        <img src="{CLINIC_IMAGE_URL}" alt="คลินิกมลพิษ" class="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-300">
+                    <!-- Thumbnail Image (ปรับย่อขนาดลงและใช้ object-contain) -->
+                    <div class="mb-3 rounded-lg overflow-hidden border border-slate-200 cursor-pointer group relative bg-slate-50 flex justify-center p-1" onclick="openModal('clinicModal')">
+                        <img src="{CLINIC_IMAGE_URL}" alt="คลินิกมลพิษ" class="h-20 w-auto max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
                         <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <span class="text-white text-xs font-bold flex items-center gap-1">🔍 คลิกขยายรูปภาพ</span>
                         </div>
