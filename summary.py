@@ -126,6 +126,9 @@ def render_summary():
     sup_status_html = '<span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200">สถานะ: มีรายการขาด</span>' if len(sup_out) > 0 else '<span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-200">สถานะ: เพียงพอ</span>'
     med_status_html = '<span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200">สถานะ: มีรายการขาด</span>' if len(med_out) > 0 else '<span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-200">สถานะ: เพียงพอ</span>'
 
+    # URL ของรูปภาพคลินิกมลพิษ (เปลี่ยน URL ตรงนี้ได้เลย)
+    CLINIC_IMAGE_URL = "https://placehold.co/800x1200/1E3A8A/FFFFFF/png?text=Pollution+Clinic+Poster"
+
     # 4. โค้ด HTML สำหรับแสดงผล
     html_code = f"""
     <!DOCTYPE html>
@@ -163,6 +166,9 @@ def render_summary():
             
             /* Responsive fixes for text */
             @media (min-width: 1024px) {{ .section-title {{ font-size: 1.25rem; }} }}
+            
+            /* Hide scrollbar when modal is open */
+            body.modal-open {{ overflow: hidden; }}
         </style>
     </head>
     <body class="text-slate-700">
@@ -174,13 +180,31 @@ def render_summary():
             <!-- Header -->
             <header class="bg-gradient-to-r from-theme-primary to-theme-secondary text-white p-6 md:p-8 relative z-10">
                 <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
-                    <div class="bg-white/10 p-3 md:p-4 rounded-2xl backdrop-blur-sm border border-white/20 shrink-0">
+                    <div class="bg-white/10 p-3 md:p-4 rounded-2xl backdrop-blur-sm border border-white/20 shrink-0 mt-2">
                         <span class="text-4xl md:text-5xl lg:text-6xl">🏥</span>
                     </div>
                     <div>
                         <h2 class="text-lg md:text-xl text-blue-200 font-medium mb-1">สรุปผลการดำเนินงาน ปี 2569</h2>
                         <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">การบริหารจัดการปัญหาฝุ่นละอองขนาดเล็ก (PM2.5)</h1>
                         <p class="text-blue-100 mt-2 text-base md:text-lg opacity-90">โรงพยาบาลสันทรายและเครือข่ายสุขภาพ อำเภอสันทราย</p>
+                        
+                        <!-- PHEOC Information Box -->
+                        <div class="mt-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 inline-block text-left">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="text-red-400 animate-pulse text-lg">🚨</span> 
+                                <strong class="text-white text-sm">การเปิดศูนย์ปฏิบัติการฉุกเฉิน (PHEOC)</strong>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-[13px] text-blue-50 pl-1">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 bg-blue-300 rounded-full"></span> 
+                                    <strong>จังหวัดเชียงใหม่:</strong> 12 มกราคม 2569
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 bg-blue-300 rounded-full"></span> 
+                                    <strong>เขตสุขภาพที่ 1:</strong> 4 มีนาคม 2569
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -291,9 +315,27 @@ def render_summary():
                             <p class="text-[11px] text-slate-500">เปิดทุกวันในเวลาราชการ</p>
                         </div>
                     </div>
-                    <ul class="bullet-list text-[12px] mb-4 text-slate-600">
-                        <li>นัดหมายล่วงหน้าผ่าน <strong>"หมอพร้อม"</strong></li>
-                        <li>รองรับผู้ป่วย <strong>Walk-in</strong></li>
+                    
+                    <!-- Thumbnail Image -->
+                    <div class="mb-3 rounded-lg overflow-hidden border border-slate-200 cursor-pointer group relative" onclick="openModal('clinicModal')">
+                        <img src="{CLINIC_IMAGE_URL}" alt="คลินิกมลพิษ" class="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <span class="text-white text-xs font-bold flex items-center gap-1">🔍 คลิกขยายรูปภาพ</span>
+                        </div>
+                    </div>
+                    
+                    <ul class="bullet-list text-[12px] mb-4 text-slate-600 space-y-2">
+                        <li class="flex justify-between items-start pr-1">
+                            <div class="flex flex-col">
+                                <span>นัดหมายผ่าน <strong>"หมอพร้อม"</strong></span>
+                                <span class="text-[10px] text-blue-600 font-medium mt-0.5">จันทร์-ศุกร์ 8.00-14.00 น.</span>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 mt-0.5 shrink-0">0 ราย</span>
+                        </li>
+                        <li class="flex justify-between items-center pr-1 mt-2">
+                            <span>ผู้ป่วย <strong>Walk-in</strong></span>
+                            <span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 shrink-0">0 ราย</span>
+                        </li>
                     </ul>
                     
                     <hr class="border-dashed border-slate-200 my-3">
@@ -460,10 +502,30 @@ def render_summary():
             <footer class="bg-theme-primary text-white/80 p-4 text-center text-sm md:text-base">
                 <p>กลุ่มงานอาชีวเวชกรรม โรงพยาบาลสันทราย</p>
             </footer>
+            
+            <!-- Lightbox Modal สำหรับแสดงรูปใหญ่ -->
+            <div id="clinicModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeModal('clinicModal')">
+                <div class="relative w-full max-w-3xl max-h-[90vh] p-4 flex justify-center items-center flex-col">
+                    <button class="absolute top-2 right-6 text-white hover:text-red-400 text-5xl font-bold cursor-pointer drop-shadow-md z-50" onclick="closeModal('clinicModal')">&times;</button>
+                    <img src="{CLINIC_IMAGE_URL}" class="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl border-2 border-white/20" onclick="event.stopPropagation()">
+                    <p class="text-white mt-3 text-sm">คลิกพื้นที่สีดำ หรือปุ่ม X เพื่อปิด</p>
+                </div>
+            </div>
+            
+            <script>
+                function openModal(id) {{
+                    document.getElementById(id).classList.remove('hidden');
+                    document.body.classList.add('modal-open');
+                }}
+                function closeModal(id) {{
+                    document.getElementById(id).classList.add('hidden');
+                    document.body.classList.remove('modal-open');
+                }}
+            </script>
         </div>
     </body>
     </html>
     """
     
-    # ขยายความสูงให้เหมาะสมกับหน้าจอแบบ 4 คอลัมน์ (รองรับการบีบหน้าจอ)
-    components.html(html_code, height=1450, scrolling=True)
+    # ขยายความสูงให้เหมาะสมกับหน้าจอแบบ 4 คอลัมน์และรองรับองค์ประกอบที่เพิ่มขึ้น
+    components.html(html_code, height=1550, scrolling=True)
