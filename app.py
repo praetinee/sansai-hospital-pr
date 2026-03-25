@@ -63,8 +63,8 @@ hide_streamlit_style = """
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-# 3. จัดการแสดงผล Tabs ใหม่ (เอาสรุปผลภาพรวมขึ้นก่อน)
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+# 3. จัดการแสดงผล Tabs ใหม่ (เอาสรุปผลภาพรวมขึ้นก่อน และแก้ไขให้เหลือ 4 Tab)
+tab1, tab2, tab3, tab4 = st.tabs([
     "📑 สรุปผลภาพรวม",
     "🔄 ขั้นตอนการให้บริการ", 
     "🗺️ บทบาทของแต่ละหน่วยงาน",
