@@ -1,6 +1,8 @@
 import re
+import streamlit as st
+import pandas as pd
 import streamlit.components.v1 as components
-from inventory_tab import load_and_process_inventory, parse_value
+from inventory_tab import load_and_process_inventory, parse_value, get_gsheet_csv_url
 
 def shorten_item_name(name):
     """ฟังก์ชันย่อชื่อเวชภัณฑ์ให้สั้นลง เพื่อให้แสดงผลใน Badges ได้สวยงาม"""
@@ -82,6 +84,26 @@ def get_current_inventory_status(df, item_col, date_columns):
 
     return in_stock, out_stock, total_sum, latest_date
 
+@st.cache_data(ttl=300)
+def count_patients_2569(url, start_row_idx):
+    """ฟังก์ชันนับจำนวนผู้ป่วยเฉพาะปี 2569 (หรือ 2026) จากคอลัมน์ A เริ่มจากแถวที่กำหนด"""
+    try:
+        csv_url = get_gsheet_csv_url(url)
+        # อ่านแบบ header=None เพื่อให้ลำดับแถวและคอลัมน์ตรงกับหน้า Sheet (Row 1 = index 0, Col A = index 0)
+        df = pd.read_csv(csv_url, header=None, dtype=str)
+        
+        if len(df) <= start_row_idx:
+            return 0
+            
+        # คอลัมน์ A คือ index 0, ตัดเฉพาะแถวที่กำหนดเป็นต้นไป
+        date_col = df.iloc[start_row_idx:, 0].astype(str)
+        
+        # ค้นหาคำว่า 2569 หรือ 2026
+        count = date_col.str.contains('2569|2026', na=False).sum()
+        return int(count)
+    except Exception as e:
+        return 0
+
 def render_summary():
     # 1. ดึงข้อมูลจาก Google Sheets (ใช้ฟังก์ชันและแคชเดิมจาก inventory_tab เพื่อความรวดเร็ว)
     med_supplies_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=38922931#gid=38922931"
@@ -94,7 +116,17 @@ def render_summary():
     sup_in, sup_out, sup_sum, sup_date = get_current_inventory_status(df_sup, "รายการพัสดุการแพทย์", cols_sup)
     med_in, med_out, med_sum, med_date = get_current_inventory_status(df_med, "รายการยา", cols_med)
 
-    # 3. สร้าง Badges สำหรับแสดงผลรายชื่อแบบคลุมโทน
+    # 3. ดึงและคำนวณจำนวนผู้ป่วยเฝ้าระวังสะสม (OPD, ER) เฉพาะปี 2569
+    opd_sheet_url = "https://docs.google.com/spreadsheets/d/1j5xpdB-LNhucSVNhQuqShKUDv-xyWCGB5xhC295J3M4/edit?gid=1128600513#gid=1128600513"
+    er_sheet_url = "https://docs.google.com/spreadsheets/d/1Ba-5IzHXOzEQziXY7vfdvDXzK0dOZv0VmoINAd-sNxU/edit?gid=2035211246#gid=2035211246"
+    
+    # OPD แถวที่ 10 เป็นต้นไป (index 9)
+    opd_count = count_patients_2569(opd_sheet_url, start_row_idx=9)
+    # ER แถวที่ 3 เป็นต้นไป (index 2)
+    er_count = count_patients_2569(er_sheet_url, start_row_idx=2)
+    total_patients_count = opd_count + er_count
+
+    # 4. สร้าง Badges สำหรับแสดงผลรายชื่อแบบคลุมโทน
     def get_badges(items, is_success=True):
         if not items:
             return '<span class="text-[10px] text-slate-400 font-medium">- ไม่มี -</span>'
@@ -129,7 +161,7 @@ def render_summary():
     # URL ของรูปภาพคลินิกมลพิษ
     CLINIC_IMAGE_URL = "https://i.postimg.cc/R0DP1WxQ/หมอพร_อม.png"
 
-    # 4. โค้ด HTML สำหรับแสดงผล
+    # 5. โค้ด HTML สำหรับแสดงผล
     html_code = f"""
     <!DOCTYPE html>
     <html lang="th">
@@ -399,11 +431,29 @@ def render_summary():
                     <div class="relative py-2 flex-grow">
                         <div class="absolute left-4 top-2 bottom-2 w-0.5 bg-slate-200"></div>
                         
-                        <!-- Stat 1 -->
+                        <!-- Stat 1: ผู้ป่วยเฝ้าระวังสะสม (อัปเดตอัตโนมัติ) -->
                         <div class="relative pl-10 mb-4">
                             <div class="absolute left-2 top-1.5 w-4 h-4 bg-slate-400 rounded-full border-4 border-white shadow-sm"></div>
-                            <div class="text-[12px] text-slate-500 font-medium">ผู้ป่วยเฝ้าระวังสะสม</div>
-                            <div class="text-2xl font-extrabold text-slate-400 mt-0.5">- <span class="text-xs font-normal text-slate-400">ราย</span></div>
+                            <div class="text-[12px] text-slate-500 font-medium flex items-center gap-1">
+                                ผู้ป่วยเฝ้าระวังสะสม <span class="text-[10px] bg-slate-100 px-1 py-0.5 rounded text-slate-400">ปี 2569</span>
+                            </div>
+                            <div class="text-2xl font-extrabold text-slate-700 mt-0.5">{total_patients_count} <span class="text-xs font-normal text-slate-500">ราย</span></div>
+                            
+                            <!-- Breakdown OPD, ER, PCU -->
+                            <div class="flex flex-wrap gap-2 mt-1.5">
+                                <div class="bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded text-[10px] font-bold flex gap-1 items-center shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                    <span>OPD:</span> <span>{opd_count}</span>
+                                </div>
+                                <div class="bg-red-50 text-red-700 border border-red-200 px-1.5 py-0.5 rounded text-[10px] font-bold flex gap-1 items-center shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                    <span>ER:</span> <span>{er_count}</span>
+                                </div>
+                                <div class="bg-slate-50 text-slate-400 border border-slate-200 px-1.5 py-0.5 rounded text-[10px] font-bold flex gap-1 items-center opacity-70">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                                    <span>PCU:</span> <span>-</span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Stat 2 -->
