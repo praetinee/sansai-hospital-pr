@@ -461,7 +461,7 @@ def render_summary():
                             <div class="absolute left-2 top-1.5 w-4 h-4 bg-orange-400 rounded-full border-4 border-white shadow-sm"></div>
                             <div class="text-[12px] text-slate-500 font-medium">ผลการวินิจฉัยเบื้องต้น</div>
                             <div class="bg-slate-50 p-2 rounded shadow-sm border border-slate-100 text-[11px] text-slate-600 mt-1 leading-snug">
-                                ไม่พบความสัมพันธ์ที่มีนัยสำคัญ
+                                พบ 10 รายที่มีอาการสัมพันธ์กับช่วงค่าฝุ่นสูง อยู่ระหว่างดำเนินการสอบสวนโรค
                             </div>
                         </div>
 
@@ -469,7 +469,9 @@ def render_summary():
                         <div class="relative pl-10">
                             <div class="absolute left-2 top-1.5 w-4 h-4 bg-theme-primary rounded-full border-4 border-white shadow-sm"></div>
                             <div class="text-[12px] text-slate-500 font-medium">ยืนยันผลกระทบจากฝุ่น</div>
-                            <div class="text-2xl font-extrabold text-theme-primary">0 <span class="text-xs font-normal text-slate-400">ราย</span></div>
+                            <div class="bg-blue-50 p-2 rounded shadow-sm border border-blue-100 text-[11px] text-theme-primary font-semibold mt-1 leading-snug inline-block">
+                                อยู่ระหว่างดำเนินการสอบสวนโรค
+                            </div>
                         </div>
                     </div>
                 </div>
