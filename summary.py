@@ -461,7 +461,7 @@ def render_summary():
                             <div class="absolute left-2 top-1.5 w-4 h-4 bg-orange-400 rounded-full border-4 border-white shadow-sm"></div>
                             <div class="text-[12px] text-slate-500 font-medium">ผลการวินิจฉัยเบื้องต้น</div>
                             <div class="bg-slate-50 p-2 rounded shadow-sm border border-slate-100 text-[11px] text-slate-600 mt-1 leading-snug">
-                                พบ 10 รายที่มีอาการสัมพันธ์กับช่วงค่าฝุ่นสูง อยู่ระหว่างดำเนินการสอบสวนโรค
+                                พบ 10 รายที่มีอาการสัมพันธ์กับการสัมผัสฝุ่น PM2.5 อยู่ระหว่างดำเนินการสอบสวนโรค
                             </div>
                         </div>
 
