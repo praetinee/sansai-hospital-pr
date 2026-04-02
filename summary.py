@@ -201,6 +201,59 @@ def render_summary():
             
             /* Hide scrollbar when modal is open */
             body.modal-open {{ overflow: hidden; }}
+
+            /* =========================================
+               PRINT CSS (จัดหน้าให้อยู่ใน 1 A4 แนวตั้ง)
+               ========================================= */
+            @media print {{
+                @page {{ size: A4 portrait; margin: 8mm; }}
+                html, body {{ background-color: white !important; height: auto !important; overflow: visible !important; padding: 0 !important; margin: 0 !important; }}
+                * {{ -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }}
+                
+                /* ซ่อนปุ่มพิมพ์และเอฟเฟคที่ไม่จำเป็นตอนพิมพ์ */
+                .print-hidden {{ display: none !important; }}
+                .shadow-xl, .shadow-paper, .border {{ box-shadow: none !important; }}
+                
+                /* บังคับคอนเทนเนอร์ให้ขยายเต็มและลบขอบโค้ง */
+                .w-full.bg-white {{ border-radius: 0 !important; border: none !important; }}
+                
+                /* ปรับ Header */
+                header {{ padding: 1rem 1.5rem !important; }}
+                header h1 {{ font-size: 22px !important; margin-bottom: 2px !important; }}
+                header h2 {{ font-size: 14px !important; }}
+                header .text-sm {{ font-size: 11px !important; }}
+                header span.text-4xl {{ font-size: 28px !important; }}
+                
+                /* บังคับตารางกริตเป็น 2 คอลัมน์ x 4 แถว เพื่อให้พอดีกระดาษ A4 แนวตั้ง */
+                .grid {{ 
+                    grid-template-columns: repeat(2, minmax(0, 1fr)) !important; 
+                    gap: 10px !important; 
+                    padding: 10px !important; 
+                }}
+                
+                /* ปรับขนาดกล่องข้อมูล */
+                .info-box {{ 
+                    padding: 10px !important; 
+                    border: 1px solid #cbd5e1 !important; 
+                    break-inside: avoid; /* ห้ามให้กล่องถูกตัดครึ่งหน้ากระดาษ */
+                }}
+                
+                /* ปรับขนาดตัวอักษรให้เล็กลงเล็กน้อยเพื่อให้จุใน 1 หน้าได้ */
+                .section-title {{ font-size: 15px !important; margin-bottom: 6px !important; }}
+                .text-\[13px\] {{ font-size: 11px !important; }}
+                .text-\[12px\] {{ font-size: 10px !important; }}
+                .text-\[11px\] {{ font-size: 9px !important; }}
+                .text-\[10px\] {{ font-size: 8px !important; }}
+                
+                .bullet-list li {{ margin-bottom: 2px !important; line-height: 1.3 !important; }}
+                
+                /* ลดขนาด Badge */
+                .px-1\.5 {{ padding-left: 4px !important; padding-right: 4px !important; }}
+                .py-0\.5 {{ padding-top: 2px !important; padding-bottom: 2px !important; }}
+                
+                /* ส่วนท้าย */
+                footer {{ padding: 8px !important; font-size: 11px !important; }}
+            }}
         </style>
     </head>
     <body class="text-slate-700">
@@ -213,7 +266,14 @@ def render_summary():
 
             <!-- Header -->
             <header class="bg-gradient-to-r from-theme-primary to-theme-secondary text-white p-6 md:p-8 relative z-10">
-                <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
+                
+                <!-- Print Button (จะถูกซ่อนไว้ตอนกดสั่งพิมพ์) -->
+                <button onclick="window.print()" class="print-hidden absolute top-4 right-4 md:top-6 md:right-8 bg-white/20 hover:bg-white/30 text-white border border-white/40 px-4 py-2 rounded-full text-[13px] font-bold flex items-center gap-2 backdrop-blur-sm transition-all shadow-sm cursor-pointer z-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    พิมพ์ / PDF
+                </button>
+
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 text-center md:text-left mt-6 md:mt-0">
                     <div class="bg-white/10 p-3 md:p-4 rounded-2xl backdrop-blur-sm border border-white/20 shrink-0 mt-2">
                         <span class="text-4xl md:text-5xl lg:text-6xl">🏥</span>
                     </div>
