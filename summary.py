@@ -168,7 +168,11 @@ def render_summary():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- โหลดไลบรารีสำหรับสร้าง PDF ขั้นสูง -->
         <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
         <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         
         <script>
@@ -198,81 +202,29 @@ def render_summary():
             
             /* Responsive fixes for text */
             @media (min-width: 1024px) {{ .section-title {{ font-size: 1.25rem; }} }}
-            
-            /* Hide scrollbar when modal is open */
             body.modal-open {{ overflow: hidden; }}
 
             /* =========================================
-               PRINT CSS (VIRTUAL CANVAS METHOD - แก้อาการหน้าพัง 100%)
+               โหมดสำหรับถ่ายทำ PDF (บังคับ 1400px แนวนอนเป๊ะๆ)
                ========================================= */
-            @media print {{
-                @page {{ size: A4 landscape; margin: 0; }}
-                
-                /* 1. บังคับหน้ากระดาษให้ล็อคตายตัว ห้ามเบราว์เซอร์ตัดแบ่งหน้าเองเด็ดขาด */
-                html, body {{ 
-                    width: 100% !important;
-                    height: 100% !important;
-                    margin: 0 !important; 
-                    padding: 0 !important;
-                    overflow: hidden !important; 
-                    background-color: white !important; 
-                }}
-                * {{ -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }}
-                
-                .print-hidden {{ display: none !important; }}
-                
-                /* 2. สร้าง "กรอบจำลอง" ขนาดคงที่ 1400x990px แล้วย่อสเกล (0.78) ประทับลงกลางหน้า A4 */
-                .w-full.bg-white.shadow-xl {{ 
-                    position: absolute !important;
-                    top: 0 !important;
-                    left: 50% !important;
-                    width: 1400px !important;
-                    height: 990px !important;
-                    max-width: none !important;
-                    margin: 0 0 0 -700px !important; /* จัดให้อยู่กึ่งกลาง */
-                    border: none !important;
-                    border-radius: 0 !important;
-                    box-shadow: none !important;
-                    transform: scale(0.78) !important;
-                    transform-origin: top center !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                }}
-                
-                .absolute.top-0.right-0 {{ display: none !important; }} /* ซ่อนลายพื้นหลังมุมขวาบน */
-                
-                /* 3. ใช้ Flexbox จัดการพื้นที่แนวตั้งให้สวยงาม ไม่ต้องพึ่ง Grid Pagination ที่บั๊กง่าย */
-                header {{ padding: 24px 32px !important; flex-shrink: 0 !important; }}
-                header h1 {{ font-size: 32px !important; line-height: 1.2 !important; margin-bottom: 4px !important; }}
-                header h2 {{ font-size: 18px !important; margin-bottom: 0 !important; }}
-                header p.text-base {{ font-size: 16px !important; margin-top: 4px !important; }}
-                
-                .grid {{ 
-                    display: grid !important;
-                    grid-template-columns: repeat(4, 1fr) !important; 
-                    gap: 16px !important; 
-                    padding: 16px 24px !important; 
-                    flex-grow: 1 !important; /* ขยายความสูงเต็มพื้นที่ที่เหลือ */
-                    align-items: stretch !important;
-                }}
-                
-                .info-box {{ padding: 16px !important; border: 1px solid #cbd5e1 !important; height: 100% !important; }}
-                
-                /* 4. ขนาดฟอนต์ไม่ต้องย่อเล็กจิ๋วแล้ว เพราะเรามีพื้นที่จำลองถึง 1400px */
-                .section-title {{ font-size: 18px !important; margin-bottom: 12px !important; padding-left: 12px !important; line-height: 1.3 !important; }}
-                .text-\[13px\] {{ font-size: 13px !important; line-height: 1.5 !important; }}
-                .text-\[12px\] {{ font-size: 12px !important; line-height: 1.5 !important; }}
-                .text-\[11px\] {{ font-size: 11px !important; line-height: 1.5 !important; }}
-                .text-\[10px\] {{ font-size: 10px !important; line-height: 1.5 !important; }}
-                
-                footer {{ padding: 12px !important; font-size: 14px !important; flex-shrink: 0 !important; margin-top: auto !important; }}
+            .pdf-mode {{
+                width: 1400px !important;
+                max-width: 1400px !important;
+                margin: 0 auto !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                background-color: white !important;
+            }}
+            .pdf-mode .print-hidden {{
+                display: none !important;
             }}
         </style>
     </head>
     <body class="text-slate-700">
 
-        <!-- ปรับแต่งส่วนนี้: ลบ max-w-[1200px] และ mx-auto ออก เพื่อให้ขยายเต็มความกว้าง (w-full) -->
-        <div class="w-full bg-white shadow-xl rounded-3xl overflow-hidden border border-slate-200 relative">
+        <!-- ใส่ ID: summary-container สำหรับจับภาพไปทำ PDF -->
+        <div id="summary-container" class="w-full bg-white shadow-xl rounded-3xl overflow-hidden border border-slate-200 relative transition-all duration-300">
             
             <!-- Background Pattern -->
             <div class="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-slate-50 rounded-bl-full z-0 opacity-50"></div>
@@ -280,10 +232,10 @@ def render_summary():
             <!-- Header -->
             <header class="bg-gradient-to-r from-theme-primary to-theme-secondary text-white p-6 md:p-8 relative z-10">
                 
-                <!-- Print Button (จะถูกซ่อนไว้ตอนกดสั่งพิมพ์) -->
-                <button onclick="window.print()" class="print-hidden absolute top-4 right-4 md:top-6 md:right-8 bg-white/20 hover:bg-white/30 text-white border border-white/40 px-4 py-2 rounded-full text-[13px] font-bold flex items-center gap-2 backdrop-blur-sm transition-all shadow-sm cursor-pointer z-50" title="พิมพ์หรือบันทึกเป็น PDF แนวนอน (1 หน้า)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                    พิมพ์ / PDF
+                <!-- ปุ่มบันทึก PDF แบบใหม่ (รันสคริปต์ jsPDF ทันที) -->
+                <button id="print-btn" onclick="generatePDF()" class="print-hidden absolute top-4 right-4 md:top-6 md:right-8 bg-white/20 hover:bg-white/30 text-white border border-white/40 px-4 py-2 rounded-full text-[13px] font-bold flex items-center gap-2 backdrop-blur-sm transition-all shadow-sm cursor-pointer z-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    เซฟเป็น PDF (1 หน้า)
                 </button>
 
                 <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 text-center md:text-left mt-6 md:mt-0">
@@ -295,7 +247,7 @@ def render_summary():
                         <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">การบริหารจัดการปัญหาฝุ่นละอองขนาดเล็ก (PM2.5)</h1>
                         <p class="text-blue-100 mt-2 text-base md:text-lg opacity-90">โรงพยาบาลสันทรายและเครือข่ายสุขภาพ อำเภอสันทราย</p>
                         
-                        <!-- PHEOC Information (ปรับรูปแบบใหม่ ไร้กรอบ) -->
+                        <!-- PHEOC Information -->
                         <div class="mt-3 text-left">
                             <div class="flex items-center justify-center md:justify-start gap-1.5 mb-1 text-white">
                                 <span class="text-red-400 animate-pulse text-sm">🚨</span> 
@@ -647,6 +599,84 @@ def render_summary():
                 function closeModal(id) {{
                     document.getElementById(id).classList.add('hidden');
                     document.body.classList.remove('modal-open');
+                }}
+
+                // ฟังก์ชันสร้าง PDF ด้วย html2canvas + jsPDF
+                async function generatePDF() {{
+                    const btn = document.getElementById('print-btn');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '⏳ กำลังเตรียมไฟล์...';
+                    
+                    // 1. สร้างหน้าต่าง Loading สีขาวบังตาไว้
+                    const overlay = document.createElement('div');
+                    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(255,255,255,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
+                    overlay.innerHTML = `
+                        <div style="font-family: 'Sarabun', sans-serif; text-align: center;">
+                            <svg class="animate-spin mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                            <h2 style="font-size: 1.5rem; font-weight: 800; color: #1e3a8a;">กำลังจัดทำไฟล์ PDF...</h2>
+                            <p style="color: #64748b; margin-top: 0.5rem; font-weight: 500;">ระบบกำลังประมวลผลให้พอดีกับ 1 หน้ากระดาษ A4</p>
+                        </div>
+                    `;
+                    document.body.appendChild(overlay);
+
+                    const element = document.getElementById('summary-container');
+                    
+                    // 2. บังคับความกว้างให้เป็น 1400px (เพื่อถ่ายรูป)
+                    element.classList.add('pdf-mode');
+
+                    // หน่วงเวลาให้ CSS จัดหน้าให้เสร็จก่อนถ่ายรูป
+                    await new Promise(resolve => setTimeout(resolve, 300));
+
+                    try {{
+                        // 3. ใช้ html2canvas ถ่ายภาพ (ได้ความละเอียด 2 เท่า)
+                        const canvas = await html2canvas(element, {{
+                            scale: 2, 
+                            useCORS: true,
+                            backgroundColor: '#ffffff',
+                            logging: false
+                        }});
+                        
+                        const imgData = canvas.toDataURL('image/jpeg', 0.98); 
+                        
+                        // 4. วางรูปลงบนกระดาษ PDF A4 แนวนอนด้วย jsPDF
+                        const {{ jsPDF }} = window.jspdf;
+                        const pdf = new jsPDF('l', 'mm', 'a4'); // l = landscape
+                        
+                        const pdfWidth = pdf.internal.pageSize.getWidth();  // 297 mm
+                        const pdfHeight = pdf.internal.pageSize.getHeight(); // 210 mm
+                        
+                        const imgProps = pdf.getImageProperties(imgData);
+                        const imgRatio = imgProps.width / imgProps.height;
+                        const pdfRatio = pdfWidth / pdfHeight;
+                        
+                        let finalWidth, finalHeight;
+                        
+                        // คำนวณให้รูปภาพกางเต็มกระดาษพอดีเป๊ะ
+                        if (imgRatio > pdfRatio) {{
+                            finalWidth = pdfWidth;
+                            finalHeight = pdfWidth / imgRatio;
+                        }} else {{
+                            finalHeight = pdfHeight;
+                            finalWidth = pdfHeight * imgRatio;
+                        }}
+                        
+                        const x = (pdfWidth - finalWidth) / 2;
+                        const y = (pdfHeight - finalHeight) / 2;
+                        
+                        pdf.addImage(imgData, 'JPEG', x, y, finalWidth, finalHeight);
+                        
+                        // สั่งดาวน์โหลด
+                        pdf.save('PM25_Summary_Report_Sansai_Hospital.pdf');
+                        
+                    }} catch (error) {{
+                        console.error('Error generating PDF', error);
+                        alert('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF กรุณาลองใหม่อีกครั้ง');
+                    }} finally {{
+                        // 5. คืนค่าหน้าเว็บกลับสู่ปกติ
+                        element.classList.remove('pdf-mode');
+                        document.body.removeChild(overlay);
+                        btn.innerHTML = originalText;
+                    }}
                 }}
             </script>
         </div>
