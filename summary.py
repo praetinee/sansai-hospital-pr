@@ -205,7 +205,9 @@ def render_summary():
     </head>
     <body class="text-slate-700">
 
-        <div class="w-full max-w-[1200px] mx-auto bg-white shadow-xl rounded-3xl overflow-hidden border border-slate-200 relative">
+        <!-- ปรับแต่งส่วนนี้: ลบ max-w-[1200px] และ mx-auto ออก เพื่อให้ขยายเต็มความกว้าง (w-full) -->
+        <div class="w-full bg-white shadow-xl rounded-3xl overflow-hidden border border-slate-200 relative">
+            
             <!-- Background Pattern -->
             <div class="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-slate-50 rounded-bl-full z-0 opacity-50"></div>
 
