@@ -197,88 +197,88 @@ def render_summary():
             .bullet-list li::before {{ content: '•'; color: #3B82F6; font-weight: bold; position: absolute; left: 0; }}
             
             /* Responsive fixes for text */
-            @media (min-width: 1024px) { .section-title { font-size: 1.25rem; } }
+            @media (min-width: 1024px) {{ .section-title {{ font-size: 1.25rem; }} }}
             
             /* Hide scrollbar when modal is open */
-            body.modal-open { overflow: hidden; }
+            body.modal-open {{ overflow: hidden; }}
 
             /* =========================================
                PRINT CSS (แก้ไขปัญหาเนื้อหาหาย และบังคับให้พอดีหน้า A4 แนวนอน)
                ========================================= */
-            @media print {
+            @media print {{
                 /* แนะนำให้พิมพ์ในแนวนอนเพื่อแสดง 4 คอลัมน์ได้ครบและสวยที่สุด */
-                @page { size: A4 landscape; margin: 6mm; }
+                @page {{ size: A4 landscape; margin: 6mm; }}
                 
-                html, body { 
+                html, body {{ 
                     background-color: white !important; 
                     height: auto !important; 
                     min-height: 100% !important;
                     overflow: visible !important; 
                     margin: 0 !important; 
                     padding: 0 !important;
-                }
-                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                }}
+                * {{ -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }}
                 
                 /* ซ่อนปุ่มพิมพ์และเงา/เส้นขอบที่ไม่จำเป็น */
-                .print-hidden { display: none !important; }
-                .shadow-xl, .shadow-paper, .border { box-shadow: none !important; }
-                .w-full.bg-white { border-radius: 0 !important; border: none !important; }
-                .absolute.top-0.right-0 { display: none !important; } /* ซ่อนลายพื้นหลังที่ดัน Layout */
+                .print-hidden {{ display: none !important; }}
+                .shadow-xl, .shadow-paper, .border {{ box-shadow: none !important; }}
+                .w-full.bg-white {{ border-radius: 0 !important; border: none !important; }}
+                .absolute.top-0.right-0 {{ display: none !important; }} /* ซ่อนลายพื้นหลังที่ดัน Layout */
                 
                 /* ปรับขนาดส่วนหัว (Header) ให้เล็กลง */
-                header { padding: 12px 16px !important; }
-                header h1 { font-size: 20px !important; margin-bottom: 2px !important; line-height: 1.1 !important; }
-                header h2 { font-size: 13px !important; margin-bottom: 0 !important; }
-                header .text-sm { font-size: 10px !important; }
-                header span.text-4xl { font-size: 24px !important; }
-                header p.text-base { font-size: 11px !important; margin-top: 2px !important; }
+                header {{ padding: 12px 16px !important; }}
+                header h1 {{ font-size: 20px !important; margin-bottom: 2px !important; line-height: 1.1 !important; }}
+                header h2 {{ font-size: 13px !important; margin-bottom: 0 !important; }}
+                header .text-sm {{ font-size: 10px !important; }}
+                header span.text-4xl {{ font-size: 24px !important; }}
+                header p.text-base {{ font-size: 11px !important; margin-top: 2px !important; }}
                 
                 /* บังคับตารางกริตเป็น 4 คอลัมน์ แนวนอน เพื่อประหยัดพื้นที่แนวตั้ง */
-                .grid { 
+                .grid {{ 
                     display: grid !important;
                     grid-template-columns: repeat(4, minmax(0, 1fr)) !important; 
                     gap: 6px !important; 
                     padding: 6px !important; 
                     align-items: start !important; /* ป้องกันเนื้อหาหาย (แก้ปัญหา Grid stretch bug ใน Chrome) */
-                }
+                }}
                 
-                .info-box { 
+                .info-box {{ 
                     padding: 8px !important; 
                     border: 1px solid #cbd5e1 !important; 
                     break-inside: avoid; 
                     page-break-inside: avoid;
-                }
+                }}
                 
                 /* ลดขนาด Text และระยะบรรทัด ให้กระชับพื้นที่ที่สุด */
-                .section-title { font-size: 12px !important; margin-bottom: 4px !important; padding-left: 8px !important; line-height: 1.2 !important; }
-                .section-title::before { top: 1px !important; bottom: 1px !important; width: 3px !important; }
+                .section-title {{ font-size: 12px !important; margin-bottom: 4px !important; padding-left: 8px !important; line-height: 1.2 !important; }}
+                .section-title::before {{ top: 1px !important; bottom: 1px !important; width: 3px !important; }}
                 
-                .text-\[13px\] { font-size: 9.5px !important; line-height: 1.25 !important; }
-                .text-\[12px\] { font-size: 9px !important; line-height: 1.25 !important; }
-                .text-\[11px\] { font-size: 8.5px !important; line-height: 1.25 !important; }
-                .text-\[10px\] { font-size: 8px !important; line-height: 1.25 !important; }
-                .text-2xl, .text-3xl { font-size: 15px !important; }
+                .text-\[13px\] {{ font-size: 9.5px !important; line-height: 1.25 !important; }}
+                .text-\[12px\] {{ font-size: 9px !important; line-height: 1.25 !important; }}
+                .text-\[11px\] {{ font-size: 8.5px !important; line-height: 1.25 !important; }}
+                .text-\[10px\] {{ font-size: 8px !important; line-height: 1.25 !important; }}
+                .text-2xl, .text-3xl {{ font-size: 15px !important; }}
                 
                 /* ลดระยะห่าง margins & paddings ต่างๆ ในกล่อง */
-                .mb-2, .mb-3, .mb-4 { margin-bottom: 4px !important; }
-                .mt-2, .mt-3 { margin-top: 4px !important; }
-                .p-2, .p-2\.5, .p-3 { padding: 4px !important; }
-                .gap-3 { gap: 6px !important; }
-                .gap-6 { gap: 8px !important; }
+                .mb-2, .mb-3, .mb-4 {{ margin-bottom: 4px !important; }}
+                .mt-2, .mt-3 {{ margin-top: 4px !important; }}
+                .p-2, .p-2\.5, .p-3 {{ padding: 4px !important; }}
+                .gap-3 {{ gap: 6px !important; }}
+                .gap-6 {{ gap: 8px !important; }}
                 
-                .bullet-list li { margin-bottom: 2px !important; line-height: 1.25 !important; padding-left: 10px !important; }
-                .bullet-list li::before { left: 0 !important; }
+                .bullet-list li {{ margin-bottom: 2px !important; line-height: 1.25 !important; padding-left: 10px !important; }}
+                .bullet-list li::before {{ left: 0 !important; }}
                 
                 /* ขนาดป้าย Tag / Badge */
-                .px-1\.5 { padding-left: 4px !important; padding-right: 4px !important; }
-                .py-0\.5 { padding-top: 2px !important; padding-bottom: 2px !important; }
+                .px-1\.5 {{ padding-left: 4px !important; padding-right: 4px !important; }}
+                .py-0\.5 {{ padding-top: 2px !important; padding-bottom: 2px !important; }}
                 
-                img.h-20 { height: 35px !important; width: auto !important; }
-                hr { margin: 6px 0 !important; }
+                img.h-20 {{ height: 35px !important; width: auto !important; }}
+                hr {{ margin: 6px 0 !important; }}
                 
                 /* ส่วนท้ายกระดาษ */
-                footer { padding: 6px !important; font-size: 10px !important; margin-top: 0 !important; }
-            }
+                footer {{ padding: 6px !important; font-size: 10px !important; margin-top: 0 !important; }}
+            }}
         </style>
     </head>
     <body class="text-slate-700">
