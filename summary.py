@@ -203,10 +203,10 @@ def render_summary():
             body.modal-open {{ overflow: hidden; }}
 
             /* =========================================
-               PRINT CSS (จัดหน้าให้อยู่ใน 1 A4 แนวตั้ง)
+               PRINT CSS (รองรับการตั้งค่าแนวตั้ง/แนวนอนแบบอิสระ)
                ========================================= */
             @media print {{
-                @page {{ size: A4 portrait; margin: 8mm; }}
+                @page {{ size: auto; margin: 8mm; }}
                 html, body {{ background-color: white !important; height: auto !important; overflow: visible !important; padding: 0 !important; margin: 0 !important; }}
                 * {{ -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }}
                 
@@ -224,7 +224,7 @@ def render_summary():
                 header .text-sm {{ font-size: 11px !important; }}
                 header span.text-4xl {{ font-size: 28px !important; }}
                 
-                /* บังคับตารางกริตเป็น 2 คอลัมน์ x 4 แถว เพื่อให้พอดีกระดาษ A4 แนวตั้ง */
+                /* บังคับตารางกริตเป็น 2 คอลัมน์ x 4 แถว เพื่อให้พอดีกระดาษ */
                 .grid {{ 
                     grid-template-columns: repeat(2, minmax(0, 1fr)) !important; 
                     gap: 10px !important; 
