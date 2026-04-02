@@ -203,81 +203,69 @@ def render_summary():
             body.modal-open {{ overflow: hidden; }}
 
             /* =========================================
-               PRINT CSS (แก้ไขปัญหาเนื้อหาหาย และบังคับให้พอดีหน้า A4 แนวนอน)
+               PRINT CSS (VIRTUAL CANVAS METHOD - แก้อาการหน้าพัง 100%)
                ========================================= */
             @media print {{
-                /* แนะนำให้พิมพ์ในแนวนอนเพื่อแสดง 4 คอลัมน์ได้ครบและสวยที่สุด */
-                @page {{ size: A4 landscape; margin: 6mm; }}
+                @page {{ size: A4 landscape; margin: 0; }}
                 
+                /* 1. บังคับหน้ากระดาษให้ล็อคตายตัว ห้ามเบราว์เซอร์ตัดแบ่งหน้าเองเด็ดขาด */
                 html, body {{ 
-                    background-color: white !important; 
-                    height: auto !important; 
-                    min-height: 100% !important;
-                    overflow: visible !important; 
+                    width: 100% !important;
+                    height: 100% !important;
                     margin: 0 !important; 
                     padding: 0 !important;
+                    overflow: hidden !important; 
+                    background-color: white !important; 
                 }}
                 * {{ -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }}
                 
-                /* ซ่อนปุ่มพิมพ์และเงา/เส้นขอบที่ไม่จำเป็น */
                 .print-hidden {{ display: none !important; }}
-                .shadow-xl, .shadow-paper, .border {{ box-shadow: none !important; }}
-                .w-full.bg-white {{ border-radius: 0 !important; border: none !important; }}
-                .absolute.top-0.right-0 {{ display: none !important; }} /* ซ่อนลายพื้นหลังที่ดัน Layout */
                 
-                /* ปรับขนาดส่วนหัว (Header) ให้เล็กลง */
-                header {{ padding: 12px 16px !important; }}
-                header h1 {{ font-size: 20px !important; margin-bottom: 2px !important; line-height: 1.1 !important; }}
-                header h2 {{ font-size: 13px !important; margin-bottom: 0 !important; }}
-                header .text-sm {{ font-size: 10px !important; }}
-                header span.text-4xl {{ font-size: 24px !important; }}
-                header p.text-base {{ font-size: 11px !important; margin-top: 2px !important; }}
+                /* 2. สร้าง "กรอบจำลอง" ขนาดคงที่ 1400x990px แล้วย่อสเกล (0.78) ประทับลงกลางหน้า A4 */
+                .w-full.bg-white.shadow-xl {{ 
+                    position: absolute !important;
+                    top: 0 !important;
+                    left: 50% !important;
+                    width: 1400px !important;
+                    height: 990px !important;
+                    max-width: none !important;
+                    margin: 0 0 0 -700px !important; /* จัดให้อยู่กึ่งกลาง */
+                    border: none !important;
+                    border-radius: 0 !important;
+                    box-shadow: none !important;
+                    transform: scale(0.78) !important;
+                    transform-origin: top center !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                }}
                 
-                /* บังคับตารางกริตเป็น 4 คอลัมน์ แนวนอน เพื่อประหยัดพื้นที่แนวตั้ง */
+                .absolute.top-0.right-0 {{ display: none !important; }} /* ซ่อนลายพื้นหลังมุมขวาบน */
+                
+                /* 3. ใช้ Flexbox จัดการพื้นที่แนวตั้งให้สวยงาม ไม่ต้องพึ่ง Grid Pagination ที่บั๊กง่าย */
+                header {{ padding: 24px 32px !important; flex-shrink: 0 !important; }}
+                header h1 {{ font-size: 32px !important; line-height: 1.2 !important; margin-bottom: 4px !important; }}
+                header h2 {{ font-size: 18px !important; margin-bottom: 0 !important; }}
+                header p.text-base {{ font-size: 16px !important; margin-top: 4px !important; }}
+                
                 .grid {{ 
                     display: grid !important;
-                    grid-template-columns: repeat(4, minmax(0, 1fr)) !important; 
-                    gap: 6px !important; 
-                    padding: 6px !important; 
-                    align-items: start !important; /* ป้องกันเนื้อหาหาย (แก้ปัญหา Grid stretch bug ใน Chrome) */
+                    grid-template-columns: repeat(4, 1fr) !important; 
+                    gap: 16px !important; 
+                    padding: 16px 24px !important; 
+                    flex-grow: 1 !important; /* ขยายความสูงเต็มพื้นที่ที่เหลือ */
+                    align-items: stretch !important;
                 }}
                 
-                .info-box {{ 
-                    padding: 8px !important; 
-                    border: 1px solid #cbd5e1 !important; 
-                    break-inside: avoid; 
-                    page-break-inside: avoid;
-                }}
+                .info-box {{ padding: 16px !important; border: 1px solid #cbd5e1 !important; height: 100% !important; }}
                 
-                /* ลดขนาด Text และระยะบรรทัด ให้กระชับพื้นที่ที่สุด */
-                .section-title {{ font-size: 12px !important; margin-bottom: 4px !important; padding-left: 8px !important; line-height: 1.2 !important; }}
-                .section-title::before {{ top: 1px !important; bottom: 1px !important; width: 3px !important; }}
+                /* 4. ขนาดฟอนต์ไม่ต้องย่อเล็กจิ๋วแล้ว เพราะเรามีพื้นที่จำลองถึง 1400px */
+                .section-title {{ font-size: 18px !important; margin-bottom: 12px !important; padding-left: 12px !important; line-height: 1.3 !important; }}
+                .text-\[13px\] {{ font-size: 13px !important; line-height: 1.5 !important; }}
+                .text-\[12px\] {{ font-size: 12px !important; line-height: 1.5 !important; }}
+                .text-\[11px\] {{ font-size: 11px !important; line-height: 1.5 !important; }}
+                .text-\[10px\] {{ font-size: 10px !important; line-height: 1.5 !important; }}
                 
-                .text-\[13px\] {{ font-size: 9.5px !important; line-height: 1.25 !important; }}
-                .text-\[12px\] {{ font-size: 9px !important; line-height: 1.25 !important; }}
-                .text-\[11px\] {{ font-size: 8.5px !important; line-height: 1.25 !important; }}
-                .text-\[10px\] {{ font-size: 8px !important; line-height: 1.25 !important; }}
-                .text-2xl, .text-3xl {{ font-size: 15px !important; }}
-                
-                /* ลดระยะห่าง margins & paddings ต่างๆ ในกล่อง */
-                .mb-2, .mb-3, .mb-4 {{ margin-bottom: 4px !important; }}
-                .mt-2, .mt-3 {{ margin-top: 4px !important; }}
-                .p-2, .p-2\.5, .p-3 {{ padding: 4px !important; }}
-                .gap-3 {{ gap: 6px !important; }}
-                .gap-6 {{ gap: 8px !important; }}
-                
-                .bullet-list li {{ margin-bottom: 2px !important; line-height: 1.25 !important; padding-left: 10px !important; }}
-                .bullet-list li::before {{ left: 0 !important; }}
-                
-                /* ขนาดป้าย Tag / Badge */
-                .px-1\.5 {{ padding-left: 4px !important; padding-right: 4px !important; }}
-                .py-0\.5 {{ padding-top: 2px !important; padding-bottom: 2px !important; }}
-                
-                img.h-20 {{ height: 35px !important; width: auto !important; }}
-                hr {{ margin: 6px 0 !important; }}
-                
-                /* ส่วนท้ายกระดาษ */
-                footer {{ padding: 6px !important; font-size: 10px !important; margin-top: 0 !important; }}
+                footer {{ padding: 12px !important; font-size: 14px !important; flex-shrink: 0 !important; margin-top: auto !important; }}
             }}
         </style>
     </head>
@@ -293,9 +281,9 @@ def render_summary():
             <header class="bg-gradient-to-r from-theme-primary to-theme-secondary text-white p-6 md:p-8 relative z-10">
                 
                 <!-- Print Button (จะถูกซ่อนไว้ตอนกดสั่งพิมพ์) -->
-                <button onclick="window.print()" class="print-hidden absolute top-4 right-4 md:top-6 md:right-8 bg-white/20 hover:bg-white/30 text-white border border-white/40 px-4 py-2 rounded-full text-[13px] font-bold flex items-center gap-2 backdrop-blur-sm transition-all shadow-sm cursor-pointer z-50" title="แนะนำให้พิมพ์ใน แนวนอน (Landscape) เพื่อให้พอดี 1 หน้า">
+                <button onclick="window.print()" class="print-hidden absolute top-4 right-4 md:top-6 md:right-8 bg-white/20 hover:bg-white/30 text-white border border-white/40 px-4 py-2 rounded-full text-[13px] font-bold flex items-center gap-2 backdrop-blur-sm transition-all shadow-sm cursor-pointer z-50" title="พิมพ์หรือบันทึกเป็น PDF แนวนอน (1 หน้า)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                    พิมพ์ / PDF (1 หน้า)
+                    พิมพ์ / PDF
                 </button>
 
                 <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 text-center md:text-left mt-6 md:mt-0">
@@ -666,5 +654,5 @@ def render_summary():
     </html>
     """
     
-    # ขยายความสูงให้เหมาะสมกับหน้าจอแบบ 4 คอลัมน์และรองรับองค์ประกอบที่เพิ่มขึ้น
-    components.html(html_code, height=1550, scrolling=True)
+    # ขยายความสูงให้เหมาะสมกับหน้าจอแบบ 4 คอลัมน์และรองรับองค์ประกอบที่เพิ่มขึ้น (ขยายเป็น 1600 เพื่อกันการตัดขอบบนเว็บ)
+    components.html(html_code, height=1600, scrolling=True)
