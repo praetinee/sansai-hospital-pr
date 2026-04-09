@@ -273,7 +273,7 @@ def render_summary():
 
                 <!-- 1. Surveillance -->
                 <div class="info-box shadow-paper">
-                    <h3 class="section-title">1. ระบบเฝ้าระวังอัจฉริยะ<br><span class="text-sm font-normal text-slate-400">(Smart Surveillance System)</span></h3>
+                    <h3 class="section-title">1. ระบบเฝ้าระวังอัตโนมัติ<br><span class="text-sm font-normal text-slate-400">(Smart Surveillance System)</span></h3>
                     <div class="flex items-center gap-3 mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100 mt-2">
                         <span class="text-2xl md:text-3xl">📊</span>
                         <div class="text-[13px] font-semibold text-theme-primary">Real-time Monitoring Dashboard</div>
