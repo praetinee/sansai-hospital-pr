@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
 from summary import render_summary
-from flow import render_flow  # นำเข้าโมดูลขั้นตอนการให้บริการ (flow.py) กลับมา
+from flow import render_flow  
 from roles import render_roles
-import inventory_tab # นำเข้าโมดูลเวชภัณฑ์ที่แยกไฟล์ไว้อย่างเป็นระเบียบ
+import inventory_tab 
 
 # 1. ตั้งค่าหน้าเว็บ Streamlit ให้เป็นแบบกว้างสุด (Wide)
 st.set_page_config(
@@ -13,9 +13,17 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. ปรับแต่ง CSS แบบขั้นสุด
+# 2. ปรับแต่ง CSS แบบขั้นสุด (เพิ่มการบังคับใช้ฟอนต์ Sarabun)
 hide_streamlit_style = """
 <style>
+    /* นำเข้าฟอนต์ Sarabun จาก Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
+
+    /* บังคับให้ทุกองค์ประกอบของ Streamlit ใช้ฟอนต์ Sarabun */
+    html, body, [class*="css"], [class*="st-"], .stMarkdown, .stText, p, h1, h2, h3, h4, h5, h6, span, div, button, input, select, textarea, table {
+        font-family: 'Sarabun', sans-serif !important;
+    }
+
     /* อนุญาตให้แสดง Header ของ Streamlit เพื่อใช้เมนู Tool ได้ */
     /* header {visibility: hidden !important;} */
     footer {visibility: hidden !important;}
@@ -37,7 +45,6 @@ hide_streamlit_style = """
         flex-wrap: wrap; /* รองรับหน้าจอมือถือให้ Tab ปัดบรรทัดได้ */
     }
     .stTabs [data-baseweb="tab"] {
-        /* เปลี่ยนจากการล็อกความสูง (height) เป็นใช้ padding แทน เพื่อป้องกันหน้าจอตัดขอบ */
         padding: 0.75rem 1.5rem;
         border-radius: 10px 10px 0 0;
         background-color: #f1f5f9;
@@ -63,7 +70,7 @@ hide_streamlit_style = """
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-# 3. จัดการแสดงผล Tabs ใหม่ (ตัด dashboard ออก และเรียง 4 Tabs ที่ถูกต้อง)
+# 3. จัดการแสดงผล Tabs
 tab1, tab2, tab3, tab4 = st.tabs([
     "📑 สรุปผลภาพรวม",
     "🔄 ขั้นตอนการให้บริการ", 
@@ -72,17 +79,13 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 with tab1:
-    # สรุปผลการดำเนินงานและ Dashboard คลังอัจฉริยะ
     render_summary()
 
 with tab2:
-    # เรียกใช้ฟังก์ชันจากไฟล์ flow.py (ขั้นตอนการให้บริการ)
     render_flow()
 
 with tab3:
-    # เรียกใช้ฟังก์ชันจากไฟล์ roles.py (บทบาทของแต่ละหน่วยงาน)
     render_roles()
 
 with tab4:
-    # เรียกใช้งานฟังก์ชันจากไฟล์ inventory_tab.py (เวชภัณฑ์คงคลัง)
     inventory_tab.render_inventory_ui()
