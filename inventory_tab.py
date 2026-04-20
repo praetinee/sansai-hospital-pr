@@ -180,7 +180,7 @@ def render_inventory_ui():
     st.markdown("## 🏥 ระบบรายงานเวชภัณฑ์และยาคงคลัง (PM 2.5)")
     st.markdown("ดึงข้อมูลตรงจาก **Google Sheets** โดยระบบจะประมวลผล **วันที่อัปเดตล่าสุด** และ **ยอดเปรียบเทียบจากวันก่อนหน้า** ให้โดยอัตโนมัติ")
     
-    # เพิ่มปุ่มลิงก์ไปยัง Google Sheet สำหรับเภสัชและพัสดุ
+    # เพิ่มปุ่มลิงก์ไปยัง Google Sheet สำหรับเภสัชและวัสดุ
     st.link_button("📝 กดเพื่อกรอก/อัปเดตข้อมูลเวชภัณฑ์ (Google Sheets)", "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?usp=sharing")
     
     st.divider()
@@ -190,13 +190,13 @@ def render_inventory_ui():
     medicines_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=50246944#gid=50246944"
 
     # ประมวลผลตาราง
-    df_sup, cols_sup = load_and_process_inventory(med_supplies_sheet, "รายการพัสดุการแพทย์")
+    df_sup, cols_sup = load_and_process_inventory(med_supplies_sheet, "รายการวัสดุทางการแพทย์")
     df_med, cols_med = load_and_process_inventory(medicines_sheet, "รายการยา")
 
-    tab_sup, tab_med = st.tabs(["📦 พัสดุการแพทย์", "💊 รายการยา"])
+    tab_sup, tab_med = st.tabs(["📦 วัสดุทางการแพทย์", "💊 รายการยา"])
 
     with tab_sup:
-        display_modern_inventory_table(df_sup, "รายการพัสดุการแพทย์", cols_sup)
+        display_modern_inventory_table(df_sup, "รายการวัสดุทางการแพทย์", cols_sup)
 
     with tab_med:
         display_modern_inventory_table(df_med, "รายการยา", cols_med)
