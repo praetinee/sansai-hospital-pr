@@ -109,11 +109,11 @@ def render_summary():
     med_supplies_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=38922931#gid=38922931"
     medicines_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=50246944#gid=50246944"
 
-    df_sup, cols_sup = load_and_process_inventory(med_supplies_sheet, "รายการพัสดุการแพทย์")
+    df_sup, cols_sup = load_and_process_inventory(med_supplies_sheet, "รายการวัสดุการแพทย์")
     df_med, cols_med = load_and_process_inventory(medicines_sheet, "รายการยา")
 
     # 2. คำนวณภาพรวม (Smart Summary) โดยใช้โลจิกที่ถูกต้อง
-    sup_in, sup_out, sup_sum, sup_date = get_current_inventory_status(df_sup, "รายการพัสดุการแพทย์", cols_sup)
+    sup_in, sup_out, sup_sum, sup_date = get_current_inventory_status(df_sup, "รายการวัสดุการแพทย์", cols_sup)
     med_in, med_out, med_sum, med_date = get_current_inventory_status(df_med, "รายการยา", cols_med)
 
     # 3. ดึงและคำนวณจำนวนผู้ป่วยเฝ้าระวังสะสม (OPD, ER) เฉพาะปี 2569
@@ -154,7 +154,7 @@ def render_summary():
     med_in_badges = get_badges(med_in, True)
     med_out_badges = get_badges(med_out, False)
     
-    # กำหนดสถานะภาพรวมแบบแยกกันระหว่างพัสดุและยา (คลุมโทนฟ้า/แดง)
+    # กำหนดสถานะภาพรวมแบบแยกกันระหว่างวัสดุและยา (คลุมโทนฟ้า/แดง)
     sup_status_html = '<span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200">สถานะ: มีรายการขาด</span>' if len(sup_out) > 0 else '<span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-200">สถานะ: เพียงพอ</span>'
     med_status_html = '<span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200">สถานะ: มีรายการขาด</span>' if len(med_out) > 0 else '<span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-200">สถานะ: เพียงพอ</span>'
 
@@ -505,13 +505,13 @@ def render_summary():
 
                 <!-- 7. Medical Supplies -->
                 <div class="info-box shadow-paper">
-                    <h3 class="section-title">7. คลังพัสดุการแพทย์<br><span class="text-sm font-normal text-slate-400">(Medical Supplies)</span></h3>
+                    <h3 class="section-title">7. คลังวัสดุการแพทย์<br><span class="text-sm font-normal text-slate-400">(Medical Supplies)</span></h3>
                     
                     <div class="flex flex-col mt-2 flex-grow justify-start">
                         <div class="flex items-center gap-3 mb-3 bg-blue-50 p-3 rounded-lg border border-blue-100">
                             <span class="text-2xl md:text-3xl">📦</span>
                             <div>
-                                <div class="text-[13px] font-semibold text-theme-primary">พัสดุการแพทย์</div>
+                                <div class="text-[13px] font-semibold text-theme-primary">วัสดุการแพทย์</div>
                                 <a href="#" onclick="window.parent.document.querySelectorAll('[data-baseweb=\\'tab\\']')[3].click(); return false;" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
                                     คลิกดูจำนวนคงเหลือ ➔
                                 </a>
