@@ -375,7 +375,7 @@ def render_summary():
                         </div>
                     </div>
                     
-                    <!-- Thumbnail Image (ปรับย่อขนาดลงและใช้ object-contain) -->
+                    <!-- Thumbnail Image -->
                     <div class="mb-3 rounded-lg overflow-hidden border border-slate-200 cursor-pointer group relative bg-slate-50 flex justify-center p-1" onclick="openModal('clinicModal')">
                         <img src="{CLINIC_IMAGE_URL}" alt="คลินิกมลพิษ" class="h-20 w-auto max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
                         <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -400,12 +400,12 @@ def render_summary():
                     <hr class="border-dashed border-slate-200 my-3">
                     
                     <!-- Hero Care Update -->
-                    <h3 class="section-title !text-[13px] !mb-2">การตรวจสุขภาพอาสาดับไฟป่า <br><span class="font-normal text-slate-500 text-[11px]">(ก่อนเริ่มภารกิจ)</span></h3>
+                    <h3 class="section-title !text-[13px] !mb-2">การตรวจสุขภาพอาสาดับไฟป่า</h3>
                     
                     <div class="space-y-2 flex-grow">
                         <!-- Location 1 -->
                         <div class="bg-slate-50 border border-slate-100 p-2 rounded-lg">
-                            <div class="text-[10px] text-slate-700 font-bold mb-1.5 border-b border-slate-200 pb-1 leading-snug">📍 ที่ว่าการอำเภอสันทราย</div>
+                            <div class="text-[10px] text-slate-700 font-bold mb-1.5 border-b border-slate-200 pb-1 leading-snug">📍 ที่ว่าการอำเภอสันทราย (ก่อนภารกิจ)</div>
                             <div class="flex justify-between items-center px-1">
                                 <div class="text-center">
                                     <div class="text-[9px] text-slate-400 mb-0.5">ตรวจทั้งหมด</div>
@@ -421,7 +421,7 @@ def render_summary():
 
                         <!-- Location 2 -->
                         <div class="bg-slate-50 border border-slate-100 p-2 rounded-lg">
-                            <div class="text-[10px] text-slate-700 font-bold mb-1.5 border-b border-slate-200 pb-1 leading-snug">📍 รพ.สต. ในเขตอำเภอ</div>
+                            <div class="text-[10px] text-slate-700 font-bold mb-1.5 border-b border-slate-200 pb-1 leading-snug">📍 รพ.สต. ในเขตอำเภอ (ก่อนภารกิจ)</div>
                             <div class="flex justify-between items-center px-1">
                                 <div class="text-center">
                                     <div class="text-[9px] text-slate-400 mb-0.5">ตรวจทั้งหมด</div>
@@ -433,6 +433,19 @@ def render_summary():
                                     <div class="text-base font-extrabold text-blue-600 leading-none">16 <span class="font-medium text-[9px] text-blue-500">คน</span></div>
                                 </div>
                             </div>
+                        </div>
+                        
+                        <!-- หลังปฏิบัติภารกิจ (ที่ถูกเพิ่มเข้ามาใหม่) -->
+                        <div class="bg-emerald-50 border border-emerald-100 p-2 rounded-lg mt-2">
+                            <div class="text-[10px] text-emerald-700 font-bold mb-1.5 border-b border-emerald-200 pb-1 leading-snug">✅ สรุปผลหลังปฏิบัติภารกิจ</div>
+                            <div class="text-[10px] text-slate-600 leading-tight space-y-1 pl-1">
+                                <p>• <strong>ตรวจทั้งหมด:</strong> 92 คน</p>
+                                <p>• <strong>ปกติ/เหมาะสม:</strong> 91 คน (98.9%)</p>
+                                <p class="text-red-600">• <strong>พบผิดปกติ:</strong> 1 ราย (ต.แม่แฝก)</p>
+                            </div>
+                            <a href="#" onclick="window.parent.document.querySelectorAll('[data-baseweb=\\'tab\\']')[4].click(); return false;" class="block text-center text-[10px] font-bold text-emerald-600 hover:text-emerald-700 underline transition-colors mt-2 bg-white rounded border border-emerald-100 py-1 shadow-sm">
+                                👉 ดูแดชบอร์ดผลตรวจเต็มๆ ที่นี่
+                            </a>
                         </div>
                     </div>
                 </div>
