@@ -7,12 +7,9 @@ from inventory_tab import load_and_process_inventory, parse_value, get_gsheet_cs
 def shorten_item_name(name):
     """ฟังก์ชันย่อชื่อเวชภัณฑ์ให้สั้นลง เพื่อให้แสดงผลใน Badges ได้สวยงาม"""
     name = str(name)
-    # ลบข้อความในวงเล็บ (เช่น ขนาด, หน่วย)
     name = re.sub(r'\(.*?\)', '', name)
-    # ตัดคำอธิบายหลังเครื่องหมาย - หรือ ,
     name = name.split(' - ')[0].split(',')[0]
     
-    # พจนานุกรมสำหรับย่อคำ
     subs = {
         "หน้ากากอนามัย": "หน้ากาก",
         "ทางการแพทย์": "",
@@ -24,22 +21,19 @@ def shorten_item_name(name):
         "Capsule": "Cap."
     }
     
-    # แทนที่คำโดยไม่สนใจตัวพิมพ์เล็ก-ใหญ่
     for old, new in subs.items():
         pattern = re.compile(re.escape(old), re.IGNORECASE)
         name = pattern.sub(new, name)
         
-    # ลบช่องว่างส่วนเกิน
     name = ' '.join(name.split())
     
-    # ถ้ายังยาวไป ให้ตัดแล้วใส่ ...
     if len(name) > 28:
         name = name[:25] + "..."
         
     return name.strip()
 
 def get_current_inventory_status(df, item_col, date_columns):
-    """ฟังก์ชันคำนวณยอดคงเหลือที่แท้จริง โดยอิงโลจิกเดียวกับ inventory_tab"""
+    """ฟังก์ชันคำนวณยอดคงเหลือที่แท้จริง"""
     in_stock = []
     out_stock = []
     total_sum = 0
@@ -48,7 +42,6 @@ def get_current_inventory_status(df, item_col, date_columns):
     if df is None or df.empty or not date_columns:
         return in_stock, out_stock, total_sum, latest_date
 
-    # 1. หาวันที่ที่มีการกรอกข้อมูลล่าสุด
     filled_dates = []
     for col in date_columns:
         if any(parse_value(val) is not None for val in df[col]):
@@ -59,7 +52,6 @@ def get_current_inventory_status(df, item_col, date_columns):
 
     latest_date = filled_dates[-1]
 
-    # 2. คำนวณยอดปัจจุบันของแต่ละรายการ (ดึงยอดย้อนหลังถ้าช่องล่าสุดว่าง)
     for index, row in df.iterrows():
         item_name = str(row[item_col])
         current_val = 0
@@ -72,11 +64,8 @@ def get_current_inventory_status(df, item_col, date_columns):
                 break
         
         total_sum += current_val
-        
-        # ย่อชื่อเวชภัณฑ์ก่อนจัดกลุ่ม
         short_name = shorten_item_name(item_name)
         
-        # จัดกลุ่มว่ามีของ หรือของขาด
         if current_val > 0:
             in_stock.append(short_name)
         else:
@@ -86,47 +75,37 @@ def get_current_inventory_status(df, item_col, date_columns):
 
 @st.cache_data(ttl=300)
 def count_patients_2569(url, start_row_idx):
-    """ฟังก์ชันนับจำนวนผู้ป่วยเฉพาะปี 2569 (หรือ 2026) จากคอลัมน์ A เริ่มจากแถวที่กำหนด"""
+    """ฟังก์ชันนับจำนวนผู้ป่วยเฉพาะปี 2569"""
     try:
         csv_url = get_gsheet_csv_url(url)
-        # อ่านแบบ header=None เพื่อให้ลำดับแถวและคอลัมน์ตรงกับหน้า Sheet (Row 1 = index 0, Col A = index 0)
         df = pd.read_csv(csv_url, header=None, dtype=str)
         
         if len(df) <= start_row_idx:
             return 0
             
-        # คอลัมน์ A คือ index 0, ตัดเฉพาะแถวที่กำหนดเป็นต้นไป
         date_col = df.iloc[start_row_idx:, 0].astype(str)
-        
-        # ค้นหาคำว่า 2569 หรือ 2026
         count = date_col.str.contains('2569|2026', na=False).sum()
         return int(count)
     except Exception as e:
         return 0
 
 def render_summary():
-    # 1. ดึงข้อมูลจาก Google Sheets (ใช้ฟังก์ชันและแคชเดิมจาก inventory_tab เพื่อความรวดเร็ว)
     med_supplies_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=38922931#gid=38922931"
     medicines_sheet = "https://docs.google.com/spreadsheets/d/1-WhGMaME7Gbe7o6V4_rtbrqxCZSX4Bfnsz-siOV9T4Q/edit?gid=50246944#gid=50246944"
 
     df_sup, cols_sup = load_and_process_inventory(med_supplies_sheet, "รายการวัสดุการแพทย์")
     df_med, cols_med = load_and_process_inventory(medicines_sheet, "รายการยา")
 
-    # 2. คำนวณภาพรวม (Smart Summary) โดยใช้โลจิกที่ถูกต้อง
     sup_in, sup_out, sup_sum, sup_date = get_current_inventory_status(df_sup, "รายการวัสดุการแพทย์", cols_sup)
     med_in, med_out, med_sum, med_date = get_current_inventory_status(df_med, "รายการยา", cols_med)
 
-    # 3. ดึงและคำนวณจำนวนผู้ป่วยเฝ้าระวังสะสม (OPD, ER) เฉพาะปี 2569
     opd_sheet_url = "https://docs.google.com/spreadsheets/d/1j5xpdB-LNhucSVNhQuqShKUDv-xyWCGB5xhC295J3M4/edit?gid=1128600513#gid=1128600513"
     er_sheet_url = "https://docs.google.com/spreadsheets/d/1Ba-5IzHXOzEQziXY7vfdvDXzK0dOZv0VmoINAd-sNxU/edit?gid=2035211246#gid=2035211246"
     
-    # OPD แถวที่ 10 เป็นต้นไป (index 9)
     opd_count = count_patients_2569(opd_sheet_url, start_row_idx=9)
-    # ER แถวที่ 3 เป็นต้นไป (index 2)
     er_count = count_patients_2569(er_sheet_url, start_row_idx=2)
     total_patients_count = opd_count + er_count
 
-    # 4. สร้าง Badges สำหรับแสดงผลรายชื่อแบบคลุมโทน
     def get_badges(items, is_success=True):
         if not items:
             return '<span class="text-[10px] text-slate-400 font-medium">- ไม่มี -</span>'
@@ -152,14 +131,11 @@ def render_summary():
     med_in_badges = get_badges(med_in, True)
     med_out_badges = get_badges(med_out, False)
     
-    # กำหนดสถานะภาพรวมแบบแยกกันระหว่างวัสดุและยา
     sup_status_html = '<span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200">สถานะ: มีรายการขาด</span>' if len(sup_out) > 0 else '<span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-200">สถานะ: เพียงพอ</span>'
     med_status_html = '<span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200">สถานะ: มีรายการขาด</span>' if len(med_out) > 0 else '<span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-200">สถานะ: เพียงพอ</span>'
 
-    # URL ของรูปภาพคลินิกมลพิษ
     CLINIC_IMAGE_URL = "https://i.postimg.cc/R0DP1WxQ/หมอพร_อม.png"
 
-    # 5. โค้ด HTML สำหรับแสดงผล
     html_code = f"""
     <!DOCTYPE html>
     <html lang="th">
@@ -214,21 +190,32 @@ def render_summary():
             }}
         </style>
 
-        <!-- สคริปต์เปลี่ยนแท็บ (อัปเดตให้ค้นหาปุ่ม Tab ของ Streamlit อย่างแม่นยำ) -->
+        <!-- สคริปต์เปลี่ยนแท็บ (อัปเดตใหม่เพื่อจำลองการคลิกแบบสมบูรณ์) -->
         <script>
             function goToTab(index) {{
                 try {{
-                    if (window.parent && window.parent.document) {{
-                        // ค้นหาปุ่มที่เป็น Tab ของ Streamlit 
-                        const tabs = window.parent.document.querySelectorAll('button[role="tab"], [data-baseweb="tab"]');
+                    const parentDoc = window.parent.document;
+                    if (parentDoc) {{
+                        const tabs = parentDoc.querySelectorAll('[data-baseweb="tab"]');
                         if (tabs && tabs.length > index) {{
-                            tabs[index].click();
+                            const targetTab = tabs[index];
+                            
+                            // จำลองเมาส์คลิกแบบสมบูรณ์เพื่อกระตุ้น React ของ Streamlit
+                            const mouseEvent = new MouseEvent('click', {{
+                                view: window.parent,
+                                bubbles: true,
+                                cancelable: true
+                            }});
+                            targetTab.dispatchEvent(mouseEvent);
+                            
+                            // เผื่อไว้กรณี Browser บางตัว
+                            targetTab.click();
                         }} else {{
-                            console.warn("ไม่พบปุ่มแท็บที่ต้องการ");
+                            console.warn("ไม่พบแท็บที่ต้องการ โปรดตรวจสอบจำนวนแท็บ");
                         }}
                     }}
-                }} catch (e) {{
-                    console.error("เกิดข้อผิดพลาดในการเปลี่ยนแท็บ", e);
+                }} catch (error) {{
+                    console.error("เกิดข้อผิดพลาดในการเปลี่ยนแท็บ:", error);
                 }}
             }}
         </script>
@@ -398,7 +385,7 @@ def render_summary():
                     
                     <hr class="border-dashed border-slate-200 my-3">
                     
-                    <!-- ส่วนการตรวจสุขภาพอาสาดับไฟป่า (Redesigned แบบ Side-by-Side) -->
+                    <!-- ส่วนการตรวจสุขภาพอาสาดับไฟป่า (Redesigned แบบ Side-by-Side อิงจากโจทย์ใหม่) -->
                     <h3 class="section-title !text-[13px] !mb-2">การตรวจสุขภาพอาสาดับไฟป่า</h3>
                     
                     <div class="grid grid-cols-2 gap-2 flex-grow">
@@ -410,11 +397,11 @@ def render_summary():
                             <div class="text-[10px] text-slate-600 space-y-1.5 pl-1 mb-1 flex-grow">
                                 <p class="font-bold text-slate-700 underline mb-1">รพ.สันทราย</p>
                                 <div class="flex justify-between items-center pr-1"><span>ตรวจทั้งหมด:</span> <span class="font-bold text-slate-700">128 คน</span></div>
-                                <div class="flex justify-between items-center pr-1"><span>ด่านหน้า:</span> <span class="font-bold text-blue-600">68 คน</span></div>
+                                <div class="flex justify-between items-center pr-1"><span>เหมาะสม/ด่านหน้า:</span> <span class="font-bold text-blue-600">68 คน</span></div>
                                 <div class="h-px bg-blue-100 my-1"></div>
                                 <p class="font-bold text-slate-700 underline mb-1">รพ.สต.</p>
                                 <div class="flex justify-between items-center pr-1"><span>ตรวจทั้งหมด:</span> <span class="font-bold text-slate-700">25 คน</span></div>
-                                <div class="flex justify-between items-center pr-1"><span>ด่านหน้า:</span> <span class="font-bold text-blue-600">16 คน</span></div>
+                                <div class="flex justify-between items-center pr-1"><span>เหมาะสม/ด่านหน้า:</span> <span class="font-bold text-blue-600">16 คน</span></div>
                             </div>
                         </div>
 
@@ -431,8 +418,8 @@ def render_summary():
                         </div>
                     </div>
                     
-                    <!-- ปุ่มกดไปแท็บที่ 5 (แก้ไข JavaScript ให้ทำงานสมบูรณ์แล้ว) -->
-                    <a href="javascript:void(0);" onclick="goToTab(4)" class="mt-3 block text-center text-[10.5px] font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-colors bg-white rounded border border-blue-200 py-1.5 shadow-sm">
+                    <!-- ปุ่มกดไปแท็บที่ 5 (ใช้ onclick ที่อัปเดตใหม่) -->
+                    <a href="#" onclick="goToTab(4); return false;" class="mt-3 block text-center text-[10.5px] font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-colors bg-white rounded border border-blue-200 py-1.5 shadow-sm">
                         👉 ดูแดชบอร์ดผลตรวจอาสาดับไฟป่าฉบับเต็ม
                     </a>
                 </div>
@@ -508,8 +495,8 @@ def render_summary():
                             <span class="text-2xl md:text-3xl">📦</span>
                             <div>
                                 <div class="text-[13px] font-semibold text-theme-primary">วัสดุการแพทย์</div>
-                                <!-- แก้ไขลิงก์ไปหน้าคลังด้วยฟังก์ชัน goToTab (แท็บที่ 4 index = 3) -->
-                                <a href="javascript:void(0);" onclick="goToTab(3)" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
+                                <!-- แก้ไขลิงก์ให้เปลี่ยนหน้าสมบูรณ์ด้วย onClick ใหม่ -->
+                                <a href="#" onclick="goToTab(3); return false;" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
                                     คลิกดูจำนวนคงเหลือ ➔
                                 </a>
                             </div>
@@ -545,8 +532,7 @@ def render_summary():
                             <span class="text-2xl md:text-3xl">💊</span>
                             <div>
                                 <div class="text-[13px] font-semibold text-theme-primary">เวชภัณฑ์ยา</div>
-                                <!-- แก้ไขลิงก์ไปหน้าคลังด้วยฟังก์ชัน goToTab (แท็บที่ 4 index = 3) -->
-                                <a href="javascript:void(0);" onclick="goToTab(3)" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
+                                <a href="#" onclick="goToTab(3); return false;" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
                                     คลิกดูจำนวนคงเหลือ ➔
                                 </a>
                             </div>
@@ -674,5 +660,4 @@ def render_summary():
     </html>
     """
     
-    # ขยายความสูงให้เหมาะสมกับหน้าจอ
     components.html(html_code, height=1600, scrolling=True)
