@@ -4,6 +4,7 @@ from summary import render_summary
 from flow import render_flow  
 from roles import render_roles
 import inventory_tab 
+import firefighter_tab  # นำเข้าไฟล์แท็บใหม่ที่เพิ่งสร้าง
 
 # 1. ตั้งค่าหน้าเว็บ Streamlit ให้เป็นแบบกว้างสุด (Wide)
 st.set_page_config(
@@ -70,12 +71,13 @@ hide_streamlit_style = """
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-# 3. จัดการแสดงผล Tabs
-tab1, tab2, tab3, tab4 = st.tabs([
+# 3. จัดการแสดงผล Tabs (เพิ่มแท็บที่ 5 เข้าไป)
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📑 สรุปผลภาพรวม",
     "🔄 ขั้นตอนการให้บริการ", 
     "🗺️ บทบาทของแต่ละหน่วยงาน",
-    "📦 เวชภัณฑ์คงคลัง"
+    "📦 เวชภัณฑ์คงคลัง",
+    "👨‍🚒 การตรวจสุขภาพอาสาดับไฟป่า"
 ])
 
 with tab1:
@@ -89,3 +91,6 @@ with tab3:
 
 with tab4:
     inventory_tab.render_inventory_ui()
+    
+with tab5:
+    firefighter_tab.render_firefighter()
