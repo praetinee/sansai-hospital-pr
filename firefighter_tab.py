@@ -82,7 +82,7 @@ def render_firefighter():
     cursor: pointer;
     box-shadow: var(--shadow);
     margin-bottom: 12px;
-    transition: opacity 0.2s;
+    transition: all 0.2s;
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -213,7 +213,7 @@ def render_firefighter():
       <!-- ปุ่มสั่ง Print PDF -->
       <button id="print-btn" class="btn-print" onclick="generatePDF()" data-html2canvas-ignore="true">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        บันทึกเป็น PDF
+        <span id="print-btn-text">บันทึกเป็น PDF</span>
       </button>
       <br>
       <div class="n" id="hero-n">128</div>
@@ -369,7 +369,7 @@ function buildDonut(containerId, data, centerLabel){
     circles += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+d.color+'" stroke-width="'+stroke+'" stroke-dasharray="'+len+' '+(circumference-len)+'" stroke-dashoffset="'+(-offset)+'" transform="rotate(-90 '+cx+' '+cy+')" stroke-linecap="butt"/>';
     offset += len;
   });
-  const svg = '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">' + circles +
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">' + circles +
     '<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" font-weight="700" fill="#16202a">'+total+'</text>' +
     '<text x="'+cx+'" y="'+(cy+15)+'" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#647082">'+(centerLabel||'คน')+'</text>' +
     '</svg>';
@@ -522,27 +522,26 @@ buildDonut('chart-a-precheck', [
 ], 'คน');
 
 /* =========================================
-   ฟังก์ชัน PDF Generator สำหรับจับภาพใน Iframe
+   ฟังก์ชัน PDF Generator ที่แก้ไขใหม่
    ========================================= */
 async function generatePDF() {
   const btn = document.getElementById('print-btn');
-  const originalText = btn.innerHTML;
-  btn.innerHTML = '⏳ กำลังเตรียมไฟล์...';
+  const btnText = document.getElementById('print-btn-text');
+  
+  // ปิดการใช้งานปุ่มและเปลี่ยนข้อความระหว่างรอ โดยไม่มีหน้าจอขาวมาบัง
+  btn.disabled = true;
+  btn.style.opacity = '0.5';
+  btnText.innerText = '⏳ กำลังสร้าง PDF...';
 
-  // สร้าง Loading แบบสวยงามเพื่อป้องกันหน้าจอค้าง
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(255,255,255,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
-  overlay.innerHTML = `
-      <div style="font-family: 'Sarabun', sans-serif; text-align: center;">
-          <h2 style="font-size: 1.5rem; font-weight: 800; color: #1e3a8a;">กำลังแคปเจอร์หน้าจอ...</h2>
-          <p style="color: #64748b; margin-top: 0.5rem; font-weight: 500;">ระบบจะบันทึกข้อมูลทั้งหมดในแท็บนี้เป็น PDF</p>
-      </div>
-  `;
-  document.body.appendChild(overlay);
+  const wrapElement = document.getElementById('dashboard-wrap');
 
-  const wrapElement = document.querySelector('.wrap');
+  // เพิ่มพื้นหลังให้กล่องเป้าหมายเป็นการชั่วคราว เพื่อไม่ให้แคปออกมาโปร่งใส
+  const originalBackground = wrapElement.style.backgroundColor;
+  const originalPadding = wrapElement.style.padding;
+  wrapElement.style.backgroundColor = '#f4f6f8';
+  wrapElement.style.padding = '20px';
 
-  // หน่วงเวลาให้ UI ตอบสนอง
+  // หน่วงเวลาให้ UI อัปเดตการแสดงผล
   await new Promise(resolve => setTimeout(resolve, 300));
 
   try {
@@ -557,7 +556,7 @@ async function generatePDF() {
     const imgData = canvas.toDataURL('image/jpeg', 0.98); 
     const { jsPDF } = window.jspdf;
     
-    // ตั้งค่าหน้ากระดาษแบบกำหนดเอง (Custom Size) ให้เท่ากับความสูงเนื้อหาจริง (แก้ปัญหาโดนตัด)
+    // ตั้งค่าหน้ากระดาษให้เท่ากับความสูงเนื้อหาจริง
     const pdf = new jsPDF('p', 'pt', [canvas.width, canvas.height]); 
     
     pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
@@ -576,8 +575,12 @@ async function generatePDF() {
     console.error('Error generating PDF', error);
     alert('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF กรุณาลองใหม่อีกครั้ง');
   } finally {
-    document.body.removeChild(overlay);
-    btn.innerHTML = originalText;
+    // คืนค่าปุ่มและสไตล์กลับสู่สภาพเดิม
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btnText.innerText = 'บันทึกเป็น PDF';
+    wrapElement.style.backgroundColor = originalBackground;
+    wrapElement.style.padding = originalPadding;
   }
 }
 </script>
