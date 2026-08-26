@@ -220,6 +220,22 @@ def render_summary():
                 display: none !important;
             }}
         </style>
+
+        <!-- Script สำหรับเปลี่ยนแท็บ (แก้ไขบั๊กเรนเดอร์ซ้ำซ้อน) -->
+        <script>
+            function goToTab(index) {{
+                try {{
+                    if (window.parent && window.parent.document) {{
+                        const tabs = window.parent.document.querySelectorAll('[data-baseweb="tab"]');
+                        if (tabs && tabs.length > index) {{
+                            tabs[index].click();
+                        }}
+                    }}
+                }} catch (e) {{
+                    console.error("Cannot switch tabs due to cross-origin or structural issue", e);
+                }}
+            }}
+        </script>
     </head>
     <body class="text-slate-700">
 
@@ -364,7 +380,7 @@ def render_summary():
                     </div>
                 </div>
 
-                <!-- 5. Medical Service -->
+                <!-- 5. Medical Service (อัปเดต) -->
                 <div class="info-box shadow-paper">
                     <h3 class="section-title">5. การบริการทางการแพทย์<br><span class="text-sm font-normal text-slate-400">(Pollution Clinic)</span></h3>
                     <div class="flex items-start gap-3 mb-3 mt-2">
@@ -399,55 +415,39 @@ def render_summary():
                     
                     <hr class="border-dashed border-slate-200 my-3">
                     
-                    <!-- Hero Care Update -->
+                    <!-- ส่วนการตรวจสุขภาพอาสาดับไฟป่า (Redesigned) -->
                     <h3 class="section-title !text-[13px] !mb-2">การตรวจสุขภาพอาสาดับไฟป่า</h3>
                     
-                    <div class="space-y-2 flex-grow">
-                        <!-- Location 1 -->
-                        <div class="bg-slate-50 border border-slate-100 p-2 rounded-lg">
-                            <div class="text-[10px] text-slate-700 font-bold mb-1.5 border-b border-slate-200 pb-1 leading-snug">📍 ที่ว่าการอำเภอสันทราย (ก่อนภารกิจ)</div>
-                            <div class="flex justify-between items-center px-1">
-                                <div class="text-center">
-                                    <div class="text-[9px] text-slate-400 mb-0.5">ตรวจทั้งหมด</div>
-                                    <div class="text-base font-extrabold text-slate-700 leading-none">128 <span class="font-medium text-[9px] text-slate-400">คน</span></div>
-                                </div>
-                                <div class="h-6 w-px bg-slate-200"></div>
-                                <div class="text-center">
-                                    <div class="text-[9px] text-slate-400 mb-0.5">ด่านหน้า</div>
-                                    <div class="text-base font-extrabold text-blue-600 leading-none">68 <span class="font-medium text-[9px] text-blue-500">คน</span></div>
-                                </div>
+                    <div class="grid grid-cols-2 gap-2 flex-grow">
+                        <!-- ก่อนภารกิจ -->
+                        <div class="bg-slate-50 border border-slate-200 p-2 rounded-lg flex flex-col shadow-sm">
+                            <div class="text-[10px] text-slate-700 font-bold mb-1.5 border-b border-slate-200 pb-1 text-center flex items-center justify-center gap-1">
+                                <span class="text-blue-500">🛡️</span> ก่อนปฏิบัติภารกิจ
+                            </div>
+                            <div class="text-[10px] text-slate-600 space-y-1.5 pl-1 mb-1 flex-grow">
+                                <div class="flex justify-between items-center"><span>ตรวจทั้งหมด:</span> <span class="font-bold text-slate-700">128 คน</span></div>
+                                <div class="flex justify-between items-center"><span>เหมาะสม/ด่านหน้า:</span> <span class="font-bold text-blue-600">68 คน</span></div>
+                                <div class="flex justify-between items-center"><span>มีโรคประจำตัว:</span> <span class="font-bold text-slate-700">85 คน</span></div>
                             </div>
                         </div>
 
-                        <!-- Location 2 -->
-                        <div class="bg-slate-50 border border-slate-100 p-2 rounded-lg">
-                            <div class="text-[10px] text-slate-700 font-bold mb-1.5 border-b border-slate-200 pb-1 leading-snug">📍 รพ.สต. ในเขตอำเภอ (ก่อนภารกิจ)</div>
-                            <div class="flex justify-between items-center px-1">
-                                <div class="text-center">
-                                    <div class="text-[9px] text-slate-400 mb-0.5">ตรวจทั้งหมด</div>
-                                    <div class="text-base font-extrabold text-slate-700 leading-none">25 <span class="font-medium text-[9px] text-slate-400">คน</span></div>
-                                </div>
-                                <div class="h-6 w-px bg-slate-200"></div>
-                                <div class="text-center">
-                                    <div class="text-[9px] text-slate-400 mb-0.5">ด่านหน้า</div>
-                                    <div class="text-base font-extrabold text-blue-600 leading-none">16 <span class="font-medium text-[9px] text-blue-500">คน</span></div>
-                                </div>
+                        <!-- หลังภารกิจ -->
+                        <div class="bg-emerald-50 border border-emerald-200 p-2 rounded-lg flex flex-col shadow-sm">
+                            <div class="text-[10px] text-emerald-800 font-bold mb-1.5 border-b border-emerald-200 pb-1 text-center flex items-center justify-center gap-1">
+                                <span class="text-emerald-500">✅</span> หลังปฏิบัติภารกิจ
                             </div>
-                        </div>
-                        
-                        <!-- หลังปฏิบัติภารกิจ (ที่ถูกเพิ่มเข้ามาใหม่) -->
-                        <div class="bg-emerald-50 border border-emerald-100 p-2 rounded-lg mt-2">
-                            <div class="text-[10px] text-emerald-700 font-bold mb-1.5 border-b border-emerald-200 pb-1 leading-snug">✅ สรุปผลหลังปฏิบัติภารกิจ</div>
-                            <div class="text-[10px] text-slate-600 leading-tight space-y-1 pl-1">
-                                <p>• <strong>ตรวจทั้งหมด:</strong> 92 คน</p>
-                                <p>• <strong>ปกติ/เหมาะสม:</strong> 91 คน (98.9%)</p>
-                                <p class="text-red-600">• <strong>พบผิดปกติ:</strong> 1 ราย (ต.แม่แฝก)</p>
+                            <div class="text-[10px] text-slate-600 space-y-1.5 pl-1 mb-1 flex-grow">
+                                <div class="flex justify-between items-center"><span>ตรวจทั้งหมด:</span> <span class="font-bold text-slate-700">92 คน</span></div>
+                                <div class="flex justify-between items-center"><span>ปกติ/เหมาะสม:</span> <span class="font-bold text-emerald-600">91 คน</span></div>
+                                <div class="flex justify-between items-center"><span>พบผิดปกติ:</span> <span class="font-bold text-red-600">1 ราย</span></div>
                             </div>
-                            <a href="#" onclick="window.parent.document.querySelectorAll('[data-baseweb=\\'tab\\']')[4].click(); return false;" class="block text-center text-[10px] font-bold text-emerald-600 hover:text-emerald-700 underline transition-colors mt-2 bg-white rounded border border-emerald-100 py-1 shadow-sm">
-                                👉 ดูแดชบอร์ดผลตรวจเต็มๆ ที่นี่
-                            </a>
                         </div>
                     </div>
+                    
+                    <!-- ปุ่มกดไปแท็บที่ 5 (ใช้ฟังก์ชัน goToTab แบบใหม่) -->
+                    <a href="javascript:void(0);" onclick="goToTab(4)" class="mt-3 block text-center text-[10.5px] font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-colors bg-white rounded border border-blue-200 py-1.5 shadow-sm">
+                        👉 ดูแดชบอร์ดผลตรวจอาสาดับไฟป่าฉบับเต็ม
+                    </a>
                 </div>
 
                 <!-- 6. Epi Investigation -->
@@ -525,7 +525,8 @@ def render_summary():
                             <span class="text-2xl md:text-3xl">📦</span>
                             <div>
                                 <div class="text-[13px] font-semibold text-theme-primary">วัสดุการแพทย์</div>
-                                <a href="#" onclick="window.parent.document.querySelectorAll('[data-baseweb=\\'tab\\']')[3].click(); return false;" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
+                                <!-- แก้ไขลิงก์ไปหน้าคลังด้วยฟังก์ชัน goToTab -->
+                                <a href="javascript:void(0);" onclick="goToTab(3)" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
                                     คลิกดูจำนวนคงเหลือ ➔
                                 </a>
                             </div>
@@ -561,7 +562,8 @@ def render_summary():
                             <span class="text-2xl md:text-3xl">💊</span>
                             <div>
                                 <div class="text-[13px] font-semibold text-theme-primary">เวชภัณฑ์ยา</div>
-                                <a href="#" onclick="window.parent.document.querySelectorAll('[data-baseweb=\\'tab\\']')[3].click(); return false;" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
+                                <!-- แก้ไขลิงก์ไปหน้าคลังด้วยฟังก์ชัน goToTab -->
+                                <a href="javascript:void(0);" onclick="goToTab(3)" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
                                     คลิกดูจำนวนคงเหลือ ➔
                                 </a>
                             </div>
@@ -697,5 +699,5 @@ def render_summary():
     </html>
     """
     
-    # ขยายความสูงให้เหมาะสมกับหน้าจอแบบ 4 คอลัมน์และรองรับองค์ประกอบที่เพิ่มขึ้น (ขยายเป็น 1600 เพื่อกันการตัดขอบบนเว็บ)
+    # ขยายความสูงให้เหมาะสมกับหน้าจอแบบ 4 คอลัมน์และรองรับองค์ประกอบที่เพิ่มขึ้น
     components.html(html_code, height=1600, scrolling=True)
