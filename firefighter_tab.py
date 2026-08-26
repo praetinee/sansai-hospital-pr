@@ -50,6 +50,16 @@ def render_firefighter():
   }
   .wrap{max-width:1180px;margin:0 auto;}
 
+  /* คลาสพิเศษสำหรับการ Export PDF เพื่อป้องกันภาพขาวซีด */
+  .exporting {
+    background: #f4f6f8 !important; /* บังคับพื้นหลังสีทึบ */
+    padding: 20px !important;
+  }
+  .exporting .kpi, .exporting .chart-card, .exporting section.card-block {
+    box-shadow: none !important; /* ปิดเงาเพื่อป้องกันการเรนเดอร์เพี้ยน */
+    border: 1px solid var(--line-strong) !important;
+  }
+
   header{
     display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
     gap:16px; padding-bottom:22px; margin-bottom:8px;
@@ -69,7 +79,6 @@ def render_firefighter():
   .headline-stat .n{font-family:'JetBrains Mono',monospace; font-size:38px; font-weight:700; color:var(--ink); line-height:1;}
   .headline-stat .l{font-size:12px; color:var(--ink-dim); margin-top:4px;}
 
-  /* สไตล์สำหรับปุ่ม PDF */
   .btn-print {
     background-color: var(--blue);
     color: #ffffff;
@@ -82,7 +91,7 @@ def render_firefighter():
     cursor: pointer;
     box-shadow: var(--shadow);
     margin-bottom: 12px;
-    transition: all 0.2s;
+    transition: opacity 0.2s;
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -211,7 +220,7 @@ def render_firefighter():
     </div>
     <div class="headline-stat">
       <!-- ปุ่มสั่ง Print PDF -->
-      <button id="print-btn" class="btn-print" onclick="generatePDF()" data-html2canvas-ignore="true">
+      <button id="print-btn" class="btn-print" onclick="generatePDF()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span id="print-btn-text">บันทึกเป็น PDF</span>
       </button>
@@ -221,7 +230,7 @@ def render_firefighter():
     </div>
   </header>
 
-  <div class="tabs" data-html2canvas-ignore="true">
+  <div class="tabs" id="tabs-section">
     <button class="tab-btn active" data-tab="before"><span class="flame">◆</span> ก่อนปฏิบัติภารกิจ</button>
     <button class="tab-btn" data-tab="after"><span class="flame">◆</span> หลังปฏิบัติภารกิจ</button>
   </div>
@@ -522,46 +531,38 @@ buildDonut('chart-a-precheck', [
 ], 'คน');
 
 /* =========================================
-   ฟังก์ชัน PDF Generator ที่แก้ไขใหม่
+   ฟังก์ชัน PDF Generator
    ========================================= */
 async function generatePDF() {
   const btn = document.getElementById('print-btn');
   const btnText = document.getElementById('print-btn-text');
   
-  // ปิดการใช้งานปุ่มและเปลี่ยนข้อความระหว่างรอ โดยไม่มีหน้าจอขาวมาบัง
-  btn.disabled = true;
-  btn.style.opacity = '0.5';
-  btnText.innerText = '⏳ กำลังสร้าง PDF...';
+  // ซ่อนปุ่มชั่วคราวขณะถ่ายภาพ เพื่อไม่ให้ปุ่มติดลงไปใน PDF
+  btn.style.display = 'none';
 
   const wrapElement = document.getElementById('dashboard-wrap');
 
-  // เพิ่มพื้นหลังให้กล่องเป้าหมายเป็นการชั่วคราว เพื่อไม่ให้แคปออกมาโปร่งใส
-  const originalBackground = wrapElement.style.backgroundColor;
-  const originalPadding = wrapElement.style.padding;
-  wrapElement.style.backgroundColor = '#f4f6f8';
-  wrapElement.style.padding = '20px';
+  // เพิ่มคลาส .exporting เพื่อบังคับให้พื้นหลังทึบ ลบแบคกราวด์ไล่สีและเงา
+  wrapElement.classList.add('exporting');
 
-  // หน่วงเวลาให้ UI อัปเดตการแสดงผล
+  // หน่วงเวลาให้ CSS ทำงานก่อนแคปเจอร์
   await new Promise(resolve => setTimeout(resolve, 300));
 
   try {
-    // ถ่ายภาพเนื้อหาทั้งหมดโดยอิงตามขนาดจริง
     const canvas = await html2canvas(wrapElement, {
         scale: 2, 
         useCORS: true,
-        backgroundColor: '#f4f6f8',
+        backgroundColor: '#f4f6f8', // ใส่สีพื้นหลังทึบ
         logging: false
     });
     
-    const imgData = canvas.toDataURL('image/jpeg', 0.98); 
+    const imgData = canvas.toDataURL('image/jpeg', 1.0); 
     const { jsPDF } = window.jspdf;
     
-    // ตั้งค่าหน้ากระดาษให้เท่ากับความสูงเนื้อหาจริง
+    // ตั้งค่าหน้ากระดาษ Custom Size ตาม Canvas
     const pdf = new jsPDF('p', 'pt', [canvas.width, canvas.height]); 
-    
     pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
     
-    // ตรวจสอบว่าอยู่แท็บไหน เพื่อตั้งชื่อไฟล์ให้ถูกต้อง
     let filename = 'Wildfire_Volunteer_Health_Check.pdf';
     if (document.getElementById('panel-after').classList.contains('active')) {
         filename = 'Wildfire_Volunteer_Health_Check_After.pdf';
@@ -575,12 +576,9 @@ async function generatePDF() {
     console.error('Error generating PDF', error);
     alert('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF กรุณาลองใหม่อีกครั้ง');
   } finally {
-    // คืนค่าปุ่มและสไตล์กลับสู่สภาพเดิม
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    btnText.innerText = 'บันทึกเป็น PDF';
-    wrapElement.style.backgroundColor = originalBackground;
-    wrapElement.style.padding = originalPadding;
+    // นำคลาส .exporting ออก และแสดงปุ่มกลับมาเหมือนเดิม
+    wrapElement.classList.remove('exporting');
+    btn.style.display = 'inline-flex';
   }
 }
 </script>
