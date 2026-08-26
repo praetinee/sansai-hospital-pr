@@ -132,14 +132,12 @@ def render_summary():
             return '<span class="text-[10px] text-slate-400 font-medium">- ไม่มี -</span>'
         
         if is_success:
-            # ใช้สีเทาอ่อนสำหรับของที่มี เพื่อความคลีน (สะอาดตา)
             classes = "bg-slate-50 text-slate-600 border-slate-200"
-            display_items = items[:10] # แสดงแค่ 10 อันแรกให้หน้าเว็บไม่ล้น
+            display_items = items[:10] 
             remainder = len(items) - 10
         else:
-            # ใช้สีแดงอ่อนสำหรับของขาดเพื่อเป็นการแจ้งเตือน (Alert)
             classes = "bg-red-50 text-red-600 border-red-200"
-            display_items = items # ของขาดให้แสดงทั้งหมด
+            display_items = items 
             remainder = 0
             
         badges = [f'<span class="inline-block px-1.5 py-0.5 text-[10px] font-bold rounded border {classes} mb-1 mr-1">{item}</span>' for item in display_items]
@@ -154,7 +152,7 @@ def render_summary():
     med_in_badges = get_badges(med_in, True)
     med_out_badges = get_badges(med_out, False)
     
-    # กำหนดสถานะภาพรวมแบบแยกกันระหว่างวัสดุและยา (คลุมโทนฟ้า/แดง)
+    # กำหนดสถานะภาพรวมแบบแยกกันระหว่างวัสดุและยา
     sup_status_html = '<span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200">สถานะ: มีรายการขาด</span>' if len(sup_out) > 0 else '<span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-200">สถานะ: เพียงพอ</span>'
     med_status_html = '<span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200">สถานะ: มีรายการขาด</span>' if len(med_out) > 0 else '<span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-200">สถานะ: เพียงพอ</span>'
 
@@ -169,7 +167,6 @@ def render_summary():
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
-        <!-- โหลดไลบรารีสำหรับสร้าง PDF ขั้นสูง -->
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -200,13 +197,9 @@ def render_summary():
             .bullet-list li {{ position: relative; padding-left: 1.25rem; margin-bottom: 0.35rem; line-height: 1.5; color: #475569; }}
             .bullet-list li::before {{ content: '•'; color: #3B82F6; font-weight: bold; position: absolute; left: 0; }}
             
-            /* Responsive fixes for text */
             @media (min-width: 1024px) {{ .section-title {{ font-size: 1.25rem; }} }}
             body.modal-open {{ overflow: hidden; }}
 
-            /* =========================================
-               โหมดสำหรับถ่ายทำ PDF (บังคับ 1400px แนวนอนเป๊ะๆ)
-               ========================================= */
             .pdf-mode {{
                 width: 1400px !important;
                 max-width: 1400px !important;
@@ -221,34 +214,32 @@ def render_summary():
             }}
         </style>
 
-        <!-- Script สำหรับเปลี่ยนแท็บ (แก้ไขบั๊กเรนเดอร์ซ้ำซ้อน) -->
+        <!-- สคริปต์เปลี่ยนแท็บ (อัปเดตให้ค้นหาปุ่ม Tab ของ Streamlit อย่างแม่นยำ) -->
         <script>
             function goToTab(index) {{
                 try {{
                     if (window.parent && window.parent.document) {{
-                        const tabs = window.parent.document.querySelectorAll('[data-baseweb="tab"]');
+                        // ค้นหาปุ่มที่เป็น Tab ของ Streamlit 
+                        const tabs = window.parent.document.querySelectorAll('button[role="tab"], [data-baseweb="tab"]');
                         if (tabs && tabs.length > index) {{
                             tabs[index].click();
+                        }} else {{
+                            console.warn("ไม่พบปุ่มแท็บที่ต้องการ");
                         }}
                     }}
                 }} catch (e) {{
-                    console.error("Cannot switch tabs due to cross-origin or structural issue", e);
+                    console.error("เกิดข้อผิดพลาดในการเปลี่ยนแท็บ", e);
                 }}
             }}
         </script>
     </head>
     <body class="text-slate-700">
 
-        <!-- ใส่ ID: summary-container สำหรับจับภาพไปทำ PDF -->
         <div id="summary-container" class="w-full bg-white shadow-xl rounded-3xl overflow-hidden border border-slate-200 relative transition-all duration-300">
             
-            <!-- Background Pattern -->
             <div class="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-slate-50 rounded-bl-full z-0 opacity-50"></div>
 
-            <!-- Header -->
             <header class="bg-gradient-to-r from-theme-primary to-theme-secondary text-white p-6 md:p-8 relative z-10">
-                
-                <!-- ปุ่มบันทึก PDF แบบใหม่ (รันสคริปต์ jsPDF ทันที) -->
                 <button id="print-btn" onclick="generatePDF()" class="print-hidden absolute top-4 right-4 md:top-6 md:right-8 bg-white/20 hover:bg-white/30 text-white border border-white/40 px-4 py-2 rounded-full text-[13px] font-bold flex items-center gap-2 backdrop-blur-sm transition-all shadow-sm cursor-pointer z-50">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     เซฟเป็น PDF (1 หน้า)
@@ -263,7 +254,6 @@ def render_summary():
                         <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">การบริหารจัดการปัญหาฝุ่นละอองขนาดเล็ก (PM2.5)</h1>
                         <p class="text-blue-100 mt-2 text-base md:text-lg opacity-90">โรงพยาบาลสันทรายและเครือข่ายสุขภาพ อำเภอสันทราย</p>
                         
-                        <!-- PHEOC Information -->
                         <div class="mt-3 text-left">
                             <div class="flex items-center justify-center md:justify-start gap-1.5 mb-1 text-white">
                                 <span class="text-red-400 animate-pulse text-sm">🚨</span> 
@@ -284,7 +274,6 @@ def render_summary():
                 </div>
             </header>
 
-            <!-- Content Body (4 Columns Grid) -->
             <div class="p-4 md:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10 bg-slate-50/50 items-stretch">
 
                 <!-- 1. Surveillance -->
@@ -329,7 +318,6 @@ def render_summary():
                 <div class="info-box shadow-paper">
                     <h3 class="section-title">4. พื้นที่ปลอดภัย<br><span class="text-sm font-normal text-slate-400">(Clean Room & Safety Zone)</span></h3>
                     
-                    <!-- Stats -->
                     <div class="mb-3 mt-2">
                         <div class="bg-blue-50 p-2.5 rounded-lg text-center border border-blue-100">
                             <div class="text-2xl font-bold text-theme-primary leading-none mb-1">30</div>
@@ -337,9 +325,7 @@ def render_summary():
                         </div>
                     </div>
 
-                    <!-- Detailed Coverage (3 Zones) -->
                     <div class="space-y-2 flex-grow">
-                        <!-- Zone 1: OPD & Public -->
                         <div class="bg-slate-50 rounded-lg p-2 border border-slate-100">
                             <h4 class="text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1">
                                 <span class="text-blue-500">🏥</span> พื้นที่บริการและส่วนกลาง
@@ -353,7 +339,6 @@ def render_summary():
                             </ul>
                         </div>
 
-                        <!-- Zone 2: IPD -->
                         <div class="bg-slate-50 rounded-lg p-2 border border-slate-100">
                             <h4 class="text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1">
                                 <span class="text-blue-500">🛌</span> หอผู้ป่วยใน (IPD)
@@ -363,7 +348,6 @@ def render_summary():
                             </ul>
                         </div>
 
-                        <!-- Zone 3: Critical & Specialized -->
                         <div class="bg-slate-50 rounded-lg p-2 border border-slate-100">
                             <h4 class="text-[11px] font-bold text-slate-700 mb-1 flex items-center gap-1">
                                 <span class="text-blue-500">🚨</span> เฉพาะทางและวิกฤต
@@ -380,7 +364,7 @@ def render_summary():
                     </div>
                 </div>
 
-                <!-- 5. Medical Service (อัปเดต) -->
+                <!-- 5. Medical Service (อัปเดตการแสดงผล) -->
                 <div class="info-box shadow-paper">
                     <h3 class="section-title">5. การบริการทางการแพทย์<br><span class="text-sm font-normal text-slate-400">(Pollution Clinic)</span></h3>
                     <div class="flex items-start gap-3 mb-3 mt-2">
@@ -391,7 +375,6 @@ def render_summary():
                         </div>
                     </div>
                     
-                    <!-- Thumbnail Image -->
                     <div class="mb-3 rounded-lg overflow-hidden border border-slate-200 cursor-pointer group relative bg-slate-50 flex justify-center p-1" onclick="openModal('clinicModal')">
                         <img src="{CLINIC_IMAGE_URL}" alt="คลินิกมลพิษ" class="h-20 w-auto max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
                         <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -415,36 +398,40 @@ def render_summary():
                     
                     <hr class="border-dashed border-slate-200 my-3">
                     
-                    <!-- ส่วนการตรวจสุขภาพอาสาดับไฟป่า (Redesigned) -->
+                    <!-- ส่วนการตรวจสุขภาพอาสาดับไฟป่า (Redesigned แบบ Side-by-Side) -->
                     <h3 class="section-title !text-[13px] !mb-2">การตรวจสุขภาพอาสาดับไฟป่า</h3>
                     
                     <div class="grid grid-cols-2 gap-2 flex-grow">
-                        <!-- ก่อนภารกิจ -->
-                        <div class="bg-slate-50 border border-slate-200 p-2 rounded-lg flex flex-col shadow-sm">
-                            <div class="text-[10px] text-slate-700 font-bold mb-1.5 border-b border-slate-200 pb-1 text-center flex items-center justify-center gap-1">
+                        <!-- กล่องซ้าย: ก่อนภารกิจ -->
+                        <div class="bg-blue-50 border border-blue-200 p-2 rounded-lg flex flex-col shadow-sm">
+                            <div class="text-[10.5px] text-blue-800 font-bold mb-2 border-b border-blue-200 pb-1 text-center flex items-center justify-center gap-1">
                                 <span class="text-blue-500">🛡️</span> ก่อนปฏิบัติภารกิจ
                             </div>
                             <div class="text-[10px] text-slate-600 space-y-1.5 pl-1 mb-1 flex-grow">
-                                <div class="flex justify-between items-center"><span>ตรวจทั้งหมด:</span> <span class="font-bold text-slate-700">128 คน</span></div>
-                                <div class="flex justify-between items-center"><span>เหมาะสม/ด่านหน้า:</span> <span class="font-bold text-blue-600">68 คน</span></div>
-                                <div class="flex justify-between items-center"><span>มีโรคประจำตัว:</span> <span class="font-bold text-slate-700">85 คน</span></div>
+                                <p class="font-bold text-slate-700 underline mb-1">รพ.สันทราย</p>
+                                <div class="flex justify-between items-center pr-1"><span>ตรวจทั้งหมด:</span> <span class="font-bold text-slate-700">128 คน</span></div>
+                                <div class="flex justify-between items-center pr-1"><span>ด่านหน้า:</span> <span class="font-bold text-blue-600">68 คน</span></div>
+                                <div class="h-px bg-blue-100 my-1"></div>
+                                <p class="font-bold text-slate-700 underline mb-1">รพ.สต.</p>
+                                <div class="flex justify-between items-center pr-1"><span>ตรวจทั้งหมด:</span> <span class="font-bold text-slate-700">25 คน</span></div>
+                                <div class="flex justify-between items-center pr-1"><span>ด่านหน้า:</span> <span class="font-bold text-blue-600">16 คน</span></div>
                             </div>
                         </div>
 
-                        <!-- หลังภารกิจ -->
+                        <!-- กล่องขวา: หลังภารกิจ -->
                         <div class="bg-emerald-50 border border-emerald-200 p-2 rounded-lg flex flex-col shadow-sm">
-                            <div class="text-[10px] text-emerald-800 font-bold mb-1.5 border-b border-emerald-200 pb-1 text-center flex items-center justify-center gap-1">
+                            <div class="text-[10.5px] text-emerald-800 font-bold mb-2 border-b border-emerald-200 pb-1 text-center flex items-center justify-center gap-1">
                                 <span class="text-emerald-500">✅</span> หลังปฏิบัติภารกิจ
                             </div>
                             <div class="text-[10px] text-slate-600 space-y-1.5 pl-1 mb-1 flex-grow">
-                                <div class="flex justify-between items-center"><span>ตรวจทั้งหมด:</span> <span class="font-bold text-slate-700">92 คน</span></div>
-                                <div class="flex justify-between items-center"><span>ปกติ/เหมาะสม:</span> <span class="font-bold text-emerald-600">91 คน</span></div>
-                                <div class="flex justify-between items-center"><span>พบผิดปกติ:</span> <span class="font-bold text-red-600">1 ราย</span></div>
+                                <p class="font-bold text-slate-700 underline mb-1">รพ.สันทราย</p>
+                                <div class="flex justify-between items-center pr-1"><span>ตรวจทั้งหมด:</span> <span class="font-bold text-slate-700">92 คน</span></div>
+                                <div class="flex justify-between items-center pr-1"><span>พบผิดปกติ:</span> <span class="font-bold text-red-600">1 ราย</span></div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- ปุ่มกดไปแท็บที่ 5 (ใช้ฟังก์ชัน goToTab แบบใหม่) -->
+                    <!-- ปุ่มกดไปแท็บที่ 5 (แก้ไข JavaScript ให้ทำงานสมบูรณ์แล้ว) -->
                     <a href="javascript:void(0);" onclick="goToTab(4)" class="mt-3 block text-center text-[10.5px] font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-colors bg-white rounded border border-blue-200 py-1.5 shadow-sm">
                         👉 ดูแดชบอร์ดผลตรวจอาสาดับไฟป่าฉบับเต็ม
                     </a>
@@ -471,7 +458,6 @@ def render_summary():
                     <div class="relative py-2 flex-grow">
                         <div class="absolute left-4 top-2 bottom-2 w-0.5 bg-slate-200"></div>
                         
-                        <!-- Stat 1: ผู้ป่วยเฝ้าระวังสะสม (อัปเดตอัตโนมัติ) -->
                         <div class="relative pl-10 mb-4">
                             <div class="absolute left-2 top-1.5 w-4 h-4 bg-slate-400 rounded-full border-4 border-white shadow-sm"></div>
                             <div class="text-[12px] text-slate-500 font-medium flex items-center gap-1">
@@ -479,7 +465,6 @@ def render_summary():
                             </div>
                             <div class="text-2xl font-extrabold text-slate-700 mt-0.5">{total_patients_count} <span class="text-xs font-normal text-slate-500">ราย</span></div>
                             
-                            <!-- Breakdown OPD, ER, PCU -->
                             <div class="flex flex-wrap gap-2 mt-1.5">
                                 <div class="bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded text-[10px] font-bold flex gap-1 items-center shadow-sm">
                                     <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
@@ -496,7 +481,6 @@ def render_summary():
                             </div>
                         </div>
 
-                        <!-- Stat 2 -->
                         <div class="relative pl-10 mb-4">
                             <div class="absolute left-2 top-1.5 w-4 h-4 bg-orange-400 rounded-full border-4 border-white shadow-sm"></div>
                             <div class="text-[12px] text-slate-500 font-medium">ผลการวินิจฉัยเบื้องต้น</div>
@@ -505,7 +489,6 @@ def render_summary():
                             </div>
                         </div>
 
-                        <!-- Stat 3 -->
                         <div class="relative pl-10">
                             <div class="absolute left-2 top-1.5 w-4 h-4 bg-theme-primary rounded-full border-4 border-white shadow-sm"></div>
                             <div class="text-[12px] text-slate-500 font-medium">ยืนยันผลกระทบจากฝุ่น</div>
@@ -525,7 +508,7 @@ def render_summary():
                             <span class="text-2xl md:text-3xl">📦</span>
                             <div>
                                 <div class="text-[13px] font-semibold text-theme-primary">วัสดุการแพทย์</div>
-                                <!-- แก้ไขลิงก์ไปหน้าคลังด้วยฟังก์ชัน goToTab -->
+                                <!-- แก้ไขลิงก์ไปหน้าคลังด้วยฟังก์ชัน goToTab (แท็บที่ 4 index = 3) -->
                                 <a href="javascript:void(0);" onclick="goToTab(3)" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
                                     คลิกดูจำนวนคงเหลือ ➔
                                 </a>
@@ -562,7 +545,7 @@ def render_summary():
                             <span class="text-2xl md:text-3xl">💊</span>
                             <div>
                                 <div class="text-[13px] font-semibold text-theme-primary">เวชภัณฑ์ยา</div>
-                                <!-- แก้ไขลิงก์ไปหน้าคลังด้วยฟังก์ชัน goToTab -->
+                                <!-- แก้ไขลิงก์ไปหน้าคลังด้วยฟังก์ชัน goToTab (แท็บที่ 4 index = 3) -->
                                 <a href="javascript:void(0);" onclick="goToTab(3)" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
                                     คลิกดูจำนวนคงเหลือ ➔
                                 </a>
@@ -622,7 +605,6 @@ def render_summary():
                     const originalText = btn.innerHTML;
                     btn.innerHTML = '⏳ กำลังเตรียมไฟล์...';
                     
-                    // 1. สร้างหน้าต่าง Loading สีขาวบังตาไว้
                     const overlay = document.createElement('div');
                     overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(255,255,255,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
                     overlay.innerHTML = `
@@ -636,14 +618,11 @@ def render_summary():
 
                     const element = document.getElementById('summary-container');
                     
-                    // 2. บังคับความกว้างให้เป็น 1400px (เพื่อถ่ายรูป)
                     element.classList.add('pdf-mode');
 
-                    // หน่วงเวลาให้ CSS จัดหน้าให้เสร็จก่อนถ่ายรูป
                     await new Promise(resolve => setTimeout(resolve, 300));
 
                     try {{
-                        // 3. ใช้ html2canvas ถ่ายภาพ (ได้ความละเอียด 2 เท่า)
                         const canvas = await html2canvas(element, {{
                             scale: 2, 
                             useCORS: true,
@@ -653,12 +632,11 @@ def render_summary():
                         
                         const imgData = canvas.toDataURL('image/jpeg', 0.98); 
                         
-                        // 4. วางรูปลงบนกระดาษ PDF A4 แนวนอนด้วย jsPDF
                         const {{ jsPDF }} = window.jspdf;
-                        const pdf = new jsPDF('l', 'mm', 'a4'); // l = landscape
+                        const pdf = new jsPDF('l', 'mm', 'a4'); 
                         
-                        const pdfWidth = pdf.internal.pageSize.getWidth();  // 297 mm
-                        const pdfHeight = pdf.internal.pageSize.getHeight(); // 210 mm
+                        const pdfWidth = pdf.internal.pageSize.getWidth();  
+                        const pdfHeight = pdf.internal.pageSize.getHeight(); 
                         
                         const imgProps = pdf.getImageProperties(imgData);
                         const imgRatio = imgProps.width / imgProps.height;
@@ -666,7 +644,6 @@ def render_summary():
                         
                         let finalWidth, finalHeight;
                         
-                        // คำนวณให้รูปภาพกางเต็มกระดาษพอดีเป๊ะ
                         if (imgRatio > pdfRatio) {{
                             finalWidth = pdfWidth;
                             finalHeight = pdfWidth / imgRatio;
@@ -680,14 +657,12 @@ def render_summary():
                         
                         pdf.addImage(imgData, 'JPEG', x, y, finalWidth, finalHeight);
                         
-                        // สั่งดาวน์โหลด
                         pdf.save('PM25_Summary_Report_Sansai_Hospital.pdf');
                         
                     }} catch (error) {{
                         console.error('Error generating PDF', error);
                         alert('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF กรุณาลองใหม่อีกครั้ง');
                     }} finally {{
-                        // 5. คืนค่าหน้าเว็บกลับสู่ปกติ
                         element.classList.remove('pdf-mode');
                         document.body.removeChild(overlay);
                         btn.innerHTML = originalText;
@@ -699,5 +674,5 @@ def render_summary():
     </html>
     """
     
-    # ขยายความสูงให้เหมาะสมกับหน้าจอแบบ 4 คอลัมน์และรองรับองค์ประกอบที่เพิ่มขึ้น
+    # ขยายความสูงให้เหมาะสมกับหน้าจอ
     components.html(html_code, height=1600, scrolling=True)
