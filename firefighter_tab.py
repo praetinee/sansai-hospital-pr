@@ -48,7 +48,7 @@ def render_firefighter():
     min-height:100vh;
     padding: 28px 20px 60px;
   }
-  .wrap{max-width:1180px;margin:0 auto; padding-bottom: 20px;}
+  .wrap{max-width:1180px;margin:0 auto;}
 
   header{
     display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
@@ -69,7 +69,7 @@ def render_firefighter():
   .headline-stat .n{font-family:'JetBrains Mono',monospace; font-size:38px; font-weight:700; color:var(--ink); line-height:1;}
   .headline-stat .l{font-size:12px; color:var(--ink-dim); margin-top:4px;}
 
-  /* ปุ่มปริ้น PDF */
+  /* สไตล์สำหรับปุ่ม PDF */
   .btn-print {
     background-color: var(--blue);
     color: #ffffff;
@@ -198,9 +198,6 @@ def render_firefighter():
   .tambon-chip b{ color:var(--ink); font-family:'JetBrains Mono',monospace; }
 
   footer{ text-align:center; color:var(--ink-dim); font-size:11.5px; margin-top:30px; }
-  
-  /* ซ่อนปุ่มปริ้นตอนที่กำลังถ่ายภาพ PDF */
-  .pdf-hide { display: none !important; }
 </style>
 </head>
 <body>
@@ -213,7 +210,7 @@ def render_firefighter():
       <div class="sub">อำเภอสันทราย จังหวัดเชียงใหม่ · ก่อน–หลังปฏิบัติภารกิจดับไฟป่า</div>
     </div>
     <div class="headline-stat">
-      <!-- เพิ่มปุ่มปริ้น PDF ตรงนี้ -->
+      <!-- ปุ่มสั่ง Print PDF -->
       <button id="print-btn" class="btn-print" onclick="generatePDF()" data-html2canvas-ignore="true">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         บันทึกเป็น PDF
@@ -525,14 +522,14 @@ buildDonut('chart-a-precheck', [
 ], 'คน');
 
 /* =========================================
-   ฟังก์ชัน PDF Generator สำหรับ Streamlit
+   ฟังก์ชัน PDF Generator สำหรับจับภาพใน Iframe
    ========================================= */
 async function generatePDF() {
   const btn = document.getElementById('print-btn');
   const originalText = btn.innerHTML;
   btn.innerHTML = '⏳ กำลังเตรียมไฟล์...';
 
-  // 1. สร้าง Loading Overlay
+  // สร้าง Loading แบบสวยงามเพื่อป้องกันหน้าจอค้าง
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(255,255,255,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
   overlay.innerHTML = `
@@ -543,32 +540,29 @@ async function generatePDF() {
   `;
   document.body.appendChild(overlay);
 
-  const wrapElement = document.getElementById('dashboard-wrap');
+  const wrapElement = document.querySelector('.wrap');
 
-  // หน่วงเวลาให้ UI อัปเดตและซ่อนปุ่ม
+  // หน่วงเวลาให้ UI ตอบสนอง
   await new Promise(resolve => setTimeout(resolve, 300));
 
   try {
-    // 2. ใช้ html2canvas ถ่ายภาพเฉพาะ div class="wrap"
+    // ถ่ายภาพเนื้อหาทั้งหมดโดยอิงตามขนาดจริง
     const canvas = await html2canvas(wrapElement, {
         scale: 2, 
         useCORS: true,
-        backgroundColor: '#f4f6f8', // สีพื้นหลังตาม root
+        backgroundColor: '#f4f6f8',
         logging: false
     });
     
     const imgData = canvas.toDataURL('image/jpeg', 0.98); 
-    
-    // 3. ใช้ jsPDF สร้างกระดาษ โดยอิงความกว้าง/ยาว ตามภาพที่แคปได้เป๊ะๆ (ไม่มีการตัดขอบ)
     const { jsPDF } = window.jspdf;
     
-    // กำหนดหน่วยเป็น Point (pt) และตั้งขนาดกระดาษให้เท่ากับ Canvas
+    // ตั้งค่าหน้ากระดาษแบบกำหนดเอง (Custom Size) ให้เท่ากับความสูงเนื้อหาจริง (แก้ปัญหาโดนตัด)
     const pdf = new jsPDF('p', 'pt', [canvas.width, canvas.height]); 
     
-    // แปะรูปลงไปเต็มแผ่น
     pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
     
-    // ตั้งชื่อไฟล์ตามแท็บที่เปิดอยู่
+    // ตรวจสอบว่าอยู่แท็บไหน เพื่อตั้งชื่อไฟล์ให้ถูกต้อง
     let filename = 'Wildfire_Volunteer_Health_Check.pdf';
     if (document.getElementById('panel-after').classList.contains('active')) {
         filename = 'Wildfire_Volunteer_Health_Check_After.pdf';
@@ -591,5 +585,4 @@ async function generatePDF() {
 </html>
     """
     
-    # ขยายความสูงให้เพียงพอสำหรับการเลื่อนดูใน Streamlit
     components.html(html_code, height=1800, scrolling=True)
