@@ -189,36 +189,6 @@ def render_summary():
                 display: none !important;
             }}
         </style>
-
-        <!-- สคริปต์เปลี่ยนแท็บ (อัปเดตใหม่เพื่อจำลองการคลิกแบบสมบูรณ์) -->
-        <script>
-            function goToTab(index) {{
-                try {{
-                    const parentDoc = window.parent.document;
-                    if (parentDoc) {{
-                        const tabs = parentDoc.querySelectorAll('[data-baseweb="tab"]');
-                        if (tabs && tabs.length > index) {{
-                            const targetTab = tabs[index];
-                            
-                            // จำลองเมาส์คลิกแบบสมบูรณ์เพื่อกระตุ้น React ของ Streamlit
-                            const mouseEvent = new MouseEvent('click', {{
-                                view: window.parent,
-                                bubbles: true,
-                                cancelable: true
-                            }});
-                            targetTab.dispatchEvent(mouseEvent);
-                            
-                            // เผื่อไว้กรณี Browser บางตัว
-                            targetTab.click();
-                        }} else {{
-                            console.warn("ไม่พบแท็บที่ต้องการ โปรดตรวจสอบจำนวนแท็บ");
-                        }}
-                    }}
-                }} catch (error) {{
-                    console.error("เกิดข้อผิดพลาดในการเปลี่ยนแท็บ:", error);
-                }}
-            }}
-        </script>
     </head>
     <body class="text-slate-700">
 
@@ -351,7 +321,7 @@ def render_summary():
                     </div>
                 </div>
 
-                <!-- 5. Medical Service (อัปเดตการแสดงผล) -->
+                <!-- 5. Medical Service (อัปเดตใหม่) -->
                 <div class="info-box shadow-paper">
                     <h3 class="section-title">5. การบริการทางการแพทย์<br><span class="text-sm font-normal text-slate-400">(Pollution Clinic)</span></h3>
                     <div class="flex items-start gap-3 mb-3 mt-2">
@@ -385,23 +355,19 @@ def render_summary():
                     
                     <hr class="border-dashed border-slate-200 my-3">
                     
-                    <!-- ส่วนการตรวจสุขภาพอาสาดับไฟป่า (Redesigned แบบ Side-by-Side อิงจากโจทย์ใหม่) -->
+                    <!-- ส่วนการตรวจสุขภาพอาสาดับไฟป่า (อัปเดตข้อมูล) -->
                     <h3 class="section-title !text-[13px] !mb-2">การตรวจสุขภาพอาสาดับไฟป่า</h3>
                     
-                    <div class="grid grid-cols-2 gap-2 flex-grow">
+                    <div class="grid grid-cols-2 gap-2 flex-grow mb-1">
                         <!-- กล่องซ้าย: ก่อนภารกิจ -->
                         <div class="bg-blue-50 border border-blue-200 p-2 rounded-lg flex flex-col shadow-sm">
                             <div class="text-[10.5px] text-blue-800 font-bold mb-2 border-b border-blue-200 pb-1 text-center flex items-center justify-center gap-1">
                                 <span class="text-blue-500">🛡️</span> ก่อนปฏิบัติภารกิจ
                             </div>
                             <div class="text-[10px] text-slate-600 space-y-1.5 pl-1 mb-1 flex-grow">
-                                <p class="font-bold text-slate-700 underline mb-1">รพ.สันทราย</p>
+                                <p class="font-bold text-slate-700 underline mb-1">รพ.สันทราย + รพ.สต.</p>
                                 <div class="flex justify-between items-center pr-1"><span>ตรวจทั้งหมด:</span> <span class="font-bold text-slate-700">128 คน</span></div>
                                 <div class="flex justify-between items-center pr-1"><span>เหมาะสม/ด่านหน้า:</span> <span class="font-bold text-blue-600">68 คน</span></div>
-                                <div class="h-px bg-blue-100 my-1"></div>
-                                <p class="font-bold text-slate-700 underline mb-1">รพ.สต.</p>
-                                <div class="flex justify-between items-center pr-1"><span>ตรวจทั้งหมด:</span> <span class="font-bold text-slate-700">25 คน</span></div>
-                                <div class="flex justify-between items-center pr-1"><span>เหมาะสม/ด่านหน้า:</span> <span class="font-bold text-blue-600">16 คน</span></div>
                             </div>
                         </div>
 
@@ -413,15 +379,10 @@ def render_summary():
                             <div class="text-[10px] text-slate-600 space-y-1.5 pl-1 mb-1 flex-grow">
                                 <p class="font-bold text-slate-700 underline mb-1">รพ.สันทราย</p>
                                 <div class="flex justify-between items-center pr-1"><span>ตรวจทั้งหมด:</span> <span class="font-bold text-slate-700">92 คน</span></div>
-                                <div class="flex justify-between items-center pr-1"><span>พบผิดปกติ:</span> <span class="font-bold text-red-600">1 ราย</span></div>
+                                <div class="flex justify-between items-center pr-1"><span>พบความผิดปกติ:</span> <span class="font-bold text-red-600">1 ราย</span></div>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- ปุ่มกดไปแท็บที่ 5 (ใช้ onclick ที่อัปเดตใหม่) -->
-                    <a href="#" onclick="goToTab(4); return false;" class="mt-3 block text-center text-[10.5px] font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-colors bg-white rounded border border-blue-200 py-1.5 shadow-sm">
-                        👉 ดูแดชบอร์ดผลตรวจอาสาดับไฟป่าฉบับเต็ม
-                    </a>
                 </div>
 
                 <!-- 6. Epi Investigation -->
@@ -495,10 +456,9 @@ def render_summary():
                             <span class="text-2xl md:text-3xl">📦</span>
                             <div>
                                 <div class="text-[13px] font-semibold text-theme-primary">วัสดุการแพทย์</div>
-                                <!-- แก้ไขลิงก์ให้เปลี่ยนหน้าสมบูรณ์ด้วย onClick ใหม่ -->
-                                <a href="#" onclick="goToTab(3); return false;" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
-                                    คลิกดูจำนวนคงเหลือ ➔
-                                </a>
+                                <span class="text-[11px] font-bold text-slate-500">
+                                    ดูรายละเอียดที่แท็บเวชภัณฑ์คงคลัง
+                                </span>
                             </div>
                         </div>
                         
@@ -532,9 +492,9 @@ def render_summary():
                             <span class="text-2xl md:text-3xl">💊</span>
                             <div>
                                 <div class="text-[13px] font-semibold text-theme-primary">เวชภัณฑ์ยา</div>
-                                <a href="#" onclick="goToTab(3); return false;" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors">
-                                    คลิกดูจำนวนคงเหลือ ➔
-                                </a>
+                                <span class="text-[11px] font-bold text-slate-500">
+                                    ดูรายละเอียดที่แท็บเวชภัณฑ์คงคลัง
+                                </span>
                             </div>
                         </div>
                         
