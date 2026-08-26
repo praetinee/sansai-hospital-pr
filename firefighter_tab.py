@@ -10,6 +10,11 @@ def render_firefighter():
 <title>สุขภาพอาสาสมัครดับไฟป่า อำเภอสันทราย</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- โหลดไลบรารีสำหรับสร้าง PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
   :root{
     --bg:#f4f6f8;
@@ -43,7 +48,7 @@ def render_firefighter():
     min-height:100vh;
     padding: 28px 20px 60px;
   }
-  .wrap{max-width:1180px;margin:0 auto;}
+  .wrap{max-width:1180px;margin:0 auto; padding-bottom: 20px;}
 
   header{
     display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
@@ -63,6 +68,26 @@ def render_firefighter():
   .headline-stat{ text-align:right; }
   .headline-stat .n{font-family:'JetBrains Mono',monospace; font-size:38px; font-weight:700; color:var(--ink); line-height:1;}
   .headline-stat .l{font-size:12px; color:var(--ink-dim); margin-top:4px;}
+
+  /* ปุ่มปริ้น PDF */
+  .btn-print {
+    background-color: var(--blue);
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-family: 'Sarabun', sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+    transition: opacity 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-print:hover { opacity: 0.9; }
 
   .firebreak{
     position:relative; margin: 26px 0 30px; height:2px;
@@ -173,10 +198,13 @@ def render_firefighter():
   .tambon-chip b{ color:var(--ink); font-family:'JetBrains Mono',monospace; }
 
   footer{ text-align:center; color:var(--ink-dim); font-size:11.5px; margin-top:30px; }
+  
+  /* ซ่อนปุ่มปริ้นตอนที่กำลังถ่ายภาพ PDF */
+  .pdf-hide { display: none !important; }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap" id="dashboard-wrap">
 
   <header>
     <div>
@@ -185,12 +213,18 @@ def render_firefighter():
       <div class="sub">อำเภอสันทราย จังหวัดเชียงใหม่ · ก่อน–หลังปฏิบัติภารกิจดับไฟป่า</div>
     </div>
     <div class="headline-stat">
+      <!-- เพิ่มปุ่มปริ้น PDF ตรงนี้ -->
+      <button id="print-btn" class="btn-print" onclick="generatePDF()" data-html2canvas-ignore="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        บันทึกเป็น PDF
+      </button>
+      <br>
       <div class="n" id="hero-n">128</div>
       <div class="l" id="hero-l">คนเข้ารับการตรวจคัดกรอง (ก่อนภารกิจ)</div>
     </div>
   </header>
 
-  <div class="tabs">
+  <div class="tabs" data-html2canvas-ignore="true">
     <button class="tab-btn active" data-tab="before"><span class="flame">◆</span> ก่อนปฏิบัติภารกิจ</button>
     <button class="tab-btn" data-tab="after"><span class="flame">◆</span> หลังปฏิบัติภารกิจ</button>
   </div>
@@ -489,10 +523,73 @@ buildDonut('chart-a-precheck', [
   {label:'ได้ตรวจก่อนภารกิจ', value:84, color:SAGE},
   {label:'ไม่ได้ตรวจก่อนภารกิจ', value:8, color:EMBER2},
 ], 'คน');
+
+/* =========================================
+   ฟังก์ชัน PDF Generator สำหรับ Streamlit
+   ========================================= */
+async function generatePDF() {
+  const btn = document.getElementById('print-btn');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '⏳ กำลังเตรียมไฟล์...';
+
+  // 1. สร้าง Loading Overlay
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(255,255,255,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
+  overlay.innerHTML = `
+      <div style="font-family: 'Sarabun', sans-serif; text-align: center;">
+          <h2 style="font-size: 1.5rem; font-weight: 800; color: #1e3a8a;">กำลังแคปเจอร์หน้าจอ...</h2>
+          <p style="color: #64748b; margin-top: 0.5rem; font-weight: 500;">ระบบจะบันทึกข้อมูลทั้งหมดในแท็บนี้เป็น PDF</p>
+      </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const wrapElement = document.getElementById('dashboard-wrap');
+
+  // หน่วงเวลาให้ UI อัปเดตและซ่อนปุ่ม
+  await new Promise(resolve => setTimeout(resolve, 300));
+
+  try {
+    // 2. ใช้ html2canvas ถ่ายภาพเฉพาะ div class="wrap"
+    const canvas = await html2canvas(wrapElement, {
+        scale: 2, 
+        useCORS: true,
+        backgroundColor: '#f4f6f8', // สีพื้นหลังตาม root
+        logging: false
+    });
+    
+    const imgData = canvas.toDataURL('image/jpeg', 0.98); 
+    
+    // 3. ใช้ jsPDF สร้างกระดาษ โดยอิงความกว้าง/ยาว ตามภาพที่แคปได้เป๊ะๆ (ไม่มีการตัดขอบ)
+    const { jsPDF } = window.jspdf;
+    
+    // กำหนดหน่วยเป็น Point (pt) และตั้งขนาดกระดาษให้เท่ากับ Canvas
+    const pdf = new jsPDF('p', 'pt', [canvas.width, canvas.height]); 
+    
+    // แปะรูปลงไปเต็มแผ่น
+    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
+    
+    // ตั้งชื่อไฟล์ตามแท็บที่เปิดอยู่
+    let filename = 'Wildfire_Volunteer_Health_Check.pdf';
+    if (document.getElementById('panel-after').classList.contains('active')) {
+        filename = 'Wildfire_Volunteer_Health_Check_After.pdf';
+    } else {
+        filename = 'Wildfire_Volunteer_Health_Check_Before.pdf';
+    }
+
+    pdf.save(filename);
+    
+  } catch (error) {
+    console.error('Error generating PDF', error);
+    alert('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF กรุณาลองใหม่อีกครั้ง');
+  } finally {
+    document.body.removeChild(overlay);
+    btn.innerHTML = originalText;
+  }
+}
 </script>
 </body>
 </html>
     """
     
-    # ปรับความสูงเพื่อให้แสดงผลได้เต็มจอโดยไม่มี scrollbar ซ้อนกัน
-    components.html(html_code, height=1400, scrolling=True)
+    # ขยายความสูงให้เพียงพอสำหรับการเลื่อนดูใน Streamlit
+    components.html(html_code, height=1800, scrolling=True)
