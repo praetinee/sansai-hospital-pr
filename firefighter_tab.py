@@ -221,7 +221,7 @@ def render_firefighter():
       <!-- ปุ่มสั่ง Print PDF -->
       <button id="print-btn" class="btn-print" onclick="captureAsImage()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span id="print-btn-text">บันทึกเป็นรูปภาพ (JPEG)</span>
+        <span id="print-btn-text">บันทึกเป็นรูปภาพ (PNG)</span>
       </button>
       <br>
       <div class="n" id="hero-n">128</div>
@@ -532,13 +532,16 @@ buildDonut('chart-a-precheck', [
 /* =========================================
    ฟังก์ชันบันทึกเป็นรูปภาพ (รวมทุกอย่างในภาพเดียว)
    ---------------------------------------------------------------
-   ที่ผ่านมาลองมาแล้ว 2 วิธี (windowHeight, foreignObjectRendering) ยังเจอปัญหาเนื้อหา
-   บนสุดหายไปและภาพเลื่อนเพี้ยน สาเหตุจริงๆ คือ "ตำแหน่งสกอลปัจจุบันของหน้าเว็บ" ตอนกดปุ่ม —
-   html2canvas จะอ้างอิงตำแหน่ง scroll ของ window ตอนนั้นเป็นจุดเริ่มแคปเจอร์ ถ้าไม่หักลบออก
-   ให้ตรงๆ (scrollX/scrollY และ x/y เป็น 0 พร้อมกัน) จะทำให้ภาพเริ่มจากตำแหน่งที่เลื่อนค้างไว้
-   แทนที่จะเริ่มจากบนสุดของเนื้อหาจริง จึงเห็นเนื้อหาส่วนบนหายไปแบบในรูปที่ส่งมา
-   วิธีแก้: บังคับ scrollX:0, scrollY:0, x:0, y:0 ให้ตรงกันทั้งหมด พร้อมกำหนด
-   windowWidth/windowHeight เท่าขนาดจริงของเนื้อหา เพื่อให้ได้ภาพเดียวที่ครบทุกอย่างแน่นอน
+   ความคืบหน้า: การแก้ scrollX/scrollY/x/y ทำให้ตอนนี้ "เนื้อหาครบทุกส่วนแล้ว" (ไม่หายอีกต่อไป)
+   แต่ยังเจอปัญหาใหม่คือ "สีซีด/จางทั้งภาพ" (ไม่ใช่แค่บางส่วนแบบเดิม) ซึ่งเป็นคนละสาเหตุกับ
+   ปัญหาเนื้อหาหาย — ต้นตอคือโหมดเรนเดอร์ปกติของ html2canvas (foreignObjectRendering:false)
+   ไม่ได้ใช้เบราว์เซอร์เรนเดอร์สีจริง แต่ "จำลอง" การผสมสี/ความทึบขึ้นมาเองด้วยอัลกอริทึมภายใน
+   ซึ่งมักให้สีอ่อน/ซีดกว่าของจริงอย่างเป็นระบบ (ยิ่งเจอ SVG วงกลม + สีที่ซ้อนทับกันหลายชั้นแบบ
+   หน้านี้ ยิ่งเห็นชัด) วิธีแก้ที่ตรงจุดที่สุดคือให้เบราว์เซอร์เรนเดอร์ให้จริงๆ ผ่าน
+   foreignObjectRendering:true (ใช้ SVG <foreignObject> เรนเดอร์ DOM ตรงๆ สีจึงตรงกับหน้าจอ
+   100%) ผสานกับการแก้ scrollX/scrollY/x/y ที่เพิ่งได้ผลไปแล้วในรอบก่อน และเปลี่ยนไฟล์ผลลัพธ์
+   จาก JPEG (มีการบีบอัดข้อมูลภาพ) เป็น PNG (ไม่มีการบีบอัดสูญเสียคุณภาพ) เพื่อตัดปัจจัยการ
+   บีบอัดภาพออกไปด้วย ให้สีคมชัดตรงกับที่เห็นบนจอที่สุด
    ========================================= */
 async function captureAsImage() {
   const btn = document.getElementById('print-btn');
@@ -562,24 +565,33 @@ async function captureAsImage() {
   }
   await new Promise(resolve => setTimeout(resolve, 350));
 
+  const captureOptions = {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#f4f6f8',
+      logging: false,
+      x: 0,
+      y: 0,
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: wrapElement.scrollWidth,
+      windowHeight: wrapElement.scrollHeight
+  };
+
   try {
-    const canvas = await html2canvas(wrapElement, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#f4f6f8',
-        logging: false,
-        x: 0,
-        y: 0,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: wrapElement.scrollWidth,
-        windowHeight: wrapElement.scrollHeight
-    });
+    let canvas;
+    try {
+      // วิธีหลัก: ให้เบราว์เซอร์เรนเดอร์จริงผ่าน SVG foreignObject สีจะตรงกับหน้าจอ 100%
+      canvas = await html2canvas(wrapElement, Object.assign({}, captureOptions, { foreignObjectRendering: true }));
+    } catch (foErr) {
+      console.warn('foreignObjectRendering ใช้ไม่ได้ในเบราว์เซอร์นี้ กำลังใช้วิธีสำรอง...', foErr);
+      canvas = await html2canvas(wrapElement, captureOptions);
+    }
 
     const activeTab = document.getElementById('panel-after').classList.contains('active') ? 'After' : 'Before';
     const link = document.createElement('a');
-    link.download = 'Wildfire_Volunteer_Health_Check_' + activeTab + '.jpg';
-    link.href = canvas.toDataURL('image/jpeg', 0.95);
+    link.download = 'Wildfire_Volunteer_Health_Check_' + activeTab + '.png';
+    link.href = canvas.toDataURL('image/png');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
