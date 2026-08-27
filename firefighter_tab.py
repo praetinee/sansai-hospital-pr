@@ -11,9 +11,6 @@ def render_firefighter():
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- โหลดไลบรารีสำหรับแคปเจอร์หน้าเว็บเป็นรูปภาพ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <style>
   :root{
     --bg:#f4f6f8;
@@ -49,16 +46,6 @@ def render_firefighter():
   }
   .wrap{max-width:1180px;margin:0 auto;}
 
-  /* คลาสพิเศษสำหรับตอนแคปเจอร์เป็นรูปภาพ: บังคับพื้นหลังทึบ ปิดเงา เพื่อให้ภาพออกมาคมชัด */
-  .exporting {
-    background: #f4f6f8 !important;
-    padding: 20px !important;
-  }
-  .exporting .kpi, .exporting .chart-card, .exporting section.card-block {
-    box-shadow: none !important;
-    border: 1px solid var(--line-strong) !important;
-  }
-
   header{
     display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
     gap:16px; padding-bottom:22px; margin-bottom:8px;
@@ -77,25 +64,6 @@ def render_firefighter():
   .headline-stat{ text-align:right; }
   .headline-stat .n{font-family:'JetBrains Mono',monospace; font-size:38px; font-weight:700; color:var(--ink); line-height:1;}
   .headline-stat .l{font-size:12px; color:var(--ink-dim); margin-top:4px;}
-
-  .btn-print {
-    background-color: var(--blue);
-    color: #ffffff;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-family: 'Sarabun', sans-serif;
-    font-weight: 700;
-    font-size: 13.5px;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    margin-bottom: 12px;
-    transition: opacity 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .btn-print:hover { opacity: 0.9; }
 
   .firebreak{
     position:relative; margin: 26px 0 30px; height:2px;
@@ -218,12 +186,6 @@ def render_firefighter():
       <div class="sub">อำเภอสันทราย จังหวัดเชียงใหม่ · ก่อน–หลังปฏิบัติภารกิจดับไฟป่า</div>
     </div>
     <div class="headline-stat">
-      <!-- ปุ่มสั่ง Print PDF -->
-      <button id="print-btn" class="btn-print" onclick="captureAsImage()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span id="print-btn-text">บันทึกเป็นรูปภาพ (PNG)</span>
-      </button>
-      <br>
       <div class="n" id="hero-n">128</div>
       <div class="l" id="hero-l">คนเข้ารับการตรวจคัดกรอง (ก่อนภารกิจ)</div>
     </div>
@@ -528,83 +490,6 @@ buildDonut('chart-a-precheck', [
   {label:'ได้ตรวจก่อนภารกิจ', value:84, color:SAGE},
   {label:'ไม่ได้ตรวจก่อนภารกิจ', value:8, color:EMBER2},
 ], 'คน');
-
-/* =========================================
-   ฟังก์ชันบันทึกเป็นรูปภาพ (รวมทุกอย่างในภาพเดียว)
-   ---------------------------------------------------------------
-   ความคืบหน้า: การแก้ scrollX/scrollY/x/y ทำให้ตอนนี้ "เนื้อหาครบทุกส่วนแล้ว" (ไม่หายอีกต่อไป)
-   แต่ยังเจอปัญหาใหม่คือ "สีซีด/จางทั้งภาพ" (ไม่ใช่แค่บางส่วนแบบเดิม) ซึ่งเป็นคนละสาเหตุกับ
-   ปัญหาเนื้อหาหาย — ต้นตอคือโหมดเรนเดอร์ปกติของ html2canvas (foreignObjectRendering:false)
-   ไม่ได้ใช้เบราว์เซอร์เรนเดอร์สีจริง แต่ "จำลอง" การผสมสี/ความทึบขึ้นมาเองด้วยอัลกอริทึมภายใน
-   ซึ่งมักให้สีอ่อน/ซีดกว่าของจริงอย่างเป็นระบบ (ยิ่งเจอ SVG วงกลม + สีที่ซ้อนทับกันหลายชั้นแบบ
-   หน้านี้ ยิ่งเห็นชัด) วิธีแก้ที่ตรงจุดที่สุดคือให้เบราว์เซอร์เรนเดอร์ให้จริงๆ ผ่าน
-   foreignObjectRendering:true (ใช้ SVG <foreignObject> เรนเดอร์ DOM ตรงๆ สีจึงตรงกับหน้าจอ
-   100%) ผสานกับการแก้ scrollX/scrollY/x/y ที่เพิ่งได้ผลไปแล้วในรอบก่อน และเปลี่ยนไฟล์ผลลัพธ์
-   จาก JPEG (มีการบีบอัดข้อมูลภาพ) เป็น PNG (ไม่มีการบีบอัดสูญเสียคุณภาพ) เพื่อตัดปัจจัยการ
-   บีบอัดภาพออกไปด้วย ให้สีคมชัดตรงกับที่เห็นบนจอที่สุด
-   ========================================= */
-async function captureAsImage() {
-  const btn = document.getElementById('print-btn');
-
-  // ซ่อนปุ่มชั่วคราวขณะถ่ายภาพ เพื่อไม่ให้ปุ่มติดลงไปในรูป
-  btn.style.display = 'none';
-
-  const wrapElement = document.getElementById('dashboard-wrap');
-
-  // เพิ่มคลาส .exporting เพื่อบังคับให้พื้นหลังทึบ ลบเงาเพื่อป้องกันการเรนเดอร์เพี้ยน
-  wrapElement.classList.add('exporting');
-
-  // เลื่อนกลับไปบนสุดของหน้าก่อนถ่ายภาพเสมอ (ทั้ง window และตัว document เอง)
-  window.scrollTo(0, 0);
-  document.documentElement.scrollTop = 0;
-  document.body.scrollTop = 0;
-
-  // รอให้ฟอนต์โหลดเสร็จสมบูรณ์ และรอให้ CSS/เลย์เอาต์นิ่งก่อนแคปเจอร์
-  if (document.fonts && document.fonts.ready) {
-    try { await document.fonts.ready; } catch (e) {}
-  }
-  await new Promise(resolve => setTimeout(resolve, 350));
-
-  const captureOptions = {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#f4f6f8',
-      logging: false,
-      x: 0,
-      y: 0,
-      scrollX: 0,
-      scrollY: 0,
-      windowWidth: wrapElement.scrollWidth,
-      windowHeight: wrapElement.scrollHeight
-  };
-
-  try {
-    let canvas;
-    try {
-      // วิธีหลัก: ให้เบราว์เซอร์เรนเดอร์จริงผ่าน SVG foreignObject สีจะตรงกับหน้าจอ 100%
-      canvas = await html2canvas(wrapElement, Object.assign({}, captureOptions, { foreignObjectRendering: true }));
-    } catch (foErr) {
-      console.warn('foreignObjectRendering ใช้ไม่ได้ในเบราว์เซอร์นี้ กำลังใช้วิธีสำรอง...', foErr);
-      canvas = await html2canvas(wrapElement, captureOptions);
-    }
-
-    const activeTab = document.getElementById('panel-after').classList.contains('active') ? 'After' : 'Before';
-    const link = document.createElement('a');
-    link.download = 'Wildfire_Volunteer_Health_Check_' + activeTab + '.png';
-    link.href = canvas.toDataURL('image/png');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-  } catch (error) {
-    console.error('Error generating image', error);
-    alert('เกิดข้อผิดพลาดในการสร้างรูปภาพ กรุณาลองใหม่อีกครั้ง');
-  } finally {
-    // นำคลาส .exporting ออก และแสดงปุ่มกลับมาเหมือนเดิม
-    wrapElement.classList.remove('exporting');
-    btn.style.display = 'inline-flex';
-  }
-}
 </script>
 </body>
 </html>
