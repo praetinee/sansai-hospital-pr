@@ -11,10 +11,6 @@ def render_firefighter():
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- โหลดไลบรารีสำหรับสร้าง PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
   :root{
     --bg:#f4f6f8;
@@ -50,14 +46,42 @@ def render_firefighter():
   }
   .wrap{max-width:1180px;margin:0 auto;}
 
-  /* คลาสพิเศษสำหรับการ Export PDF เพื่อป้องกันภาพขาวซีด */
-  .exporting {
-    background: #f4f6f8 !important; /* บังคับพื้นหลังสีทึบ */
-    padding: 20px !important;
-  }
-  .exporting .kpi, .exporting .chart-card, .exporting section.card-block {
-    box-shadow: none !important; /* ปิดเงาเพื่อป้องกันการเรนเดอร์เพี้ยน */
-    border: 1px solid var(--line-strong) !important;
+  /* =========================================
+     โหมดพิมพ์ / บันทึกเป็น PDF (ใช้ window.print() ของเบราว์เซอร์แทน html2canvas)
+     เดิมใช้ html2canvas ถ่ายภาพหน้าจอแล้วแปลงเป็น PDF ซึ่งเป็นการ "จำลอง" CSS ขึ้นมาเอง
+     ทำให้เพี้ยน/ตัดเนื้อหาหาย/สีจางไม่ครบ เปลี่ยนมาให้เบราว์เซอร์พิมพ์หน้าเว็บจริงแทน
+     (กด "บันทึกเป็น PDF" ในหน้าต่างพิมพ์ของเบราว์เซอร์ได้เลย) ซึ่งได้ทั้งหน้า ครบทุกเนื้อหา
+     คมชัดทุกบรรทัด และสีตรงกับที่เห็นบนจอ 100% เพราะเป็นการเรนเดอร์จริง ไม่ใช่ภาพแคปเจอร์
+     ========================================= */
+  @media print {
+    @page { size: A4 landscape; margin: 10mm; }
+    html, body {
+      background: #ffffff !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+    }
+    /* บังคับให้เบราว์เซอร์พิมพ์สีพื้นหลัง/ไล่สีออกมาด้วย ไม่ใช่แค่ตัวอักษร
+       (นี่คือสาเหตุหลักที่สีของข้อมูลจางหาย เพราะปกติเบราว์เซอร์จะไม่พิมพ์สีพื้นหลังให้
+       เว้นแต่จะสั่ง print-color-adjust:exact ไว้อย่างชัดเจน) */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+    .wrap{ max-width:100% !important; }
+    .btn-print, #tabs-section, .firebreak{ display:none !important; }
+    /* พิมพ์เฉพาะแท็บ (ก่อน/หลังภารกิจ) ที่กำลังเปิดดูอยู่ ณ ขณะนั้น */
+    .panel{ display:none !important; }
+    .panel.active{ display:block !important; }
+    .kpi, .chart-card, section.card-block{
+      box-shadow:none !important;
+      border:1px solid var(--line-strong) !important;
+      break-inside: avoid; page-break-inside: avoid;
+    }
+    .grid2, .grid3, .kpi-row, .callout, .tambon-strip{ break-inside: avoid; }
+    table.data-table{ break-inside: auto; }
+    table.data-table tr{ break-inside: avoid; }
+    footer{ margin-top:14px; }
   }
 
   header{
@@ -220,9 +244,9 @@ def render_firefighter():
     </div>
     <div class="headline-stat">
       <!-- ปุ่มสั่ง Print PDF -->
-      <button id="print-btn" class="btn-print" onclick="generatePDF()">
+      <button id="print-btn" class="btn-print" onclick="printReport()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span id="print-btn-text">บันทึกเป็น PDF</span>
+        <span id="print-btn-text">พิมพ์ / บันทึกเป็น PDF</span>
       </button>
       <br>
       <div class="n" id="hero-n">128</div>
@@ -531,90 +555,24 @@ buildDonut('chart-a-precheck', [
 ], 'คน');
 
 /* =========================================
-   ฟังก์ชัน PDF Generator
+   ฟังก์ชันพิมพ์ / บันทึกเป็น PDF
+   ---------------------------------------------------------------
+   *** เปลี่ยนวิธีทั้งหมด (สองวิธีก่อนหน้าที่ใช้ html2canvas ถ่ายภาพหน้าจอแล้วแปลงเป็น PDF
+   ไม่ได้ผลจริง — มันเป็นการ "จำลอง" การเรนเดอร์หน้าเว็บขึ้นมาเองใน JavaScript ซึ่งทำให้
+   ทั้งเนื้อหาบางส่วนหายไป/ถูกตัด และตำแหน่ง/สีเพี้ยนไม่ตรงกับหน้าจอจริง ***
+   วิธีใหม่: ใช้ window.print() ของเบราว์เซอร์เอง ซึ่งเป็นการเรนเดอร์หน้าเว็บจริง ๆ
+   ไม่ใช่ภาพแคปเจอร์ จึงได้เนื้อหาครบทุกบรรทัด คมชัด และสีตรงกับที่เห็นบนจอ 100%
+   ผู้ใช้กด "พิมพ์ / บันทึกเป็น PDF" แล้วเลือกปลายทางเป็น "บันทึกเป็น PDF" (Save as PDF)
+   ในหน้าต่างพิมพ์ของเบราว์เซอร์ได้เลย ส่วนการจัดหน้า/สี ควบคุมด้วย CSS @media print
+   ที่อยู่ใน <style> ด้านบน (บังคับพิมพ์สีพื้นหลังด้วย print-color-adjust:exact และ
+   ตั้งกระดาษเป็น A4 แนวนอนเพื่อให้พอดีกับความกว้างของแดชบอร์ด)
    ========================================= */
-async function generatePDF() {
-  const btn = document.getElementById('print-btn');
-  const btnText = document.getElementById('print-btn-text');
-  
-  // ซ่อนปุ่มชั่วคราวขณะถ่ายภาพ เพื่อไม่ให้ปุ่มติดลงไปใน PDF
-  btn.style.display = 'none';
-
-  const wrapElement = document.getElementById('dashboard-wrap');
-
-  // เพิ่มคลาส .exporting เพื่อบังคับให้พื้นหลังทึบ ลบแบคกราวด์ไล่สีและเงา
-  wrapElement.classList.add('exporting');
-
-  // เลื่อนกลับไปบนสุดของหน้าก่อนถ่ายภาพเสมอ ป้องกัน offset เพี้ยนจากตำแหน่งสกอลปัจจุบัน
-  window.scrollTo(0, 0);
-
-  // รอให้ฟอนต์ทั้งหมดโหลดเสร็จสมบูรณ์ก่อนแคปเจอร์ (ป้องกันการเรนเดอร์ก่อนฟอนต์พร้อม)
-  if (document.fonts && document.fonts.ready) {
-    try { await document.fonts.ready; } catch (e) {}
-  }
-
-  // หน่วงเวลาให้ CSS ทำงานก่อนแคปเจอร์
-  await new Promise(resolve => setTimeout(resolve, 300));
-
-  try {
-    // *** จุดที่แก้ไขรอบนี้ (วิธีก่อนหน้าเรื่อง windowHeight ไม่ได้ผล จึงเปลี่ยนวิธีเรนเดอร์แทน) ***
-    // ต้นเหตุจริงๆ คือ html2canvas โหมดปกติ (foreignObjectRendering:false) ไม่ได้ใช้เบราว์เซอร์
-    // เรนเดอร์ DOM ให้ตรงๆ แต่มันจะ "จำลอง" CSS ขึ้นมาเองทีละสไตล์ ซึ่งรองรับ CSS ไม่ครบ 100%
-    // โดยเฉพาะ CSS custom property ที่ซ้อนกันหลายชั้น เช่น style="--accent:var(--gold)" ที่ถูกใช้
-    // ต่อใน background:var(--accent, var(--ember)) ของ .kpi::before / .section-title::before
-    // และสีพื้นหลัง/เส้นขอบที่เป็น rgba() ผสมกับ box-shadow หลายชั้น (--line, --line-strong, --bg-panel-2)
-    // จุดเหล่านี้อยู่กระจายอยู่ในกราฟ ตาราง และชิปตำบลที่อยู่ถัดจาก KPI แถวแรกลงไป จึงเพี้ยน/จางกว่าปกติ
-    // วิธีแก้: เปลี่ยนไปใช้ foreignObjectRendering:true ให้เบราว์เซอร์เรนเดอร์ DOM จริงผ่าน SVG
-    // foreignObject แทน (สีตรงกับที่เห็นบนจอ 100% เพราะไม่ได้จำลอง CSS เอง) พร้อมสำรองวิธีเดิมไว้
-    // เผื่อเบราว์เซอร์ของผู้ใช้ไม่รองรับ foreignObjectRendering (เช่น Safari รุ่นเก่าบางเวอร์ชัน)
-    let canvas;
-    try {
-      canvas = await html2canvas(wrapElement, {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: '#f4f6f8', // ใส่สีพื้นหลังทึบ
-          logging: false,
-          foreignObjectRendering: true,
-          windowWidth: wrapElement.scrollWidth,
-          windowHeight: wrapElement.scrollHeight
-      });
-    } catch (foErr) {
-      console.warn('foreignObjectRendering ใช้ไม่ได้ในเบราว์เซอร์นี้ กำลังใช้วิธีสำรอง...', foErr);
-      canvas = await html2canvas(wrapElement, {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: '#f4f6f8',
-          logging: false,
-          windowWidth: wrapElement.scrollWidth,
-          windowHeight: wrapElement.scrollHeight
-      });
-    }
-    
-    const imgData = canvas.toDataURL('image/jpeg', 1.0); 
-    const { jsPDF } = window.jspdf;
-    
-    // ตั้งค่าหน้ากระดาษ Custom Size ตาม Canvas
-    const pdf = new jsPDF('p', 'pt', [canvas.width, canvas.height]); 
-    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
-    
-    let filename = 'Wildfire_Volunteer_Health_Check.pdf';
-    if (document.getElementById('panel-after').classList.contains('active')) {
-        filename = 'Wildfire_Volunteer_Health_Check_After.pdf';
-    } else {
-        filename = 'Wildfire_Volunteer_Health_Check_Before.pdf';
-    }
-
-    pdf.save(filename);
-    
-  } catch (error) {
-    console.error('Error generating PDF', error);
-    alert('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF กรุณาลองใหม่อีกครั้ง');
-  } finally {
-    // นำคลาส .exporting ออก และแสดงปุ่มกลับมาเหมือนเดิม
-    wrapElement.classList.remove('exporting');
-    btn.style.display = 'inline-flex';
-  }
+function printReport() {
+  window.print();
 }
+window.addEventListener('afterprint', function () {
+  // เผื่อกรณีที่ต้องทำความสะอาดสถานะใด ๆ หลังพิมพ์เสร็จ (ปัจจุบันไม่มี state ที่ต้องรีเซ็ต)
+});
 </script>
 </body>
 </html>
