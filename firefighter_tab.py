@@ -11,6 +11,9 @@ def render_firefighter():
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+<!-- โหลดไลบรารีสำหรับแคปเจอร์หน้าเว็บเป็นรูปภาพ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <style>
   :root{
     --bg:#f4f6f8;
@@ -46,42 +49,14 @@ def render_firefighter():
   }
   .wrap{max-width:1180px;margin:0 auto;}
 
-  /* =========================================
-     โหมดพิมพ์ / บันทึกเป็น PDF (ใช้ window.print() ของเบราว์เซอร์แทน html2canvas)
-     เดิมใช้ html2canvas ถ่ายภาพหน้าจอแล้วแปลงเป็น PDF ซึ่งเป็นการ "จำลอง" CSS ขึ้นมาเอง
-     ทำให้เพี้ยน/ตัดเนื้อหาหาย/สีจางไม่ครบ เปลี่ยนมาให้เบราว์เซอร์พิมพ์หน้าเว็บจริงแทน
-     (กด "บันทึกเป็น PDF" ในหน้าต่างพิมพ์ของเบราว์เซอร์ได้เลย) ซึ่งได้ทั้งหน้า ครบทุกเนื้อหา
-     คมชัดทุกบรรทัด และสีตรงกับที่เห็นบนจอ 100% เพราะเป็นการเรนเดอร์จริง ไม่ใช่ภาพแคปเจอร์
-     ========================================= */
-  @media print {
-    @page { size: A4 landscape; margin: 10mm; }
-    html, body {
-      background: #ffffff !important;
-      min-height: 0 !important;
-      padding: 0 !important;
-    }
-    /* บังคับให้เบราว์เซอร์พิมพ์สีพื้นหลัง/ไล่สีออกมาด้วย ไม่ใช่แค่ตัวอักษร
-       (นี่คือสาเหตุหลักที่สีของข้อมูลจางหาย เพราะปกติเบราว์เซอร์จะไม่พิมพ์สีพื้นหลังให้
-       เว้นแต่จะสั่ง print-color-adjust:exact ไว้อย่างชัดเจน) */
-    * {
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-      color-adjust: exact !important;
-    }
-    .wrap{ max-width:100% !important; }
-    .btn-print, #tabs-section, .firebreak{ display:none !important; }
-    /* พิมพ์เฉพาะแท็บ (ก่อน/หลังภารกิจ) ที่กำลังเปิดดูอยู่ ณ ขณะนั้น */
-    .panel{ display:none !important; }
-    .panel.active{ display:block !important; }
-    .kpi, .chart-card, section.card-block{
-      box-shadow:none !important;
-      border:1px solid var(--line-strong) !important;
-      break-inside: avoid; page-break-inside: avoid;
-    }
-    .grid2, .grid3, .kpi-row, .callout, .tambon-strip{ break-inside: avoid; }
-    table.data-table{ break-inside: auto; }
-    table.data-table tr{ break-inside: avoid; }
-    footer{ margin-top:14px; }
+  /* คลาสพิเศษสำหรับตอนแคปเจอร์เป็นรูปภาพ: บังคับพื้นหลังทึบ ปิดเงา เพื่อให้ภาพออกมาคมชัด */
+  .exporting {
+    background: #f4f6f8 !important;
+    padding: 20px !important;
+  }
+  .exporting .kpi, .exporting .chart-card, .exporting section.card-block {
+    box-shadow: none !important;
+    border: 1px solid var(--line-strong) !important;
   }
 
   header{
@@ -244,9 +219,9 @@ def render_firefighter():
     </div>
     <div class="headline-stat">
       <!-- ปุ่มสั่ง Print PDF -->
-      <button id="print-btn" class="btn-print" onclick="printReport()">
+      <button id="print-btn" class="btn-print" onclick="captureAsImage()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        <span id="print-btn-text">พิมพ์ / บันทึกเป็น PDF</span>
+        <span id="print-btn-text">บันทึกเป็นรูปภาพ (JPEG)</span>
       </button>
       <br>
       <div class="n" id="hero-n">128</div>
@@ -555,24 +530,69 @@ buildDonut('chart-a-precheck', [
 ], 'คน');
 
 /* =========================================
-   ฟังก์ชันพิมพ์ / บันทึกเป็น PDF
+   ฟังก์ชันบันทึกเป็นรูปภาพ (รวมทุกอย่างในภาพเดียว)
    ---------------------------------------------------------------
-   *** เปลี่ยนวิธีทั้งหมด (สองวิธีก่อนหน้าที่ใช้ html2canvas ถ่ายภาพหน้าจอแล้วแปลงเป็น PDF
-   ไม่ได้ผลจริง — มันเป็นการ "จำลอง" การเรนเดอร์หน้าเว็บขึ้นมาเองใน JavaScript ซึ่งทำให้
-   ทั้งเนื้อหาบางส่วนหายไป/ถูกตัด และตำแหน่ง/สีเพี้ยนไม่ตรงกับหน้าจอจริง ***
-   วิธีใหม่: ใช้ window.print() ของเบราว์เซอร์เอง ซึ่งเป็นการเรนเดอร์หน้าเว็บจริง ๆ
-   ไม่ใช่ภาพแคปเจอร์ จึงได้เนื้อหาครบทุกบรรทัด คมชัด และสีตรงกับที่เห็นบนจอ 100%
-   ผู้ใช้กด "พิมพ์ / บันทึกเป็น PDF" แล้วเลือกปลายทางเป็น "บันทึกเป็น PDF" (Save as PDF)
-   ในหน้าต่างพิมพ์ของเบราว์เซอร์ได้เลย ส่วนการจัดหน้า/สี ควบคุมด้วย CSS @media print
-   ที่อยู่ใน <style> ด้านบน (บังคับพิมพ์สีพื้นหลังด้วย print-color-adjust:exact และ
-   ตั้งกระดาษเป็น A4 แนวนอนเพื่อให้พอดีกับความกว้างของแดชบอร์ด)
+   ที่ผ่านมาลองมาแล้ว 2 วิธี (windowHeight, foreignObjectRendering) ยังเจอปัญหาเนื้อหา
+   บนสุดหายไปและภาพเลื่อนเพี้ยน สาเหตุจริงๆ คือ "ตำแหน่งสกอลปัจจุบันของหน้าเว็บ" ตอนกดปุ่ม —
+   html2canvas จะอ้างอิงตำแหน่ง scroll ของ window ตอนนั้นเป็นจุดเริ่มแคปเจอร์ ถ้าไม่หักลบออก
+   ให้ตรงๆ (scrollX/scrollY และ x/y เป็น 0 พร้อมกัน) จะทำให้ภาพเริ่มจากตำแหน่งที่เลื่อนค้างไว้
+   แทนที่จะเริ่มจากบนสุดของเนื้อหาจริง จึงเห็นเนื้อหาส่วนบนหายไปแบบในรูปที่ส่งมา
+   วิธีแก้: บังคับ scrollX:0, scrollY:0, x:0, y:0 ให้ตรงกันทั้งหมด พร้อมกำหนด
+   windowWidth/windowHeight เท่าขนาดจริงของเนื้อหา เพื่อให้ได้ภาพเดียวที่ครบทุกอย่างแน่นอน
    ========================================= */
-function printReport() {
-  window.print();
+async function captureAsImage() {
+  const btn = document.getElementById('print-btn');
+
+  // ซ่อนปุ่มชั่วคราวขณะถ่ายภาพ เพื่อไม่ให้ปุ่มติดลงไปในรูป
+  btn.style.display = 'none';
+
+  const wrapElement = document.getElementById('dashboard-wrap');
+
+  // เพิ่มคลาส .exporting เพื่อบังคับให้พื้นหลังทึบ ลบเงาเพื่อป้องกันการเรนเดอร์เพี้ยน
+  wrapElement.classList.add('exporting');
+
+  // เลื่อนกลับไปบนสุดของหน้าก่อนถ่ายภาพเสมอ (ทั้ง window และตัว document เอง)
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+
+  // รอให้ฟอนต์โหลดเสร็จสมบูรณ์ และรอให้ CSS/เลย์เอาต์นิ่งก่อนแคปเจอร์
+  if (document.fonts && document.fonts.ready) {
+    try { await document.fonts.ready; } catch (e) {}
+  }
+  await new Promise(resolve => setTimeout(resolve, 350));
+
+  try {
+    const canvas = await html2canvas(wrapElement, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#f4f6f8',
+        logging: false,
+        x: 0,
+        y: 0,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: wrapElement.scrollWidth,
+        windowHeight: wrapElement.scrollHeight
+    });
+
+    const activeTab = document.getElementById('panel-after').classList.contains('active') ? 'After' : 'Before';
+    const link = document.createElement('a');
+    link.download = 'Wildfire_Volunteer_Health_Check_' + activeTab + '.jpg';
+    link.href = canvas.toDataURL('image/jpeg', 0.95);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+  } catch (error) {
+    console.error('Error generating image', error);
+    alert('เกิดข้อผิดพลาดในการสร้างรูปภาพ กรุณาลองใหม่อีกครั้ง');
+  } finally {
+    // นำคลาส .exporting ออก และแสดงปุ่มกลับมาเหมือนเดิม
+    wrapElement.classList.remove('exporting');
+    btn.style.display = 'inline-flex';
+  }
 }
-window.addEventListener('afterprint', function () {
-  // เผื่อกรณีที่ต้องทำความสะอาดสถานะใด ๆ หลังพิมพ์เสร็จ (ปัจจุบันไม่มี state ที่ต้องรีเซ็ต)
-});
 </script>
 </body>
 </html>
