@@ -548,31 +548,47 @@ async function generatePDF() {
   // เลื่อนกลับไปบนสุดของหน้าก่อนถ่ายภาพเสมอ ป้องกัน offset เพี้ยนจากตำแหน่งสกอลปัจจุบัน
   window.scrollTo(0, 0);
 
+  // รอให้ฟอนต์ทั้งหมดโหลดเสร็จสมบูรณ์ก่อนแคปเจอร์ (ป้องกันการเรนเดอร์ก่อนฟอนต์พร้อม)
+  if (document.fonts && document.fonts.ready) {
+    try { await document.fonts.ready; } catch (e) {}
+  }
+
   // หน่วงเวลาให้ CSS ทำงานก่อนแคปเจอร์
   await new Promise(resolve => setTimeout(resolve, 300));
 
   try {
-    // *** จุดที่แก้ไข (สาเหตุของสีจางหลัง KPI แถวแรก) ***
-    // components.html() ของ Streamlit กำหนด height=1800 ให้กับ iframe ทำให้ window.innerHeight
-    // ภายใน iframe ถูกจำกัดอยู่แค่ 1800px แม้เนื้อหาจริงจะสูงกว่านั้นมาก (เพราะเปิด scrolling=True
-    // ให้เลื่อนดูได้) โดยดีฟอลต์ html2canvas จะใช้ขนาด window ของ iframe นี้เป็น "กรอบอ้างอิง"
-    // ในการคำนวณสไตล์/สี ทำให้ทุกส่วนที่อยู่ต่ำกว่า 1800px ลงไป (กราฟวงกลม, แถบกราฟ, ตาราง ฯลฯ)
-    // ถูกเรนเดอร์เพี้ยน/จางกว่าปกติ เพราะไม่ได้อยู่ใน "หน้าต่าง" ที่ html2canvas มองเห็นจริง ๆ
-    // วิธีแก้: กำหนด windowWidth/windowHeight (และ width/height) ให้เท่ากับขนาดจริงของ
-    // dashboard-wrap (scrollWidth/scrollHeight) เพื่อบังคับให้ html2canvas มองเห็นและเรนเดอร์
-    // เนื้อหาทั้งหมดในครั้งเดียว ไม่ใช่แค่ส่วนที่พอดีกับความสูง iframe เดิม
-    const canvas = await html2canvas(wrapElement, {
-        scale: 2, 
-        useCORS: true,
-        backgroundColor: '#f4f6f8', // ใส่สีพื้นหลังทึบ
-        logging: false,
-        windowWidth: wrapElement.scrollWidth,
-        windowHeight: wrapElement.scrollHeight,
-        width: wrapElement.scrollWidth,
-        height: wrapElement.scrollHeight,
-        scrollX: 0,
-        scrollY: 0
-    });
+    // *** จุดที่แก้ไขรอบนี้ (วิธีก่อนหน้าเรื่อง windowHeight ไม่ได้ผล จึงเปลี่ยนวิธีเรนเดอร์แทน) ***
+    // ต้นเหตุจริงๆ คือ html2canvas โหมดปกติ (foreignObjectRendering:false) ไม่ได้ใช้เบราว์เซอร์
+    // เรนเดอร์ DOM ให้ตรงๆ แต่มันจะ "จำลอง" CSS ขึ้นมาเองทีละสไตล์ ซึ่งรองรับ CSS ไม่ครบ 100%
+    // โดยเฉพาะ CSS custom property ที่ซ้อนกันหลายชั้น เช่น style="--accent:var(--gold)" ที่ถูกใช้
+    // ต่อใน background:var(--accent, var(--ember)) ของ .kpi::before / .section-title::before
+    // และสีพื้นหลัง/เส้นขอบที่เป็น rgba() ผสมกับ box-shadow หลายชั้น (--line, --line-strong, --bg-panel-2)
+    // จุดเหล่านี้อยู่กระจายอยู่ในกราฟ ตาราง และชิปตำบลที่อยู่ถัดจาก KPI แถวแรกลงไป จึงเพี้ยน/จางกว่าปกติ
+    // วิธีแก้: เปลี่ยนไปใช้ foreignObjectRendering:true ให้เบราว์เซอร์เรนเดอร์ DOM จริงผ่าน SVG
+    // foreignObject แทน (สีตรงกับที่เห็นบนจอ 100% เพราะไม่ได้จำลอง CSS เอง) พร้อมสำรองวิธีเดิมไว้
+    // เผื่อเบราว์เซอร์ของผู้ใช้ไม่รองรับ foreignObjectRendering (เช่น Safari รุ่นเก่าบางเวอร์ชัน)
+    let canvas;
+    try {
+      canvas = await html2canvas(wrapElement, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#f4f6f8', // ใส่สีพื้นหลังทึบ
+          logging: false,
+          foreignObjectRendering: true,
+          windowWidth: wrapElement.scrollWidth,
+          windowHeight: wrapElement.scrollHeight
+      });
+    } catch (foErr) {
+      console.warn('foreignObjectRendering ใช้ไม่ได้ในเบราว์เซอร์นี้ กำลังใช้วิธีสำรอง...', foErr);
+      canvas = await html2canvas(wrapElement, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#f4f6f8',
+          logging: false,
+          windowWidth: wrapElement.scrollWidth,
+          windowHeight: wrapElement.scrollHeight
+      });
+    }
     
     const imgData = canvas.toDataURL('image/jpeg', 1.0); 
     const { jsPDF } = window.jspdf;
