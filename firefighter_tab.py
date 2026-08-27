@@ -545,15 +545,33 @@ async function generatePDF() {
   // เพิ่มคลาส .exporting เพื่อบังคับให้พื้นหลังทึบ ลบแบคกราวด์ไล่สีและเงา
   wrapElement.classList.add('exporting');
 
+  // เลื่อนกลับไปบนสุดของหน้าก่อนถ่ายภาพเสมอ ป้องกัน offset เพี้ยนจากตำแหน่งสกอลปัจจุบัน
+  window.scrollTo(0, 0);
+
   // หน่วงเวลาให้ CSS ทำงานก่อนแคปเจอร์
   await new Promise(resolve => setTimeout(resolve, 300));
 
   try {
+    // *** จุดที่แก้ไข (สาเหตุของสีจางหลัง KPI แถวแรก) ***
+    // components.html() ของ Streamlit กำหนด height=1800 ให้กับ iframe ทำให้ window.innerHeight
+    // ภายใน iframe ถูกจำกัดอยู่แค่ 1800px แม้เนื้อหาจริงจะสูงกว่านั้นมาก (เพราะเปิด scrolling=True
+    // ให้เลื่อนดูได้) โดยดีฟอลต์ html2canvas จะใช้ขนาด window ของ iframe นี้เป็น "กรอบอ้างอิง"
+    // ในการคำนวณสไตล์/สี ทำให้ทุกส่วนที่อยู่ต่ำกว่า 1800px ลงไป (กราฟวงกลม, แถบกราฟ, ตาราง ฯลฯ)
+    // ถูกเรนเดอร์เพี้ยน/จางกว่าปกติ เพราะไม่ได้อยู่ใน "หน้าต่าง" ที่ html2canvas มองเห็นจริง ๆ
+    // วิธีแก้: กำหนด windowWidth/windowHeight (และ width/height) ให้เท่ากับขนาดจริงของ
+    // dashboard-wrap (scrollWidth/scrollHeight) เพื่อบังคับให้ html2canvas มองเห็นและเรนเดอร์
+    // เนื้อหาทั้งหมดในครั้งเดียว ไม่ใช่แค่ส่วนที่พอดีกับความสูง iframe เดิม
     const canvas = await html2canvas(wrapElement, {
         scale: 2, 
         useCORS: true,
         backgroundColor: '#f4f6f8', // ใส่สีพื้นหลังทึบ
-        logging: false
+        logging: false,
+        windowWidth: wrapElement.scrollWidth,
+        windowHeight: wrapElement.scrollHeight,
+        width: wrapElement.scrollWidth,
+        height: wrapElement.scrollHeight,
+        scrollX: 0,
+        scrollY: 0
     });
     
     const imgData = canvas.toDataURL('image/jpeg', 1.0); 
